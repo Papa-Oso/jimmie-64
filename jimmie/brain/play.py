@@ -29,6 +29,8 @@ PROJECT = HERE.parent           # the jimmie-64 folder this brain lives in
 REPOS = PROJECT.parent          # its neighbours: .tmp-ai-models, twitch-vod-transcribe
 GAME = HERE / "build/game"
 PROFILE = HERE / "profile"
+if os.environ.get("JIMMIE_PLAY_PROFILE"):          # timing tests keep their own save and settings
+    PROFILE = Path(os.environ["JIMMIE_PLAY_PROFILE"])
 ROM = PROJECT / "main/user/save/baserom.us.z64"
 CONFIG = PROJECT / "main/user/save/sm64config.txt"
 PYTHON = PROJECT / ".venv/Scripts/python.exe"
@@ -178,6 +180,9 @@ def main() -> int:
                JIMMIE_ROUTE_CHANNEL=channel.name, JIMMIE_HEAD_TRACE=str(session / "native.jsonl"))
     args = [str(GAME / "sm64coopdx.exe"), "--server", "58468", "--playercount", "1", "--windowed", "--skip-update-check",
             "--no-discord", "--disable-mods", "--enable-mod", "jimmie", "--console", "--savepath", str(PROFILE / SAVE)]
+    for extra in os.environ.get("JIMMIE_PLAY_EXTRA_MODS", "").split(","):   # timing tests add the input-tape mod
+        if extra:
+            args += ["--enable-mod", extra]
     if a.smoke:
         env.update(JIMMIE_HEAD_TEST_START="1")
         if a.run_test:

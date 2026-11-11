@@ -81,7 +81,9 @@ function S:_select(m)
  if not self.scene or not finite(frame) or frame-self.since<2 then return nil,'scene-settling' end
  if not m.marioObj or not point(m.pos) or not point(m.vel) or not finite(m.floorHeight) or m.action==0
   or math.abs(m.pos.y-m.floorHeight)>4 or math.abs(m.vel.y)>4 then return nil,'player-airborne' end
- if g.ACT_GROUP_MASK and g.ACT_GROUP_CUTSCENE and (m.action & g.ACT_GROUP_MASK)==g.ACT_GROUP_CUTSCENE then return nil,'player-transition' end
+ -- motion:textspawn. Text boxes are allowed; every other cutscene still keeps him away.
+ local talking=m.action==g.ACT_READING_AUTOMATIC_DIALOG or m.action==g.ACT_WAITING_FOR_DIALOG or m.action==g.ACT_READING_NPC_DIALOG
+ if not talking and g.ACT_GROUP_MASK and g.ACT_GROUP_CUTSCENE and (m.action & g.ACT_GROUP_MASK)==g.ACT_GROUP_CUTSCENE then return nil,'player-transition' end
  if g.get_current_play_mode()~=(g.PLAY_MODE_NORMAL or 0) or g.is_game_paused() then return nil,'not-gameplay' end
  if math.abs(m.pos.x)>7600 or math.abs(m.pos.z)>7600 or math.abs(m.pos.y)>14000 then return nil,'coordinate-bound' end
  if frame<self.nextTry then return nil,'retry-delay' end

@@ -1959,6 +1959,72 @@ function jimmie_stick_place(s,x,y,z,face,hidden,size)
     s.stick.oFaceAngleYaw,s.stick.oFaceAnglePitch,s.stick.oFaceAngleRoll=math.floor(face*32768/math.pi)%65536,0,0
     obj_scale_xyz(s.stick,size or .62,size or .62,size or .62)
 end
+-- motion:swim. Where the skating Jimmie has no ground to stand on, a second Jimmie is drawn beside Mario instead:
+-- swimming while Mario is in deep water, flying (his camera-man pose) while Mario stands on a moving floor such as
+-- the tilting Bowser arena or a raft. Looks only: no collision, never nearer than arm's length, moves nothing.
+JIMMIE_SWIM={}
+function jimmie_swim_step()
+    local s=JIMMIE_SWIM;local m=gMarioStates[0]
+    if not (m and m.marioObj) then return end
+    local mx,my,mz=m.pos.x,m.pos.y,m.pos.z;local f=m.faceAngle.y*math.pi/32768
+    local tx,tz=mx+math.sin(f)*130-math.cos(f)*190,mz+math.cos(f)*130+math.sin(f)*190
+    local mode=nil
+    if jimmie and jimmie.activeFlags~=0 then s.alone=0
+    else
+        s.alone=(s.alone or 0)+1
+        if (m.action & ACT_FLAG_SWIMMING)~=0 or my<m.waterLevel-100 then mode='swim'
+        elseif s.alone>45 and m.floor and m.floor.object~=nil and math.abs(my-m.floorHeight)<4 then mode='fly' end
+    end
+    if obj_get_first_with_behavior_id(id_bhvBeginningLakitu) then mode=nil end
+    if mode then s.hold=20;s.mode=mode else s.hold=(s.hold or 0)-1 end
+    if s.hold<=0 then
+        if s.body then
+            if s.body.activeFlags~=0 then obj_mark_for_deletion(s.body) end
+            if s.board and s.board.activeFlags~=0 then obj_mark_for_deletion(s.board) end
+            s.body=nil;s.board=nil;s.clip=nil;log('[jimmie-swim] out frame='..tostring(get_global_timer()))
+        end
+        return
+    end
+    mode=s.mode
+    if not (s.body and s.body.activeFlags~=0) then
+        if id_bhvjimmie==nil or E_MODEL_jimmie==nil or originalBoardModel==nil or not OriginalBank.clips.swim or not OriginalBank.clips.fly then return end
+        local okA,body=pcall(spawn_non_sync_object,id_bhvjimmie,E_MODEL_jimmie,tx,-10000,tz,function(o) end)
+        local okB,board=pcall(spawn_non_sync_object,id_bhvjimmie,originalBoardModel,tx,-10000,tz,function(o) end)
+        if not (okA and okB and body and board) then return end
+        s.body,s.board,s.tick,s.x,s.y,s.z,s.face,s.clip=body,board,0,tx,my+(mode=='fly' and 500 or 0),tz,f,nil
+        log('[jimmie-swim] in mode='..mode..' frame='..tostring(get_global_timer()))
+    end
+    if s.clip~=mode then
+        s.clip=mode
+        smlua_anim_util_set_animation(s.body,OriginalBank.clips[mode].body);smlua_anim_util_set_animation(s.board,OriginalBank.clips[mode].board)
+    end
+    s.tick=s.tick+1
+    local ty=my+(mode=='fly' and 70 or 0)
+    local dx,dy,dz=tx-s.x,ty-s.y,tz-s.z;local d=math.sqrt(dx*dx+dz*dz)
+    if d>2500 then s.x,s.y,s.z=tx,ty,tz;dx,dy,dz,d=0,0,0,0 end
+    local step=math.min(26,d*.07);local nx,nz=s.x,s.z
+    if d>1 then nx,nz=s.x+dx/d*step,s.z+dz/d*step end
+    local ax,az=nx-mx,nz-mz;local ad=math.sqrt(ax*ax+az*az)
+    if ad<170 and ad>1 then nx,nz=mx+ax/ad*170,mz+az/ad*170 end
+    s.y=s.y+math.max(-14,math.min(14,dy*.08))
+    if mode=='swim' then
+        -- stay in open water: under the surface, off the bottom, never into ground
+        local water,floor=find_water_level(nx,nz),find_floor_height(nx,s.y+200,nz)
+        if water and floor and floor<water-110 then s.x,s.z=nx,nz
+        else water,floor=find_water_level(s.x,s.z),find_floor_height(s.x,s.y+200,s.z) end
+        if water and s.y>water-45 then s.y=water-45 end
+        if floor and s.y<floor+30 then s.y=floor+30 end
+    else s.x,s.z=nx,nz end
+    local turn=(f-s.face+math.pi)%(2*math.pi)-math.pi;s.face=s.face+turn*.08       -- he heads the way Mario is heading
+    local o=s.body
+    o.oPosX,o.oPosZ=s.x,s.z
+    if mode=='swim' then o.oPosY=s.y-30+5*math.sin(s.tick*.13) else o.oPosY=s.y+10*math.sin(s.tick*.3) end
+    local yaw=skate_model_angles(s.face+math.pi/2,0,0)
+    o.oFaceAngleYaw,o.oFaceAnglePitch,o.oFaceAngleRoll=yaw,0,0
+    local a=o.header.gfx.animInfo;local fr=s.tick%24;a.animFrame=fr;a.animFrameAccelAssist=fr*65536;a.animAccel=65536
+    s.board.oPosY=-10000
+    if mode=='fly' and s.tick%3==0 then jimmie_intro_sparkles(o.oPosX,o.oPosY+40,o.oPosZ,1,110) end
+end
 local function on_update()
     railPresentation:clear() -- early returns, pause and ownership changes fail closed
     if in_jimmie_title() then
@@ -1981,6 +2047,7 @@ local function on_update()
     end
     jimmie_mirror_step()
     jimmie_opening_step()
+    jimmie_swim_step()
     if companionSpawn:observe(m) then
         despawn_jimmie()
         originalScene=originalScene+1
