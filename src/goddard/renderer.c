@@ -19,6 +19,7 @@
 #include "macros.h"
 #include "objects.h"
 #include "renderer.h"
+#include "jimmie_head.h"
 #include "sfx.h"
 #include "shape_helper.h"
 #include "skin.h"
@@ -708,6 +709,10 @@ static Gfx *next_gfx(void) {
     return &sCurrentGdDl->gfx[sCurrentGdDl->curGfxIdx++];
 }
 
+void gd_dl_external(Gfx *dl) {
+    gSPDisplayList(next_gfx(), GD_VIRTUAL_TO_PHYSICAL(dl));
+}
+
 /**
  * Increments the current display list's Light index list and returns a pointer to the next Light element
  */
@@ -1204,6 +1209,7 @@ void gd_copy_p1_contpad(OSContPad *p1cont) {
     for (i = 0; i < sizeof(OSContPad); i++) {
         dest[i] = src[i];
     }
+    jimmie_head_test_pad(&sGdContPads[0], sMSceneView);
 
     if (p1cont->button & Z_TRIG) {
         print_all_timers();

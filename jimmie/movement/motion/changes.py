@@ -1,0 +1,481 @@
+"""Jimmie's accepted movement changes, in the order they are applied. Read by apply_motion.py.
+
+Each change: name, what (one line), marker (file, text that is in the file only once the change is applied),
+edits {file: [(old, new), ...]}. Each old text must be in the file exactly once.
+A change with files={path under the mod: source file} replaces whole files instead (no marker, no edits).
+pending=True means tested in the private copy but not yet approved for the build Josh plays:
+apply_motion.py leaves it out unless run with --include-pending. Delete the flag to release it.
+"""
+from pathlib import Path
+import apply_windup  # ../ollie-candidate: the ollie's main.lua and controller edits
+
+HERE = Path(__file__).resolve().parent
+BANK_END = 'function M.new()'
+
+CHANGES = []
+
+# 1. Ollie: ground wind-up, ollie from the pop, deeper landing (2026-11-10).
+CHANGES.append(dict(
+    name='ollie', what='6-frame ground crouch before trick jumps; ollie starts at the pop; 9-frame landing',
+    marker=('original_clip_bank.lua', 'jimmie_ollie_v2_'),
+    edits={'main.lua': apply_windup.MAIN, 'original_motion_controller.lua': apply_windup.CONTROLLER,
+           'original_clip_bank.lua': [(BANK_END, (HERE / 'ollie_bank_fragment.lua').read_text(encoding='utf-8') + BANK_END)]}))
+
+# 2. Planned hops (onto rails, over obstacles) crouch first, and turns onto and off rails are spread over frames.
+RAILHOP_TICKS = 5
+CHANGES.append(dict(
+    name='railhop', what='planned hops crouch on the spot for 5 frames first; he turns to line up with a rail in the air',
+    marker=('skate_opportunities.lua', 'motion:railhop'),
+    edits={
+     'skate_opportunities.lua': [
+      ('local RAIL_GRAVITY,RAIL_FRICTION,RAIL_DRAG,RAIL_MAX_SPEED=2.5,.04,.001,48\n',
+       'local RAIL_GRAVITY,RAIL_FRICTION,RAIL_DRAG,RAIL_MAX_SPEED=2.5,.04,.001,48\n'
+       '-- motion:railhop. Frames a planned hop crouches on the ground before it leaves.\n'
+       'O.WINDUP=%d\n' % RAILHOP_TICKS),
+      ('terrain=ctx.terrain,started=ctx.time,approachOrigin=cp(p)}\n',
+       'terrain=ctx.terrain,started=ctx.time,approachOrigin=cp(p),windup=plan.contactEntry and 0 or O.WINDUP}\n'),
+      (' t.step=t.step+1\n local total=t.phase==\'grind\' and 60 or t.plan.duration\n',
+       ' if t.phase==\'air\' and t.step==0 and (t.windup or 0)>0 then\n'
+       '  -- Crouch where he stands. The jump was already proved from this exact spot, so nothing moves.\n'
+       '  if not self:playersClear(p,p,ctx) then self:cancel(\'fresh-clearance-refused\',ctx);return nil end\n'
+       '  if t.windup==O.WINDUP then self:event(\'windup\',ctx,{opportunity=t.kind}) end\n'
+       '  t.windup=t.windup-1;t.popped=true\n'
+       '  local to=t.plan.landing or t.plan.b\n'
+       '  return {position=cp(p),velocity={x=0,y=0,z=0},onGround=true,variant=t.variant,kind=t.kind,grind=false,phase=\'windup\',\n'
+       '   windup=(O.WINDUP-1-t.windup)/math.max(1,O.WINDUP-1)*.99,heading=to and dist(p,to)>1 and math.atan2(to.x-p.x,to.z-p.z) or nil,\n'
+       '   episode=self.episode,duration=t.plan.duration/30,airTime=0}\n'
+       ' end\n'
+       ' t.step=t.step+1\n local total=t.phase==\'grind\' and 60 or t.plan.duration\n'),
+      ('  raisedPresentation=presentation,\n  incline=presentation and presentation.incline or (grind and',
+       '  raisedPresentation=presentation,popped=t.popped,\n'
+       '  heading=t.rail and (t.phase==\'air\' or t.phase==\'grind\') and math.atan2(t.rail.b.x-t.rail.a.x,t.rail.b.z-t.rail.a.z) or nil,\n'
+       '  incline=presentation and presentation.incline or (grind and'),
+     ],
+     'main.lua': [
+      # Turn over a few frames in the air and in the crouch; on the rail itself stay exactly lined up.
+      ('    if math.abs(v.x)+math.abs(v.z)>.01 then p.yaw=math.atan2(v.x,v.z) end\n    p.prevYaw=p.yaw\n',
+       '    local wantYaw=out.heading or (math.abs(v.x)+math.abs(v.z)>.01 and math.atan2(v.x,v.z)) or p.yaw\n'
+       '    if out.grind or out.phase==\'grind\' then p.yaw=wantYaw\n'
+       '    else\n'
+       '        local dyaw=(wantYaw-p.yaw+math.pi*3)%(math.pi*2)-math.pi\n'
+       '        p.yaw=p.yaw+math.max(-.3,math.min(.3,dyaw))\n'
+       '    end\n'
+       '    p.prevYaw=p.yaw\n'
+       '    p.popped=(out.popped==true and not p.onGround) or nil;p.windup=nil\n'),
+      # The crouch shows during the planner's wind-up; the frame the board meets the rail already counts as grinding.
+      ('        windup=p.windup and p.onGround and math.max(0,p.windup.t-1)/6 or nil,popped=p.popped==true,\n'
+       '        inAir=PHYS_AIR==true and p.onGround==false,railContact=opportunityMotion and opportunityMotion.grind==true,',
+       '        windup=(opportunityMotion and opportunityMotion.phase==\'windup\' and opportunityMotion.windup) or (p.windup and p.onGround and math.max(0,p.windup.t-1)/6) or nil,popped=p.popped==true,\n'
+       '        inAir=PHYS_AIR==true and p.onGround==false,railContact=opportunityMotion and (opportunityMotion.grind==true or opportunityMotion.phase==\'grind\'),'),
+      ('        balanceClip=opportunityMotion and opportunityMotion.grind and opportunityMotion.balanceClip or nil})\n',
+       '        balanceClip=opportunityMotion and (opportunityMotion.grind or opportunityMotion.phase==\'grind\') and opportunityMotion.balanceClip or nil})\n'),
+     ]}))
+
+# 3. Following: a couple of pushes, then coast in the riding pose; lean into turns.
+CHANGES.append(dict(
+    name='coast', what='two pushes then a coast in the riding pose instead of kicking non-stop; leans up to about 10 degrees into turns',
+    marker=('main.lua', 'motion:coast'),
+    edits={
+     'main.lua': [
+      ('    if p.onGround and spd < desiredSpeed - 1 and not p.windup then\n'
+       '        p.pushT = p.pushT + dt\n'
+       '        if p.pushT > 0.40 then p.pushT = 0 end\n',
+       '    -- motion:coast. After two pushes, roll for a while unless he has nearly stopped or is racing to catch up.\n'
+       '    local wantPush = p.onGround and spd < desiredSpeed - 1 and not p.windup\n'
+       '    if (p.coastT or 0) > 0 then\n'
+       '        p.coastT = p.coastT - dt\n'
+       '        if spd > 6 and not (currentSkateIntent and currentSkateIntent.catchUp) then wantPush = false end\n'
+       '    end\n'
+       '    if not wantPush and (p.coastT or 0) <= 0 then p.pushN = 0 end\n'
+       '    if wantPush then\n'
+       '        p.pushT = p.pushT + dt\n'
+       '        if p.pushT > 0.40 then\n'
+       '            p.pushT = 0\n'
+       '            p.pushN = (p.pushN or 0) + 1\n'
+       '            if p.pushN >= 2 then p.pushN = 0; p.coastT = 0.9; wantPush = false end\n'
+       '        end\n'
+       '    end\n'
+       '    if wantPush then\n'),
+      ('    local bank = math.floor(math.max(-600, math.min(600, turn * -5200)))\n',
+       '    local bank = math.floor(math.max(-1800, math.min(1800, turn * -24000)))\n'),
+      ('    -- Orient the deck lengthwise, with slope and banking on its actual axes.\n',
+       '    -- Orient the deck lengthwise, with slope and banking on its actual axes.\n'
+       '    p.lean = (p.lean or 0) * 0.7 + (p.onGround and turn * math.min(1, spd / 20) or 0) * 0.3\n'),
+      ('        skate_model_angles(p.yaw, slopeVal or 0, turn)\n', '        skate_model_angles(p.yaw, slopeVal or 0, p.lean)\n'),
+      ('        flightDuration=flight_playback_seconds(.95,1/30),dying=dying,bailDuration=.9,\n',
+       '        speed=jimmieSpeed,flightDuration=flight_playback_seconds(.95,1/30),dying=dying,bailDuration=.9,\n'),
+     ],
+     'original_motion_controller.lua': [
+      ("    if self.push then clip='push';phase=self.push/.4;self.push=self.push+dt end\n",
+       "    if self.push then clip='push';phase=self.push/.4;self.push=self.push+dt\n"
+       "    elseif (tonumber(c.speed) or 0)>4 and self.bank.clips.pose then clip='pose' end\n"),
+     ]}))
+
+# 4. Grinds keep most of the approach speed.
+_ENTRY = 'entrySpeed(%s)'
+CHANGES.append(dict(
+    name='railspeed', what='he keeps 85% of his approach speed when the board meets a rail, instead of only the part pointing along it',
+    marker=('skate_opportunities.lua', 'motion:railspeed'),
+    edits={'skate_opportunities.lua': [
+      ('local function startGrind(t,vx,vy,vz)\n',
+       '-- motion:railspeed. Speed along the rail at contact: most of the approach speed carries over,\n'
+       '-- as long as he was already heading the rail\'s way.\n'
+       'local function entrySpeed(vx,vy,vz,x,y,z)\n'
+       ' local along=(vx or 0)*x+(vy or 0)*y+(vz or 0)*z\n'
+       ' if along>0 then along=math.max(along,.85*math.sqrt((vx or 0)^2+(vz or 0)^2)) end\n'
+       ' return clamp(along,0,RAIL_MAX_SPEED)\n'
+       'end\n'
+       'local function startGrind(t,vx,vy,vz)\n'),
+      (' t.grindSpeed=clamp((vx or 0)*x+(vy or 0)*y+(vz or 0)*z,0,RAIL_MAX_SPEED)\n',
+       ' t.grindSpeed=entrySpeed(vx,vy,vz,x,y,z)\n'),
+      ('  estimated=clamp((rail.a.x-before.x)*tx+(rail.a.y-before.y)*grade+(rail.a.z-before.z)*tz,0,RAIL_MAX_SPEED)\n',
+       '  estimated=entrySpeed(rail.a.x-before.x,rail.a.y-before.y,rail.a.z-before.z,tx,grade,tz)\n'),
+      ('  estimated=clamp((p.vx or 0)*tx+(p.vy or 0)*grade+(p.vz or 0)*tz,0,RAIL_MAX_SPEED)\n',
+       '  estimated=entrySpeed(p.vx,p.vy,p.vz,tx,grade,tz)\n'),
+    ]}))
+
+# 5. Kickflip and heelflip use the longer landing made for the ollie.
+CHANGES.append(dict(
+    name='fliplanding', what='kickflip and heelflip land with the 9-frame landing instead of the old 6-frame one',
+    marker=('original_clip_bank.lua', 'motion:fliplanding'),
+    edits={'original_clip_bank.lua': [
+      (BANK_END, '-- motion:fliplanding\nfor _,n in ipairs({"kickflip","heelflip"}) do if M.clips[n] and M.clips.land_ollie then M.clips[n].landing="land_ollie" end end\n' + BANK_END),
+    ]}))
+
+# 6. Bails have a cause. The dice are rolled when he leaves the ground, the odds come from the trick, his speed
+#    and how he lands, and a failed trick goes wrong in the air and falls at touchdown (not a second after a clean landing).
+CHANGES.append(dict(
+    name='crashcause', what='trick bails happen at touchdown with odds from the trick, speed, drop and landing; a doomed trick visibly under-rotates',
+    marker=('main.lua', 'motion:crashcause'),
+    edits={
+     'trick_outcomes.lua': [
+      (" function s:complete(event,scene)\n", " function s:complete(event,scene,opts)\n"),
+      ("  local ok,roll=pcall(random,1,M.FAIL_OUT_OF)\n",
+       "  -- motion:crashcause. The caller may supply the roll (made at take-off) and the odds out of 1000.\n"
+       "  local ok,roll\n"
+       "  if type(opts)=='table' and finite(opts.roll) then ok,roll=true,opts.roll else ok,roll=pcall(random,1,M.FAIL_OUT_OF) end\n"),
+      ("  local fail=roll<=M.FAIL_COUNT;if fail then self.failures=self.failures+1 end\n"
+       "  return fail,{id=event.id,kind=event.kind,clip=event.clip,roll=roll,failed=fail}\n",
+       "  local count=type(opts)=='table' and finite(opts.count) and math.max(0,math.min(M.FAIL_OUT_OF,math.floor(opts.count))) or M.FAIL_COUNT\n"
+       "  local fail=roll<=count;if fail then self.failures=self.failures+1 end\n"
+       "  return fail,{id=event.id,kind=event.kind,clip=event.clip,roll=roll,failed=fail,chance=count}\n"),
+     ],
+     'original_motion_controller.lua': [
+      # The trick is judged the frame the board touches down, not when the landing crouch has finished.
+      ("    self.landing={clip=q.landing or 'land',t=0,heading=a.heading,early=(a.phase or 0)<(q.catch or .84)}\n    self.air=nil\n",
+       "    self.landing={clip=q.landing or 'land',t=0,heading=a.heading,early=(a.phase or 0)<(q.catch or .84)}\n    self.air=nil\n"
+       "    if self.journey then completed=self.journey;completed.early=self.landing.early;self.journey=nil end\n"),
+      # A trick that is going to fail runs late, so the board has not come round when he lands.
+      ("   phase=math.min(1,phase);a.phase=phase;a.t=a.t+dt\n",
+       "   phase=math.min(1,phase)\n   if c.doomed then phase=a.from+(phase-a.from)*.7 end\n   a.phase=phase;a.t=a.t+dt\n"),
+      ("earlyLanding=self.landing and self.landing.early or false,completedTrick=",
+       "earlyLanding=self.landing and self.landing.early or false,journey=self.journey and self.journey.kind or nil,completedTrick="),
+     ],
+     'main.lua': [
+      ("local function update_pose_animation(dt)\n",
+       "-- motion:crashcause. Odds out of 1000 that a trick fails. Globals, because this file is at Lua's limit of local names.\n"
+       "function jimmie_bail_odds(clip,kind,speed)\n"
+       "    local base=kind=='grind' and 40 or (clip=='kickflip' or clip=='heelflip') and 70 or (clip=='bs_pop_shuvit' or clip=='fs_pop_shuvit') and 45 or 20\n"
+       "    return base+math.max(0,math.min(60,((tonumber(speed) or 0)-25)*2))\n"
+       "end\n"
+       "-- Total odds at touchdown, the part known at take-off, and the name of the biggest landing cause.\n"
+       "function jimmie_landing_odds(p,event,speed,planned)\n"
+       "    local base=p.trickBase or jimmie_bail_odds(event.clip,event.kind,speed)\n"
+       "    local extra,why=0,nil\n"
+       "    if event.kind=='trick' and event.early and not p.doomed then extra,why=350,'landed-early' end\n"
+       "    local hard=math.max(0,math.min(500,(((p.airTop or p.y or 0)-(p.y or 0))-340)*2))\n"
+       "    if hard>extra then why='hard-landing' end\n"
+       "    local side=0\n"
+       "    if not planned and (tonumber(speed) or 0)>8 and p.yaw then\n"
+       "        local a=math.abs(((math.atan2(p.vx or 0,p.vz or 0)-p.yaw+math.pi)%(2*math.pi))-math.pi)\n"
+       "        side=math.max(0,math.min(400,(math.min(a,math.pi-a)-.5)*600))\n"
+       "        if side>math.max(extra,hard) then why='sideways-landing' end\n"
+       "    end\n"
+       "    return math.floor(math.min(950,base+extra+hard+side)),base,why\n"
+       "end\n"
+       "local function update_pose_animation(dt)\n"),
+      ("        speed=jimmieSpeed,flightDuration=", "        doomed=p.doomed==true,speed=jimmieSpeed,flightDuration="),
+      ("        if out.completedTrick and not dying then\n"
+       "            local fail,result=originalOutcomes:complete(out.completedTrick,tostring(originalScene))\n"
+       "            if type(result)=='table' then log('[trick-outcome] id='..result.id..' kind='..result.kind..' roll='..result.roll..'/1000 crash='..tostring(fail)) end\n"
+       "            if VOICE.skateMemory then VOICE.skateMemory.outcome(out.completedTrick,result) end\n"
+       "            if fail then jimmie_dies('board','trick_bail') end\n"
+       "        end\n",
+       "        if out.journey and PHYS and not p.onGround then\n"
+       "            -- Roll once when he leaves the ground. A hop onto a rail is judged when he comes off it.\n"
+       "            p.airTop=math.max(p.airTop or p.y,p.y)\n"
+       "            if not p.trickRoll then p.trickRoll=math.random(1,1000) end\n"
+       "            local key=out.journey..tostring(out.clip)\n"
+       "            if p.trickKey~=key then\n"
+       "                p.trickKey=key;p.trickBase=jimmie_bail_odds(out.clip,out.journey,jimmieSpeed)\n"
+       "                p.doomed=p.trickRoll<=p.trickBase and not (out.journey=='trick' and opportunityMotion and opportunityMotion.kind=='rail')\n"
+       "            end\n"
+       "        end\n"
+       "        if out.completedTrick and not dying then\n"
+       "            local odds,base,why=jimmie_landing_odds(p,out.completedTrick,jimmieSpeed,opportunityMotion~=nil)\n"
+       "            local fail,result=originalOutcomes:complete(out.completedTrick,tostring(originalScene),{roll=p.trickRoll,count=odds})\n"
+       "            if type(result)=='table' then\n"
+       "                local cause=not fail and 'none' or (result.roll>base and why) or (result.kind=='grind' and 'off-the-rail' or 'under-rotated')\n"
+       "                log('[trick-outcome] id='..result.id..' kind='..result.kind..' roll='..result.roll..'/1000 crash='..tostring(fail)..' chance='..tostring(result.chance)..' cause='..tostring(cause)..' clip='..tostring(result.clip))\n"
+       "            end\n"
+       "            p.trickRoll,p.trickKey,p.trickBase,p.doomed,p.airTop=nil,nil,nil,nil,nil\n"
+       "            if VOICE.skateMemory then VOICE.skateMemory.outcome(out.completedTrick,result) end\n"
+       "            if fail then jimmie_dies('board','trick_bail') end\n"
+       "        end\n"),
+     ]}))
+
+# 7. Longer grinds. A rail used to be measured out to 144 units (240 for known rails) and then he hopped off,
+#    which at his speed is 7 to 12 frames. Now it is measured out to 576 units when the rail is that long.
+CHANGES.append(dict(
+    name='longgrind', what='rails are measured out to 576 units instead of 144, so a grind can last about a second',
+    marker=('skate_probes.lua', 'motion:longgrind'),
+    edits={'skate_surface_rails.lua': [
+      # Fences and other visible rails: this was the cap that applied in the fence tests.
+      ('points=math.min(7,math.floor(visual.remaining/24)+1)', 'points=math.min(25,math.floor(visual.remaining/24)+1)'),
+     ],
+     # The log now also says how much visible rail lay ahead of the entry point, to measure the share ridden.
+     'skate_opportunities.lua': [
+      ("self:event('rail-opportunity-found',ctx,{from=cp(rail.a),to=cp(rail.b)})",
+       "self:event('rail-opportunity-found',ctx,{from=cp(rail.a),to=cp(rail.b),remaining=rail.visual and rail.visual.remaining or nil})"),
+     ],
+     'skate_probes.lua': [
+      ('s.nearGeneric=s.index<=nearCount;s.source=nil;s.visual=nil;s.maxPoints=11',
+       's.nearGeneric=s.index<=nearCount;s.source=nil;s.visual=nil;s.maxPoints=25'),
+      ('  for _=1,(s.visual and 1 or 2) do\n',
+       '  -- motion:longgrind. Four steps of 24 units per update, up to 25 points (576 units).\n'
+       '  for _=1,(s.visual and 2 or 4) do\n'),
+      ('    if #s.points>=(s.nearGeneric and 7 or s.maxPoints or 11) then',
+       '    if #s.points>=(s.nearGeneric and 25 or s.maxPoints or 25) then'),
+    ]}))
+
+# 8. When the staged fall is refused (any floor that is not perfectly flat), he used to freeze, flip over in 0.9 s,
+#    vanish and reappear. Now he slides to a stop while the fall plays at its real speed, lies a moment, and gets up
+#    where he is. The get-up is the fall clip run backwards quickly; there is no separate get-up clip for this path.
+FALL_SECONDS, LIE_SECONDS, GETUP_SECONDS = 2.03, 0.35, 0.6
+CHANGES.append(dict(
+    name='fallhere', what='on uneven floor he slides, falls at real speed and gets up where he is, instead of vanishing and reappearing',
+    marker=('main.lua', 'motion:fallhere'),
+    edits={
+     'original_motion_controller.lua': [
+      ("   clip='bail';phase=math.min(1,(self.time or 0)/math.max(dt,c.bailDuration or .9))\n",
+       "   clip='bail';phase=math.min(1,(self.time or 0)/math.max(dt,c.bailDuration or .9))\n"
+       "   if c.getup then phase=math.max(0,1-c.getup) end\n"),
+     ],
+     'main.lua': [
+      ('    local accepted=begin_original_crash()\n'
+       '    if VOICE.skateMemory then VOICE.skateMemory.crash(accepted,speechEvent=="trick_bail") end\n',
+       '    local accepted=begin_original_crash()\n'
+       '    -- motion:fallhere. The staged fall only runs on perfectly flat floor. Anywhere else, fall and get up on the spot.\n'
+       '    JIMMIE_FALL=nil\n'
+       '    if not accepted and jimmie and originalBoard then\n'
+       '        local q=PHYS or {}\n'
+       '        JIMMIE_FALL={vx=q.vx or 0,vz=q.vz or 0,t=0,yaw=q.yaw}\n'
+       '        dyingUntil=now()+%s\n'
+       '    end\n'
+       '    if VOICE.skateMemory then VOICE.skateMemory.crash(accepted or JIMMIE_FALL~=nil,speechEvent=="trick_bail") end\n'
+       % (FALL_SECONDS + LIE_SECONDS + GETUP_SECONDS + 0.5)),
+      ('dying=dying,bailDuration=.9,',
+       'dying=dying,bailDuration=JIMMIE_FALL and %s or .9,getup=JIMMIE_FALL and JIMMIE_FALL.getup or nil,' % FALL_SECONDS),
+      ('        if now() >= dyingUntil then\n'
+       '            dying = false\n'
+       '            despawn_jimmie(true) -- terrain-declined crashes retain pending post-recovery collar\n',
+       '        local f=JIMMIE_FALL\n'
+       '        if f and originalBoard then\n'
+       '            f.t=f.t+dt\n'
+       '            if f.t<%(fall)s then\n'
+       '                -- Slide on along the floor and slow down; stop at a wall, a ledge or a step.\n'
+       '                local nx,nz=jimmie.oPosX+f.vx,jimmie.oPosZ+f.vz\n'
+       '                local fy=find_floor_height(nx,jimmie.oPosY+40,nz)\n'
+       '                if (f.vx~=0 or f.vz~=0) and fy>-10000 and math.abs(fy-jimmie.oPosY)<=40 and (not Personality or Personality.wallClear(nx,fy,nz)) then\n'
+       '                    jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ=nx,fy,nz\n'
+       '                else f.vx,f.vz=0,0 end\n'
+       '                f.vx,f.vz=f.vx*.86,f.vz*.86\n'
+       '            elseif f.t>=%(up)s then f.getup=math.min(1,(f.t-%(up)s)/%(getup)s) end\n'
+       '            if f.getup and f.getup>=1 then\n'
+       '                local yaw=f.yaw or 0\n'
+       '                PHYS={x=jimmie.oPosX,y=jimmie.oPosY,z=jimmie.oPosZ,vx=0,vy=0,vz=0,yaw=yaw,prevYaw=yaw,onGround=true,pushT=0,airT=0}\n'
+       '                PHYS_AIR=false;PHYS_PUSHING=false;TRICK_PENDING=nil\n'
+       '                JIMMIE_FALL=nil;dying=false;dyingUntil=0;jimmieDeadUntil=0;deathSpin=0\n'
+       '                originalController:reset()\n'
+       '                originalOutcomes:recovered(tostring(originalScene),jimmie,clock_elapsed_f64())\n'
+       "                log('[original-crash] recovered by simple getup')\n"
+       '                if VOICE.skateMemory then VOICE.skateMemory.gotUp() end\n'
+       '            end\n'
+       '            return\n'
+       '        end\n'
+       '        if now() >= dyingUntil then\n'
+       '            dying = false\n'
+       '            despawn_jimmie(true) -- terrain-declined crashes retain pending post-recovery collar\n'
+       % dict(fall=FALL_SECONDS, up=FALL_SECONDS + LIE_SECONDS, getup=GETUP_SECONDS)),
+     ]}))
+
+# 9. Trick batches 1 to 3: ten more flips and shuvits, eight grabs, four spins and ten named grinds and slides
+#    (made by ../tricks/trick_motion.py), a trick list that lives in the
+#    clip bank instead of the picker, per-trick bail odds, and the trick's real name on the outcome facts for speech.
+CHANGES.append(dict(
+    name='tricks1', what='35 new tricks (flips, shuvits, grabs, spins, named grinds and slides, manuals), fakie versions and combos; picked from a named list in the clip bank; outcome facts carry trick="<name>"; a 180 lands rolling backwards, then he turns back round',
+    marker=('original_clip_bank.lua', 'jimmie_tricks_v1_'),
+    edits={
+     'original_clip_bank.lua': [
+      (BANK_END, (HERE / 'tricks1_bank_fragment.lua').read_text(encoding='utf-8') + BANK_END),
+      (' local s={clips=M.clips}\n', ' local s={clips=M.clips,tricks=M.trickList,manuals=M.manualList,styles=M.styles}\n'),
+     ],
+     'original_motion_controller.lua': [
+      ("   heading=self.heading\n   if self.landing then\n",
+       "   heading=self.heading\n"
+       "   if c.manualClip and self.bank.clips[c.manualClip] then\n"
+       "    -- Manual: tip onto two wheels straight from the landing and hold it; the trick has already been judged at touchdown.\n"
+       "    if self.manual~=c.manualClip then self.manual=c.manualClip;self.manualTime=0 end\n"
+       "    self.landing=nil;self.push=nil\n"
+       "    clip=self.manual;phase=math.min(1,self.manualTime/self.bank.clips[clip].duration);self.manualTime=self.manualTime+dt\n"
+       "   elseif self.manual then\n"
+       "    -- Set the other wheels back down: the entry run backwards, twice as fast.\n"
+       "    clip=self.manual;self.manualTime=math.min(self.manualTime,self.bank.clips[clip].duration)-dt*2\n"
+       "    phase=math.max(0,self.manualTime/self.bank.clips[clip].duration)\n"
+       "    if self.manualTime<=0 then self.manual=nil end\n"
+       "   elseif self.landing then\n"),
+      ("     self.journey=c.trickTakeoff==true and {id=self.serial,kind='trick',clip=chosen} or nil\n    end\n",
+       "     self.journey=c.trickTakeoff==true and {id=self.serial,kind='trick',clip=chosen} or nil\n"
+       "    else self.journey.out=chosen end\n"),
+      ("   clip='windup';phase=c.windup\n",
+       "   if not self.winding or c.windup<(self.lastWind or 0) then\n"
+       "    -- Decide now whether this jump is a nollie, a boneless or a no-comply: each has its own crouch.\n"
+       "    self.winding=true\n"
+       "    local want=c.requestedTrick and self.bank.clips[c.requestedTrick]\n"
+       "    local r=math.random()\n"
+       "    if want then self.style=want.style\n"
+       "    elseif self.bank.styles and not c.noSpin then self.style=r<.08 and 'nollie' or r<.13 and 'boneless' or r<.18 and 'nocomply' or nil\n"
+       "    else self.style=nil end\n"
+       "   end\n"
+       "   self.lastWind=c.windup\n"
+       "   clip=self.style and self.bank.clips['windup_'..self.style] and ('windup_'..self.style) or 'windup';phase=c.windup\n"),
+      ("   self.journey.kind='grind'\n", "   self.journey.kind='grind';self.journey.grind=c.balanceClip\n"),
+      ("    local chosen=c.requestedTrick or families[(self.serial-1)%#families+1]\n",
+       "    local chosen=c.requestedTrick\n"
+       "    if not chosen and self.bank.tricks then\n"
+       "     -- Weighted pick from the bank's named tricks: never the same one twice running, and long tricks need the air time.\n"
+       "     local total,pool=0,{}\n"
+       "     for _,n in ipairs(self.bank.tricks) do\n"
+       "      local q=self.bank.clips[n]\n"
+       "      if q and n~=self.lastTrick and duration>=(q.minAir or .4) and not (q.spin and c.noSpin) and q.style==self.style then total=total+(q.weight or 1);pool[#pool+1]=n end\n"
+       "     end\n"
+       "     local roll=math.random()*total\n"
+       "     for _,n in ipairs(pool) do roll=roll-(self.bank.clips[n].weight or 1);if roll<=0 then chosen=n;break end end\n"
+       "     chosen=chosen or pool[#pool]\n"
+       "    end\n"
+       "    chosen=chosen or families[(self.serial-1)%#families+1]\n"),
+      ("    if not self.bank.clips[chosen] or duration<.4 then chosen='trick' end\n",
+       "    if not self.bank.clips[chosen] or duration<.4 then chosen='trick' end\n    self.lastTrick=chosen;self.winding=nil;self.style=nil\n"),
+     ],
+     'main.lua': [
+      ("    local wantPush = p.onGround and spd < desiredSpeed - 1 and not p.windup\n",
+       "    local wantPush = p.onGround and spd < desiredSpeed - 1 and not p.windup and not p.fakie and not p.manual\n"),
+      ("    local p=PHYS or {}\n    local ok,out=originalController:step({body=jimmie,board=originalBoard,dt=dt,scene=originalScene,\n",
+       "    local p=PHYS or {}\n"
+       "    -- Manuals: planned when he leaves the ground, started the frame he lands, held for about a second.\n"
+       "    if p.manual then\n"
+       "        p.manual.t=p.manual.t+dt\n"
+       "        if p.manual.t>p.manual.dur or not p.onGround or p.windup or dying or (opportunityMotion and opportunityMotion.phase=='windup') then p.manual=nil end\n"
+       "    elseif p.manualPlan and p.onGround and PHYS then\n"
+       "        p.manual={clip=p.manualPlan,t=0,dur=.8+math.random()*.8};p.manualPlan=nil\n"
+       "    end\n"
+       "    local ok,out=originalController:step({body=jimmie,board=originalBoard,dt=dt,scene=originalScene,\n"),
+      ("            if not p.trickRoll then p.trickRoll=math.random(1,1000) end\n",
+       "            if not p.trickRoll then\n"
+       "                p.trickRoll=math.random(1,1000)\n"
+       "                -- Still rolling backwards from a 180: this one is a fakie trick, and he stays backwards until it lands.\n"
+       "                if p.fakie then p.fakie.hold=math.max(p.fakie.hold,45);p.fakieTrick=true else p.fakieTrick=nil end\n"
+       "                local manuals=OriginalBank.manualList\n"
+       "                p.manualPlan=manuals and #manuals>0 and not p.fakie and not (opportunityMotion and opportunityMotion.kind=='rail') and math.random()<.3 and manuals[math.random(#manuals)] or nil\n"
+       "            end\n"),
+      ("    local yaw = (math.floor(heading * 32768 / math.pi) - 16384) % 65536\n",
+       "    if PHYS and PHYS.fakie then heading = heading + PHYS.fakie.yaw end\n"
+       "    local yaw = (math.floor(heading * 32768 / math.pi) - 16384) % 65536\n"),
+      ("        doomed=p.doomed==true,", "        manualClip=p.manual and p.manual.clip or nil,noSpin=opportunityMotion~=nil and opportunityMotion.kind=='rail',doomed=p.doomed==true,"),
+      ("        if out.journey and PHYS and not p.onGround then\n",
+       "        if p.fakie and p.onGround and not out.completedTrick then\n"
+       "            -- Rolling backwards after a 180: hold it, then pivot back round over a few frames.\n"
+       "            p.fakie.hold=p.fakie.hold-1\n"
+       "            if p.fakie.hold<=0 then\n"
+       "                p.fakie.yaw=p.fakie.yaw-math.max(-.35,math.min(.35,p.fakie.yaw))\n"
+       "                if math.abs(p.fakie.yaw)<.01 then p.fakie=nil end\n"
+       "            end\n"
+       "        end\n"
+       "        if out.journey and PHYS and not p.onGround then\n"),
+      ("            if fail then jimmie_dies('board','trick_bail') end\n        end\n",
+       "            if fail then jimmie_dies('board','trick_bail')\n"
+       "            elseif type(result)=='table' and result.kind=='trick' and PHYS and OriginalBank.clips[result.clip] and OriginalBank.clips[result.clip].spin then\n"
+       "                -- The clip ended turned half way; from this frame the whole model carries that half turn instead.\n"
+       "                local already=p.fakie and p.fakie.yaw or 0\n"
+       "                if math.abs(already)>.01 then p.fakie=nil else p.fakie={yaw=math.pi*OriginalBank.clips[result.clip].spin,hold=math.random()<.5 and 75 or 20} end\n"
+       "                jimmie.oFaceAngleYaw=(jimmie.oFaceAngleYaw+32768)%65536;originalBoard.oFaceAngleYaw=jimmie.oFaceAngleYaw\n"
+       "            end\n        end\n"),
+      ("    local base=kind=='grind' and 40 or (clip=='kickflip'",
+       "    local q=OriginalBank and OriginalBank.clips[clip]\n"
+       "    local base=kind=='grind' and 40 or (q and q.odds) or (clip=='kickflip'"),
+      ("            if type(result)=='table' then\n                local cause=",
+       "            if type(result)=='table' then\n"
+       "                -- The trick's real name, for speech (\"kickflip\", \"360 flip\"); a grind is just \"grind\" for now.\n"
+       "                local named=OriginalBank.clips[result.clip]\n"
+       "                local ground=out.completedTrick.grind and OriginalBank.clips[out.completedTrick.grind]\n"
+       "                local gname=ground and ground.name or 'grind'\n"
+       "                if result.kind=='grind' then\n"
+       "                    -- A flip on the way onto the rail is named with it: \"kickflip to 5-0 grind\".\n"
+       "                    local lead=named and named.name and named.name~='ollie' and result.clip~=out.completedTrick.grind and (named.name..' to ') or ''\n"
+       "                    result.trick=lead..gname\n"
+       "                    local outq=out.completedTrick.out and OriginalBank.clips[out.completedTrick.out]\n"
+       "                    if outq and outq.name and outq.name~='ollie' then result.trick=result.trick..' to '..outq.name..' out' end\n"
+       "                else result.trick=(named and named.name) or tostring(result.clip) end\n"
+       "                if named and named.spin then p.manual=nil end\n"
+       "                if p.fakieTrick and result.kind=='trick' then result.trick='fakie '..result.trick end\n"
+       "                p.fakieTrick=nil\n"
+       "                if p.manual and p.manual.t==0 and not fail and OriginalBank.clips[p.manual.clip] then result.trick=result.trick..' to '..OriginalBank.clips[p.manual.clip].name end\n"
+       "                -- How many tricks he has landed in a row with less than three seconds between them.\n"
+       "                p.line=fail and 0 or ((p.lineT and now()-p.lineT<3) and (p.line or 0)+1 or 1);p.lineT=now();result.line=p.line\n"
+       "                local cause="),
+      ("..' clip='..tostring(result.clip))\n", "..' clip='..tostring(result.clip)..' trick='..tostring(result.trick)..' line='..tostring(result.line))\n"),
+     ],
+     'skate_rail_presentation.lua': [
+      ("        and a.clip ~= 'jimmie_stock_v1_board_reverse_balance042' then return reject('unsupported-clip') end\n",
+       "        and a.clip ~= 'jimmie_stock_v1_board_reverse_balance042'\n"
+       "        and not (JIMMIE_GRIND_BOARDS ~= nil and JIMMIE_GRIND_BOARDS[a.clip] == true) then return reject('unsupported-clip') end\n"),
+     ],
+     'skate_rail_binding.lua': [
+      ("   and controller.output.clip=='balance042' and finite(controller.output.heading)\n",
+       "   and (controller.output.clip=='balance042' or (JIMMIE_GRIND_CLIPS~=nil and JIMMIE_GRIND_CLIPS[controller.output.clip]==true)) and finite(controller.output.heading)\n"),
+     ],
+     'skate_opportunities.lua': [
+      ("function O:chooseBalance(ctx)\n local r=self.rng();if not finite(r) then r=.5 end\n",
+       "function O:chooseBalance(ctx,visual)\n local r=self.rng();if not finite(r) then r=.5 end\n"
+       " if visual then\n"
+       "  -- On a visible rail only poses whose contact point lies on the rail line may be used: the 50-50 and the named grinds.\n"
+       "  local total,pool=0,{}\n"
+       "  for _,g in ipairs(JIMMIE_GRINDS or {}) do if g.clip~=self.lastBalance then total=total+g.weight;pool[#pool+1]=g end end\n"
+       "  local pick=r*total\n"
+       "  for _,g in ipairs(pool) do pick=pick-g.weight;if pick<=0 then self.lastBalance=g.clip;return g.clip end end\n"
+       "  self.lastBalance=pool[1] and pool[#pool].clip or 'balance042';return self.lastBalance\n"
+       " end\n"),
+      ("balanceClip=rail and (rail.visual and 'balance042' or self:chooseBalance(ctx)) or nil,", "balanceClip=rail and self:chooseBalance(ctx,rail.visual) or nil,"),
+     ],
+     'performance_skate_memory.lua': [
+      ('clip=episode.clip,roll=episode.roll,', 'clip=episode.clip,trick=episode.trick,line=episode.line,roll=episode.roll,'),
+      ('pending={id=result.id,kind=result.kind,clip=result.clip,roll=result.roll,', 'pending={id=result.id,kind=result.kind,clip=result.clip,trick=result.trick,line=result.line,roll=result.roll,'),
+     ]}))
+
+# 10. Trick batch 5: nollie, nollie kickflip, nollie heelflip, boneless, no-comply, bigspin, frontside bigspin, double heelflip,
+#     ollie north, and three wind-ups. The code that uses them is already in change 9 and does nothing until these clips exist.
+CHANGES.append(dict(
+    name='tricks5', what='nine more tricks with their own wind-ups: nollies, boneless, no-comply, bigspins, double heelflip, ollie north',
+    marker=('original_clip_bank.lua', 'M.styles=true'),
+    edits={'original_clip_bank.lua': [(BANK_END, (HERE / 'tricks5_bank_fragment.lua').read_text(encoding='utf-8') + BANK_END)]}))
+
+# 11. Hair: the side part Josh approved on 2026-11-07, which had never been carried into the current model.
+#     Today's hair with only the crown changed (see ../hair-part/hair_v3.py and its README). Whole-file change:
+#     the three outfit model files are replaced; the board and brace files are not touched.
+SIDEPART = HERE.parent / 'hair-part' / 'built_sidepart' / 'bin'
+CHANGES.append(dict(
+    name='sidepart', what='his hair has the approved side part (three outfit model files replaced; same hair otherwise)',
+    files={'actors/jimmie_orig_%s_geo.bin' % n: SIDEPART / ('jimmie_orig_%s_geo.bin' % n) for n in ('rg', 'vest', 'tee')}))
+
+# Tried and dropped on 2026-11-10: a dust puff at the pop and landing (the game's own white puff objects).
+# It spawned without errors but was too faint to see on sand in the captures, so it is not applied.

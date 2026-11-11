@@ -1,0 +1,35 @@
+{
+  "source_sha256": {
+    "jimmie_poses.json": "b8fa3dee010f8c62b9ceafd9c246fec5e3e276946e3b2089e6973aa9b8e7d2aa",
+    "jimmie_face.png": "73cd9f93e4e1e8fda8535671e3ae2765da6cb7da9ca5863d59706174d41414a6"
+  },
+  "engine_source_sha256": {
+    "dynlist_mario_master.c": "cc0a44148fad6297ad0a1246aeac046666fa2afb25db5cbc2a669b8debfe1103",
+    "dynlist_mario_face.c": "cafffe7ae68888153e4bdb3078fc912ae69732eb80a899daab7b7f084cccfa93"
+  },
+  "source_profile": "approved-part-finish",
+  "source_vertices": 2568,
+  "source_triangles": 5120,
+  "rig_vertices": 2568,
+  "rig_triangles": 5120,
+  "drivers": [
+    6,
+    15,
+    106,
+    122,
+    131,
+    140,
+    149,
+    158,
+    167,
+    176,
+    185,
+    194,
+    197,
+    206,
+    215
+  ],
+  "rig_sha256": "f47b15f44a081147691911cc2d1b2e001f23de08eb774cd85e6ba5d4a12dfe73",
+  "status": "candidate; native visual review required",
+  "note": "Unix line endings, like the file in the fork. Written by docs/movement-review-20261109/hair-part/build_title_head.py from docs/hair-neckbrace-20261107/candidate_part_finish."
+}

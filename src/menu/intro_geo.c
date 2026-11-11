@@ -5,6 +5,7 @@
 #include "game/segment2.h"
 #include "game/segment7.h"
 #include "intro_geo.h"
+#include "jimmie_title_art.h"
 #include "sm64.h"
 #include "textures.h"
 #include "types.h"
@@ -197,6 +198,12 @@ Gfx *intro_backdrop_set_image(f32 x, f32 y, s8 index) {
  * Geo callback to render the intro background tiles
  */
 Gfx *geo_intro_regular_backdrop(s32 state, struct GraphNode *node, UNUSED void *context) {
+#ifdef JIMMIE_NATIVE_HEAD
+    if (state == 1 && jimmie_title_active()) {
+        node->flags = (node->flags & 0xFF) | (LAYER_OPAQUE << 8);
+        return jimmie_title_backdrop();
+    }
+#endif
     struct GraphNodeMore *graphNode;
     Gfx *displayList;
     Gfx *displayListIter;

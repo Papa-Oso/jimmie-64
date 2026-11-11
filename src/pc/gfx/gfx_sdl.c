@@ -28,6 +28,7 @@
 #endif // End of OS-Specific GL defines
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #include "gfx_window_manager_api.h"
@@ -138,10 +139,21 @@ static void gfx_sdl_init(const char *window_title) {
     int xpos = (configWindow.x == WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.x;
     int ypos = (configWindow.y == WAPI_WIN_CENTERPOS) ? SDL_WINDOWPOS_CENTERED : configWindow.y;
 
+    Uint32 windowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+#ifdef JIMMIE_NATIVE_HEAD
+    /* Opt-in framebuffer QA has no desktop window or input focus. Ordinary
+     * launches retain precisely the same visible-window flags as before. */
+    const char *captureDirectory = getenv("JIMMIE_GAME_FRAMES");
+    if ((captureDirectory && captureDirectory[0]) || getenv("JIMMIE_ROUTE_PAD_TEST")) {
+        windowFlags &= ~SDL_WINDOW_SHOWN;
+        windowFlags |= SDL_WINDOW_HIDDEN;
+    }
+#endif
+
     wnd = SDL_CreateWindow(
         window_title,
         xpos, ypos, configWindow.w, configWindow.h,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
+        windowFlags
     );
     ctx = SDL_GL_CreateContext(wnd);
 

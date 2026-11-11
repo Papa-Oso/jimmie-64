@@ -768,10 +768,14 @@ static void geo_process_camera(struct GraphNodeCamera *node) {
 
     // compute inverse matrix for lighting engine and fresnel
     Mat4 invCameraMatrix;
-    if (mtxf_inverse_non_affine(invCameraMatrix, gCamera->mtx)) {
+    // Fixed title cameras have no gameplay gCamera. The current stack is the
+    // same matrix copied above, and is valid for both title and gameplay.
+    if (mtxf_inverse_non_affine(invCameraMatrix, gMatStack[gMatStackIndex])) {
         Mtx *invMtx = alloc_display_list(sizeof(Mtx));
-        mtxf_to_mtx(invMtx, invCameraMatrix);
-        gSPMatrix(gDisplayListHead++, invMtx, G_MTX_INVERSE_CAMERA_EXT);
+        if (invMtx) {
+            mtxf_to_mtx(invMtx, invCameraMatrix);
+            gSPMatrix(gDisplayListHead++, invMtx, G_MTX_INVERSE_CAMERA_EXT);
+        }
     }
 
     if (node->fnNode.node.children != 0) {

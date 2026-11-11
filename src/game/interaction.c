@@ -13,6 +13,7 @@
 #include "engine/surface_collision.h"
 #include "game_init.h"
 #include "interaction.h"
+#include "pc/jimmie_run_bridge.h"
 #include "level_update.h"
 #include "mario.h"
 #include "mario_step.h"
@@ -980,7 +981,8 @@ u32 interact_star_or_key(struct MarioState *m, UNUSED u32 interactType, struct O
         }
 
         if (m->marioObj != NULL) {
-            spawn_object(m->marioObj, MODEL_NONE, bhvStarKeyCollectionPuffSpawner);
+            struct Object *collectionPuff = spawn_object(m->marioObj, MODEL_NONE, bhvStarKeyCollectionPuffSpawner);
+            jimmie_run_collection(m, o, collectionPuff);
         }
 
         o->oInteractStatus = INT_STATUS_INTERACTED;

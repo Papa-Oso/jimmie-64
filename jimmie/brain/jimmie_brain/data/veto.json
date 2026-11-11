@@ -1,0 +1,6 @@
+{
+  "about": "Owner vetoes. Checked by the writer, the director and (file names) the game. Add to this list; never remove.",
+  "texts": ["I know this map better than you"],
+  "patterns": ["know (this|the|that) (map|level|course|game) better than"],
+  "files": ["roast_01.ogg", "roast_02.ogg"]
+}

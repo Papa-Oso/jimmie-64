@@ -8,6 +8,7 @@
 #include "objects.h"
 #include "skin.h"
 #include "skin_movement.h"
+#include "jimmie_head.h"
 
 /* bss */
 struct ObjWeight *sResetCurWeight;
@@ -151,6 +152,7 @@ void reset_joint_weights(struct ObjJoint *joint) {
     struct ObjGroup *group;
 
     gd_inverse_mat4f(&joint->matE8, &D_801B9EA8);
+    jimmie_head_capture_bind(joint);
     D_801B9EE8 = joint;
     if ((group = joint->weightGrp) != NULL) {
         apply_to_obj_types_in_group(OBJ_TYPE_WEIGHTS, (applyproc_t) reset_weight, group);

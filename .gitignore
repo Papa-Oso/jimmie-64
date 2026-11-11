@@ -92,3 +92,22 @@ todo-old.txt
 tools/ido5.3_compiler/usr/lib/libc.so.1
 /.vs
 tools/audiofile/libaudiofile.a
+
+# Private Jimmie integration inputs and generated runtime cache
+/mods/jimmie/actors/*.png
+/mods/jimmie/actors/*.bin
+*.n64
+*.v64
+
+# Developer Python bytecode is not a runtime input
+/tools/__pycache__/
+
+# Jimmie's brain: what it generates while running stays local
+/jimmie/brain/sessions/
+/jimmie/brain/profile/
+/jimmie/brain/build/
+/jimmie/brain/work/*
+!/jimmie/brain/work/pool/
+/jimmie/**/__pycache__/
+/baserom.*
+/sm64config.txt

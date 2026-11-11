@@ -13,6 +13,7 @@
 #include "renderer.h"
 #include "shape_helper.h"
 #include "draw_objects.h"
+#include "jimmie_head.h"
 
 #include "gfx_dimensions.h"
 
@@ -843,6 +844,7 @@ void draw_nothing(UNUSED struct GdObj *nop) {
  * `GdDisplayList` when calling create_shape_gddl()
  */
 void draw_shape_faces(struct ObjShape *shape) {
+    if (jimmie_head_draw(shape)) return;
     sUpdateViewState.mtlDlNum = 0;
     sUpdateViewState.unreadCounter = 0;
     gddl_is_loading_stub_dl(FALSE);

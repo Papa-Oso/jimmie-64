@@ -2,6 +2,7 @@
 extern "C" {
 #include "game/moving_texture.h"
 #include "game/hardcoded.h"
+#include "pc/jimmie_run_bridge.h"
 
 void *dynos_swap_cmd(void *cmd) {
     return DynOS_SwapCmd(cmd);
@@ -32,14 +33,17 @@ LevelScript* dynos_get_level_script(const char* scriptEntryName) {
 }
 
 bool dynos_warp_to_warpnode(s32 aLevel, s32 aArea, s32 aAct, s32 aWarpId) {
+    jimmie_run_disqualify();
     return DynOS_Warp_ToWarpNode(aLevel, aArea, aAct, aWarpId);
 }
 
 bool dynos_warp_to_level(s32 aLevel, s32 aArea, s32 aAct) {
+    jimmie_run_disqualify();
     return DynOS_Warp_ToLevel(aLevel, aArea, aAct);
 }
 
 bool dynos_warp_to_start_level(void) {
+    jimmie_run_disqualify();
     // change the level to the start level
     extern s16 gChangeLevel;
     gChangeLevel = gLevelValues.entryLevel;
@@ -49,6 +53,7 @@ bool dynos_warp_to_start_level(void) {
 }
 
 bool dynos_warp_restart_level(void) {
+    jimmie_run_disqualify();
     return DynOS_Warp_RestartLevel();
 }
 
@@ -57,6 +62,7 @@ bool dynos_warp_exit_level(s32 aDelay) {
 }
 
 bool dynos_warp_to_castle(s32 aLevel) {
+    jimmie_run_disqualify();
     return DynOS_Warp_ToCastle(aLevel);
 }
 

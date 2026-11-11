@@ -12,6 +12,7 @@
 #include "gd_math.h"
 #include "gd_types.h"
 #include "joints.h"
+#include "jimmie_head.h"
 #include "macros.h"
 #include "objects.h"
 #include "renderer.h"
@@ -176,6 +177,7 @@ void eye_joint_update_func(struct ObjJoint *self) {
         attobj = att->obj;
         set_cur_dynobj(attobj);
         sp5C = d_get_rot_mtx_ptr();
+        jimmie_head_capture_eye_offset(attobj, &sp50);
         gd_add_vec3f_to_mat4f_offset(sp5C, &sp50);
     }
 }

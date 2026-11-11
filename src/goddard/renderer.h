@@ -51,6 +51,7 @@ void *gd_malloc(u32 size, u8 perm);
 void *gd_malloc_perm(u32 size);
 void *gd_malloc_temp(u32 size);
 void draw_indexed_dl(s32 dlNum, s32 gfxIdx);
+void gd_dl_external(Gfx *dl);
 void gd_add_to_heap(void *addr, u32 size);
 void gdm_init(void *blockpool, u32 size);
 void gdm_setup(void);

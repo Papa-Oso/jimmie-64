@@ -1,0 +1,971 @@
+{"text": "Fuck, we got it.", "rule": "star", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Yeah, there it is.", "rule": "star", "intent": "celebrate", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Holy shit, come on.", "rule": "star", "intent": "celebrate", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Oh my god, we got it!", "rule": "star", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Fuck, yes!", "rule": "star", "intent": "celebrate", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Come on, come on.", "rule": "star", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "There we go, buddy.", "rule": "star", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "That's what I'm talking about, man.", "rule": "star", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, man.", "rule": "star", "intent": "celebrate", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Let's go, Mario!", "rule": "star", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Come on, Mario!", "rule": "star", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Yeah, we got it.", "rule": "star_run", "intent": "celebrate", "mode": "16", "level": null, "copied": true, "fit": true}
+{"text": "Fuck, we got it.", "rule": "star_run", "intent": "celebrate", "mode": "16", "level": null, "copied": false, "fit": true}
+{"text": "Come on, come on.", "rule": "star_run", "intent": "celebrate", "mode": "16", "level": null, "copied": false, "fit": true}
+{"text": "Fuck yeah, let's go.", "rule": "star_run", "intent": "celebrate", "mode": "16", "level": null, "copied": false, "fit": true}
+{"text": "Fuckin' hell, let's go.", "rule": "star_run", "intent": "celebrate", "mode": "16", "level": null, "copied": false, "fit": true}
+{"text": "That's what I'm talking about, son.", "rule": "star_run", "intent": "celebrate", "mode": "16", "level": null, "copied": false, "fit": true}
+{"text": "Keep moving, dude.", "rule": "star_run", "intent": "celebrate", "mode": "16", "level": null, "copied": false, "fit": true}
+{"text": "Let's go, Mario.", "rule": "star_run", "intent": "celebrate", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Come on, Mario.", "rule": "star_run", "intent": "celebrate", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Fuck, nice one.", "rule": "star_run", "intent": "celebrate", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Oh my god, yeah.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "He's got it.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Fuck, we got it.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Let's go, come on.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Fuck oh, we got it.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Dude, holy shit.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "First one. Let's go.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Come on, come on.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "There we go, man.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Come on, Mario.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Let's fucking go, man.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Let's go, buddy.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Fuck, let's go.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, Mario.", "rule": "star_first", "intent": "celebrate", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Oh, there we go.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Alright, there we go.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Finally, holy shit.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Oh, okay, okay.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Oh my god, finally.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, we got it.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "We finally got it.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Come on, there we go.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Finally got it, son.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "There we go, buddy.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Thank God that worked, buddy.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "There we go, man.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Thank God that worked.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Finally, some fucking progress.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, there we go.", "rule": "star_after_trouble", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Finally, holy shit.", "rule": "star_after_deaths", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Come on, finally.", "rule": "star_after_deaths", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Finally.", "rule": "star_after_deaths", "intent": "relief", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "There we fucking go.", "rule": "star_after_deaths", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, finally.", "rule": "star_after_deaths", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Took your fucking time, buddy.", "rule": "star_after_deaths", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "There we go, buddy.", "rule": "star_after_deaths", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Finally, dude.", "rule": "star_after_deaths", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "About fucking time.", "rule": "star_after_deaths", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Took you long enough.", "rule": "star_after_deaths", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "About damn time.", "rule": "star_after_deaths", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "You finally got it.", "rule": "star_after_deaths", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, took forever.", "rule": "star_after_deaths", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Yeah, that's my fucking boy.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, let's go.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "We're fucking killing it.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Oh my god, we're fucking crushing it.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, yeah!", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Yeah, that's what I'm talking about.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Come on, come on.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Easy work, dude.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "There we go, man.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "There we go, son.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "I'm the reason we're winning, man.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Now watch this.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Yeah, that was my call.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "I did that.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, we did that.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "See that? I did that.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Check that out.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "We're crushing it.", "rule": "star_hot", "intent": "take_credit", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, let's go!", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true}
+{"text": "God damn, we're here.", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true}
+{"text": "That's it, buddy.", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true}
+{"text": "One more. Just one more, man.", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true}
+{"text": "That's the last one, buddy.", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true}
+{"text": "Fuck, we got it.", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Oh god, please be there.", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Fuck, let's go.", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, we did it.", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "That's the one.", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Don't fuck with this.", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Last one.", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Let's fucking do this.", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Final one.", "rule": "star_sixteen", "intent": "hype_nerves", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Oh, you fucking idiot.", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Come on, come on.", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "You fucking pussy.", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Oh, you idiot.", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Seriously?", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "You suck at this, dude.", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "How about you suck it, son?", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "What the fuck, dude?", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Come on, man.", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "God damn, Mario.", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "What the fuck are you doing?", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, Mario.", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "You're such a fuck up.", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "What the fuck was that?", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Yeah, you suck.", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "What the hell, Mario?", "rule": "death", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Oh, you idiot.", "rule": "death_run", "intent": "needle", "mode": "16", "level": null, "copied": true, "fit": true}
+{"text": "Dude, you suck.", "rule": "death_run", "intent": "needle", "mode": "16", "level": null, "copied": true, "fit": true}
+{"text": "You fucking pussy.", "rule": "death_run", "intent": "needle", "mode": "16", "level": null, "copied": true, "fit": true}
+{"text": "What the fuck, man.", "rule": "death_run", "intent": "needle", "mode": "16", "level": null, "copied": true, "fit": true}
+{"text": "Are you kidding me, dude?", "rule": "death_run", "intent": "needle", "mode": "16", "level": null, "copied": false, "fit": true}
+{"text": "God damn, sweetie.", "rule": "death_run", "intent": "needle", "mode": "16", "level": null, "copied": false, "fit": true}
+{"text": "Yeah, you suck.", "rule": "death_run", "intent": "needle", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Oh, you fucking idiot.", "rule": "death_run", "intent": "needle", "mode": "16", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Oh, you idiot.", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Seriously, what the hell?", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Come on, you fucking pussy.", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "You fucking pussy.", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Seriously?", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "God damn, dude.", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "God damn, you're trash, dude.", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "You fucking pussy, man.", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Are you fucking kidding me, buddy?", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Again? You suck.", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, you suck.", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Again? Are you kidding me?", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "What the fuck are you doing?", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Again? Come on.", "rule": "death_again", "intent": "fake_sympathy", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Are you kidding?", "rule": "death_streak", "intent": "deadpan", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "God damn.", "rule": "death_streak", "intent": "deadpan", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "No.", "rule": "death_streak", "intent": "deadpan", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Are you serious?", "rule": "death_streak", "intent": "deadpan", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "What.", "rule": "death_streak", "intent": "deadpan", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "God damn, man.", "rule": "death_streak", "intent": "deadpan", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Come on, man.", "rule": "death_streak", "intent": "deadpan", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "God damn, it’s rough.", "rule": "death_tilted", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "God damn, it's fine.", "rule": "death_tilted", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "God damn, you alright?", "rule": "death_tilted", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "God damn, you okay, man?", "rule": "death_tilted", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "You okay there, son?", "rule": "death_tilted", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Come on, buddy.", "rule": "death_tilted", "intent": "sincere", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "You're doing fine.", "rule": "death_tilted", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "It's alright.", "rule": "death_tilted", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Just take it easy.", "rule": "death_tilted", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "That's rough.", "rule": "death_tilted", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Fuck, you good?", "rule": "death_tilted", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "You okay?", "rule": "death_tilted", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Let's just take a breath.", "rule": "death_tilted", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "You fucking pussy.", "rule": "hurt", "intent": "needle", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Oh, you idiot.", "rule": "hurt", "intent": "needle", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Come on, come on.", "rule": "hurt", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Get up, dude.", "rule": "hurt", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "You suck, buddy.", "rule": "hurt", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "God damn, Mario.", "rule": "hurt", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Are you kidding me, man?", "rule": "hurt", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "God damn.", "rule": "hurt", "intent": "needle", "mode": null, "level": null, "copied": true, "fit": true, "untagged": true}
+{"text": "What are you doing?", "rule": "hurt", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Dude, what just happened?", "rule": "big_fall", "intent": "disbelief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "How the fuck did that happen?", "rule": "big_fall", "intent": "disbelief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "How does that fucking happen?", "rule": "big_fall", "intent": "disbelief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Come on, Spanky.", "rule": "big_fall", "intent": "disbelief", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Are you kidding me, son?", "rule": "big_fall", "intent": "disbelief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "God damn.", "rule": "big_fall", "intent": "disbelief", "mode": null, "level": null, "copied": true, "fit": true, "untagged": true}
+{"text": "Okay, here we go.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Holy shit, here we go.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Alright, here we go.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Here we go again.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Holy shit, let's go.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Come on, come on.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "I'm gonna hit it.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, watch this.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "I'm gonna fucking nail it.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Come on, look at this.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Check this fucking shit out, man.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Watch me, dude.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Look at this, son.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Here we go, son.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "You check this out, son.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "About to send it.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Check this fucking shit out.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Big trick coming.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Watch this.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "So easy.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Check this out.", "rule": "call_shot", "intent": "boast_call", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Oh, fuck me.", "rule": "bail_called", "intent": "own_it", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Fuck me, I guess.", "rule": "bail_called", "intent": "own_it", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Fuck me.", "rule": "bail_called", "intent": "own_it", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "God damn, I suck.", "rule": "bail_called", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "I fucked up.", "rule": "bail_called", "intent": "own_it", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "I'm an idiot, dude.", "rule": "bail_called", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Fuck me, dude.", "rule": "bail_called", "intent": "own_it", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "My bad, man.", "rule": "bail_called", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "I fucked up there.", "rule": "bail_called", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "I'm an idiot.", "rule": "bail_called", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "My bad, my bad.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Okay, fuck me.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "God damn, my bad.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, my bad.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, I fucked up.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "It's fine, man.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Fuckin' hell, dude.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "I'm an idiot, man.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Fuckin' hell, man.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Oh shit balls.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "That was fucking mid.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "I'm a fucking idiot.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Well, I fucked up here.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Fuck me.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": true, "fit": true, "untagged": true}
+{"text": "Jesus, fuck me.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": true, "fit": true, "untagged": true}
+{"text": "Yeah, I fucked up.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "I'm fucking bad.", "rule": "bail_plain", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Fuck me.", "rule": "bail_any", "intent": "own_it", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Holy shit, that was bad.", "rule": "bail_any", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "That was fucking bad.", "rule": "bail_any", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "That was bad.", "rule": "bail_any", "intent": "own_it", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "I'm an idiot.", "rule": "bail_any", "intent": "own_it", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Fuck me, I guess.", "rule": "bail_any", "intent": "own_it", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "My bad, son.", "rule": "bail_any", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "That was so fucking bad, son.", "rule": "bail_any", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "I fucked up, buddy.", "rule": "bail_any", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "I fucked up.", "rule": "bail_any", "intent": "own_it", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, the floor!", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "It's the board, son.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "That board is trash, dude.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Whatever, buddy.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "It's the god damn floor.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, that floor is fucked.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "The board's trash.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "That floor is fucking garbage.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "The floor is fucking sketchy.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "The floor is fucking broken.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "That's the fucking board.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "That floor is doing it on purpose.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "It’s the board.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, the floor is broken.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Fucking board is tripping me out.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "The board is trash.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "That fucking floor is broken.", "rule": "bail_streak", "intent": "save_face", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Yeah, that was fucking easy.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "I'm going to do that again.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Yeah, I fucking told you.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Easy shit.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, I'm good.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Oh my god, I'm him.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Yeah, check that shit out.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Easy chooch.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "That was fucking easy, ladies.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "That was fucking clean, dude.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "There we go, buddy.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Did you see that shit, buddy?", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "I'm the fucking goat.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Yeah, I meant to do that.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Did you see that?", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "I'm the goat.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "That was fucking clean.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "So easy.", "rule": "land_called", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, I landed it!", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Look at that shit!", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Oh, you idiot.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Yo, did you see that?", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Seriously, look at that.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Come on, look.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Did you see that?", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Look at me, you fucking pussy.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, I did it!", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "You fucking pussy, buddy.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "That was clean, dude.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Where you going, man?", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "That was clean, man.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "That was sick, man.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Yeah, look at me.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Yo, I landed that!", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Come on, look back.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Where you going?", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "That was clean.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Don't walk away.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "You fucking saw that.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "You fucking pussy.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Look at me.", "rule": "land_left", "intent": "needle", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, finally.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Yeah, there we go.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "All right, we back.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Fuck, we got it.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Oh, there we go.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Holy shit, there we go.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "All right, finally.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Yeah, that's what I'm talking about.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "That's what I'm talking about, man.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "There we go, buddy.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Finally, son.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Finally, there we go, dude.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Thank God that worked.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Fucking finally.", "rule": "land_after_fall", "intent": "relief", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Oh, damn.", "rule": "land_plain", "intent": "boast", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Easy chooch.", "rule": "land_plain", "intent": "boast", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Yeah, let's go.", "rule": "land_plain", "intent": "boast", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Yeah, that's what I'm talking about.", "rule": "land_plain", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Simple.", "rule": "land_plain", "intent": "boast", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Fucking clean, man.", "rule": "land_plain", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Yeah, that was clean, man.", "rule": "land_plain", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "There we go, son.", "rule": "land_plain", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Yeah, we'll take it.", "rule": "land_plain", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, nice one.", "rule": "land_plain", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "That was fucking sick.", "rule": "land_plain", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "That was fucking clean.", "rule": "land_plain", "intent": "boast", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Again. Again.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Yeah, I told you.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "God damn, we're just taking it.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, I'm too good.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "I'm just too fucking cracked.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Okay, I'm fucking cracked.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Look at that, buddy.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Yeah, that was fucking clean, man.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, I'm fucking on one, son.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "I'm just built different.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, I'm on fire.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "I'm going to do that again.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Just fucking easy.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "I'm about to go crazy.", "rule": "land_streak", "intent": "boast", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, we here.", "rule": "arrive_final_bowser", "intent": "hype_nerves", "mode": "16", "level": 21, "copied": false, "fit": true}
+{"text": "Finally.", "rule": "arrive_final_bowser", "intent": "hype_nerves", "mode": "16", "level": 21, "copied": true, "fit": true}
+{"text": "Come on, come on.", "rule": "arrive_final_bowser", "intent": "hype_nerves", "mode": "16", "level": 21, "copied": false, "fit": true}
+{"text": "Holy shit, look at this place.", "rule": "arrive_final_bowser", "intent": "hype_nerves", "mode": "16", "level": 21, "copied": false, "fit": true}
+{"text": "God damn, look at that.", "rule": "arrive_final_bowser", "intent": "hype_nerves", "mode": "16", "level": 21, "copied": false, "fit": true}
+{"text": "Where the fuck are we, buddy?", "rule": "arrive_final_bowser", "intent": "hype_nerves", "mode": "16", "level": 21, "copied": false, "fit": true}
+{"text": "New fucking area, man.", "rule": "arrive_final_bowser", "intent": "hype_nerves", "mode": "16", "level": 21, "copied": false, "fit": true}
+{"text": "Look at this fucking place.", "rule": "arrive_final_bowser", "intent": "hype_nerves", "mode": "16", "level": 21, "copied": false, "fit": true, "untagged": true}
+{"text": "This place is fucking huge.", "rule": "arrive_final_bowser", "intent": "hype_nerves", "mode": "16", "level": 21, "copied": false, "fit": true, "untagged": true}
+{"text": "Where the hell are we?", "rule": "arrive_final_bowser", "intent": "hype_nerves", "mode": "16", "level": 21, "copied": false, "fit": true, "untagged": true}
+{"text": "Oh my god, look at this place.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, what's up here?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, look at this place.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Check this out.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": true, "fit": true}
+{"text": "Okay, let's see what this is.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Look at this shit.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": true, "fit": true}
+{"text": "Holy shit, look at this.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "What's up, castle?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "Holy shit, where are we?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "Okay, okay. This looks sick.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "Oh my god, okay.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "Holy shit, okay.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "God damn, this is big.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "New spot, let's go.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "God damn, look at that mountain.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "Whomp's Fortress, what's up?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 24, "copied": false, "fit": true}
+{"text": "What's up, beach?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "Okay, let's see this shit.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "Whoa, what the hell is going on?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "What's up, Jolly Roger?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "Holy shit, look at that.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 5, "copied": false, "fit": true}
+{"text": "Yo, what's going on here?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "Let's go, let's go.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 7, "copied": false, "fit": true}
+{"text": "Lethal Lava Land, what's up?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 22, "copied": false, "fit": true}
+{"text": "Okay, okay, let's see this.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 22, "copied": false, "fit": true}
+{"text": "What's going on, desert?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "Good morning, sand.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "Okay, we skate this.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "Okay. Okay, we're here.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "Shifting Sand Land, yeah.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "What's going on, Docks?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "Yo, we here.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "Come on, let's see this.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "Snowy shit, let's go.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "Yo, Snowman's Land, what's up?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "Yeah, hi, Snowman's Land.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "Is this skateable?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "Oh my god, look at this shit.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 11, "copied": false, "fit": true}
+{"text": "Yeah, we gonna skate this.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 36, "copied": false, "fit": true}
+{"text": "Yo, look at this place.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 13, "copied": false, "fit": true}
+{"text": "Yo, hello.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 14, "copied": false, "fit": true}
+{"text": "Yo, what the hell is this place?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "This looks fucking dope.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "Sup, Dark World, good morning.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 17, "copied": false, "fit": true}
+{"text": "Oh my god, what the hell.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 19, "copied": false, "fit": true}
+{"text": "What's up, Bowser?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 21, "copied": false, "fit": true}
+{"text": "Oh my god, look at that.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 27, "copied": false, "fit": true}
+{"text": "New spot, holy shit.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 27, "copied": false, "fit": true}
+{"text": "Holy shit, look at this spot, dude.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "New spot, sweetie.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "New spot, man.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "What's up with this area, man?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "We here now, man.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 7, "copied": false, "fit": true}
+{"text": "What's happening here, dude?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 13, "copied": false, "fit": true}
+{"text": "Okay, let's see what this is, dude.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 14, "copied": false, "fit": true}
+{"text": "Where we at, buddy?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "Okay, let's see what we got here, son.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "Holy shit, look at this place, dude.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "Where we at, son?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "Let's see what we got here, boys.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 17, "copied": false, "fit": true}
+{"text": "What the hell is this, dude?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "What the hell is this, buddy?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Yeah, we gonna skate this, son.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 7, "copied": false, "fit": true}
+{"text": "God damn, what is this, son?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 13, "copied": false, "fit": true}
+{"text": "This shit looks sick, dude.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 19, "copied": false, "fit": true}
+{"text": "Look who walked in, dude.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "Where are we even at, son?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 14, "copied": false, "fit": true}
+{"text": "Okay, okay, let's see this shit, buddy.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "What the hell is this, boys?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "Come on, look at that snow, buddy.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "There we go, man.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "Oh my god, it's hot as fuck, dude.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 22, "copied": false, "fit": true}
+{"text": "This looks fucking sweet, son.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 27, "copied": false, "fit": true}
+{"text": "What's up with this fog, son?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 7, "copied": false, "fit": true}
+{"text": "Where the fuck are we, dude?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "Yeah, we're here, boys.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 14, "copied": false, "fit": true}
+{"text": "We're in the cave, boys.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 7, "copied": false, "fit": true}
+{"text": "Let's go, son.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": true, "fit": true}
+{"text": "This looks like a fucking skate spot.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "Snowman's Land, what's happening?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 10, "copied": false, "fit": true, "untagged": true}
+{"text": "Good morning, clock.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 14, "copied": false, "fit": true, "untagged": true}
+{"text": "This looks fucking sick.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 5, "copied": false, "fit": true, "untagged": true}
+{"text": "This looks fuckin' sick.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 26, "copied": false, "fit": true, "untagged": true}
+{"text": "Okay, okay. This looks skateable.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 10, "copied": false, "fit": true, "untagged": true}
+{"text": "Jolly Roger, what's up?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 12, "copied": false, "fit": true, "untagged": true}
+{"text": "Welcome to the mountain.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "Fuck, this place looks sick.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 4, "copied": false, "fit": true, "untagged": true}
+{"text": "New spot.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Okay. This looks sick.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "This place looks fucking sick.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 4, "copied": false, "fit": true, "untagged": true}
+{"text": "What's up with this place?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 9, "copied": false, "fit": true, "untagged": true}
+{"text": "Is this place skateable?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 14, "copied": false, "fit": true, "untagged": true}
+{"text": "Hey, Mario.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 7, "copied": true, "fit": true, "untagged": true}
+{"text": "Look who walked in.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 6, "copied": false, "fit": true, "untagged": true}
+{"text": "Looks like a fuckin' skate spot.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "Let's see what's going on here.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 8, "copied": false, "fit": true, "untagged": true}
+{"text": "Yeah, this looks fucking sick.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "What's going on here?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "What the hell is this place?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 26, "copied": false, "fit": true, "untagged": true}
+{"text": "What's up, Lethal Lava Land?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "Okay. Let's see what's here.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 4, "copied": false, "fit": true, "untagged": true}
+{"text": "Big mountain.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "This looks like a skate spot.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 12, "copied": false, "fit": true, "untagged": true}
+{"text": "What's up with this?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 13, "copied": false, "fit": true, "untagged": true}
+{"text": "Okay, what's going on here?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 13, "copied": false, "fit": true, "untagged": true}
+{"text": "This looks fucking prime.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 16, "copied": false, "fit": true, "untagged": true}
+{"text": "Big spooky house.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 4, "copied": false, "fit": true, "untagged": true}
+{"text": "Nice spot.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Big fucking mansion.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 4, "copied": false, "fit": true, "untagged": true}
+{"text": "What's up, new spot?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 16, "copied": false, "fit": true, "untagged": true}
+{"text": "Come on, look at this shit.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 10, "copied": false, "fit": true, "untagged": true}
+{"text": "That's a lot of shit.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 21, "copied": false, "fit": true, "untagged": true}
+{"text": "This place is sick.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "What the hell is this?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 4, "copied": false, "fit": true, "untagged": true}
+{"text": "Where are we at?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 9, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, what's up?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 12, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, what a spot.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "We're here.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 16, "copied": false, "fit": true, "untagged": true}
+{"text": "Yo, what's up?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 17, "copied": false, "fit": true, "untagged": true}
+{"text": "Yo, what's happening here?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, what is this place?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 27, "copied": false, "fit": true, "untagged": true}
+{"text": "What the hell is going on here?", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 10, "copied": false, "fit": true, "untagged": true}
+{"text": "Big clock.", "rule": "arrive_new", "intent": "greet", "mode": "free", "level": 14, "copied": false, "fit": true, "untagged": true}
+{"text": "Again? Seriously?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Same fucking spot.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Are we back here again?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "I mean, seriously, again?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "God damn, we're back.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Wait, are we back?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "We're back in this shit again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "I mean, what the fuck.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Again? Again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "We're back.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": true, "fit": true}
+{"text": "I mean, fuck.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 16, "copied": true, "fit": true}
+{"text": "Holy shit, we're back.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "Not again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "We back here? Holy shit.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "I mean, for real?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "I mean, what the hell?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "We're back again. Come on.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "Holy shit, we're right here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "Again? God damn, again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "I mean, we're back.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "We're back here again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "God damn, okay.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "We back here again?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "Holy shit, we back.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "Come on, come on.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "God damn, same spot again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 24, "copied": false, "fit": true}
+{"text": "God damn, we're stuck.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "We're back again. Again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "Holy shit, we're right back.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "I mean, we're back here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 5, "copied": false, "fit": true}
+{"text": "We're back. We're fucking back.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "God damn, seriously?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "We're back. We're back.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "Oh my god, again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "We're back. Again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 7, "copied": false, "fit": true}
+{"text": "I mean, we're right fucking here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 7, "copied": false, "fit": true}
+{"text": "Let's go, come on.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 22, "copied": true, "fit": true}
+{"text": "I mean, again?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 22, "copied": false, "fit": true}
+{"text": "Same spot. Again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "I mean, really?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 8, "copied": true, "fit": true}
+{"text": "I mean, we're literally back.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "Let's go. Again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "Same spot, holy shit.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "Are we back? We're back.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "I'm never coming back here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "God damn, we're back again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "Are we back?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 10, "copied": true, "fit": true}
+{"text": "We're back in this shit.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "God damn, not again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "Again? We're back again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 11, "copied": false, "fit": true}
+{"text": "Are we back here?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 36, "copied": false, "fit": true}
+{"text": "Oh my god, we're back.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 36, "copied": false, "fit": true}
+{"text": "I mean, really? Again?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 36, "copied": false, "fit": true}
+{"text": "Yeah, we're back again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 13, "copied": false, "fit": true}
+{"text": "God damn, we're right back here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 13, "copied": false, "fit": true}
+{"text": "We're right back here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "I'm never going back in here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "We're in the same spot again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 19, "copied": false, "fit": true}
+{"text": "Holy shit, we're back again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 27, "copied": false, "fit": true}
+{"text": "I mean, come on.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 27, "copied": true, "fit": true}
+{"text": "Wait, we're back here?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 27, "copied": false, "fit": true}
+{"text": "We're back here, boys.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "Not again, dude.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "I mean, Jesus Christ, buddy.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "Back in the fucking desert, son.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "I'm now going to never be back in here, son.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 7, "copied": false, "fit": true}
+{"text": "I'm never coming back here, man.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Are we back here again, man?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 7, "copied": false, "fit": true}
+{"text": "What is going on, dude?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "We're back, dude.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, not again, son.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "I mean, seriously, man?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 21, "copied": false, "fit": true}
+{"text": "I mean, come on, dude.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 7, "copied": false, "fit": true}
+{"text": "We're right back here, buddy.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 22, "copied": false, "fit": true}
+{"text": "I mean, seriously, dude.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 19, "copied": false, "fit": true}
+{"text": "Are you kidding me, dude?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "We're back again, dude.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 5, "copied": false, "fit": true}
+{"text": "Same fucking place, buddy.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "We're right back here, son.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 24, "copied": false, "fit": true}
+{"text": "We're right back here, man.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 17, "copied": false, "fit": true}
+{"text": "I mean, again, dude.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "You're kidding me, buddy.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "Come on, move it, dude.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "I'm now going to never be back in here, dude.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 11, "copied": false, "fit": true}
+{"text": "What the hell, dude?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": null, "copied": true, "fit": true}
+{"text": "Are we fucking back here, man?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 22, "copied": false, "fit": true}
+{"text": "What the hell, buddy.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 17, "copied": false, "fit": true}
+{"text": "Again? We're back again, man.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "Again? We're back here again, man.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "I'm never coming back here, dude.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 14, "copied": false, "fit": true}
+{"text": "I'm never going back in here, ladies.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "Are we back here, man?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 22, "copied": false, "fit": true}
+{"text": "I mean, really, man.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 11, "copied": false, "fit": true}
+{"text": "I mean, what the hell, boys?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "I'm never gonna leave this shit.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 6, "copied": false, "fit": true, "untagged": true}
+{"text": "Are we back again?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 17, "copied": false, "fit": true, "untagged": true}
+{"text": "Again? Are you kidding me?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 8, "copied": false, "fit": true, "untagged": true}
+{"text": "We're back. We're back again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 26, "copied": false, "fit": true, "untagged": true}
+{"text": "Again? God damn it.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 6, "copied": false, "fit": true, "untagged": true}
+{"text": "We're back. See what I mean?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 8, "copied": false, "fit": true, "untagged": true}
+{"text": "That's some bullshit.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "Come on, move it.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "You know what just happened.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "Okay, I'm never coming back here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 13, "copied": false, "fit": true, "untagged": true}
+{"text": "You kidding me?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "Not this fucking place again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 6, "copied": false, "fit": true, "untagged": true}
+{"text": "Same spot. Fucking again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 8, "copied": false, "fit": true, "untagged": true}
+{"text": "I'm never fucking leaving this cove.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 12, "copied": false, "fit": true, "untagged": true}
+{"text": "Same fucking place.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 10, "copied": false, "fit": true, "untagged": true}
+{"text": "Again? Are we back again?", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "God forbid we move forward.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 5, "copied": false, "fit": true, "untagged": true}
+{"text": "Same place.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 13, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it's messed up.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 19, "copied": false, "fit": true, "untagged": true}
+{"text": "Not again. God damn it.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 14, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, we're right back here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 13, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, we're right back here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 9, "copied": false, "fit": true, "untagged": true}
+{"text": "Again? For the love of Christ.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 11, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, right fucking here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, same spot.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "We're right fucking here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 16, "copied": false, "fit": true, "untagged": true}
+{"text": "Same spot.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 16, "copied": false, "fit": true, "untagged": true}
+{"text": "I'm never fucking going back here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 9, "copied": false, "fit": true, "untagged": true}
+{"text": "Again? Holy shit.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 26, "copied": false, "fit": true, "untagged": true}
+{"text": "Same place again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 17, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, you really fucked us.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 26, "copied": false, "fit": true, "untagged": true}
+{"text": "We're right here again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 14, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, think about this.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 23, "copied": false, "fit": true, "untagged": true}
+{"text": "We're right fucking here again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, we're literally right back here.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "We're just stuck.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "Same fucking spot again.", "rule": "arrive_again", "intent": "callback", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, we got it!", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Come on, come on.", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Yeah, we got it.", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Oh my god, yeah.", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Holy shit, let's go!", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Yeah, that's my boy.", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Let's go, let's go!", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Easy work, dude.", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "You got the key, son.", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Now watch this, dude.", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "This is mine, buddy.", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "I'm taking this.", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "I'm taking it all.", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "That's my key.", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "So fucking easy.", "rule": "key", "intent": "take_credit", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, we did it.", "rule": "grand_star", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Dude, holy shit.", "rule": "grand_star", "intent": "sincere", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "Finally, let's go.", "rule": "grand_star", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Oh my god, we actually did it.", "rule": "grand_star", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Let's go, let's go.", "rule": "grand_star", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Dude, fuck yeah.", "rule": "grand_star", "intent": "sincere", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "That's what I'm talking about, buddy.", "rule": "grand_star", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "We actually did it, man.", "rule": "grand_star", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true}
+{"text": "Let's go, baby.", "rule": "grand_star", "intent": "sincere", "mode": null, "level": null, "copied": true, "fit": true}
+{"text": "We fucking did it.", "rule": "grand_star", "intent": "sincere", "mode": null, "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "We did it.", "rule": "grand_star", "intent": "sincere", "mode": null, "level": null, "copied": true, "fit": true, "untagged": true}
+{"text": "Come on, come on.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "I mean, right?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": true, "fit": true}
+{"text": "Holy shit, look at that.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, look at that ledge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, I just wanna skate.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Let's go, let's go.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "I mean, spot on.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": true, "fit": true}
+{"text": "I mean, we really gotta hit this.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, look at this staircase.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "Holy shit, look at those things.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "Holy shit, look at that fountain.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "I mean, what the fuck is going on?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "I mean, we just skating.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "Let's go, fucking let's go.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "Holy shit, we just chillin.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "Holy shit, these rocks are huge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true}
+{"text": "I mean, just like, look at that.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true}
+{"text": "Is it just me, or is it foggy as hell?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "I mean, look at that ship.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "Holy shit, look at this mountain.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true}
+{"text": "I mean, this is a sick spot for a line.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "You ever think about how haunted this is?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "I mean, you know what I mean?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "Holy shit, this place is huge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true}
+{"text": "What the hell is going on with this volcano?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true}
+{"text": "Holy shit, we just chilling?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "I mean, spot on, right?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "Holy shit, this spot is actually sick.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "What the hell is going on here?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "Holy shit, this dock is huge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "Is this water supposed to be this fucking blue?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "Is this even skateable, you know?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "Holy shit, it's like a god damn ice box.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "I mean, really, what is this place?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "Come on, let's go.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 10, "copied": true, "fit": true}
+{"text": "I mean, just fantastic.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true}
+{"text": "Holy shit, we just standing here?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true}
+{"text": "Do you think we can clear this?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 13, "copied": false, "fit": true}
+{"text": "This place is fucking huge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 13, "copied": false, "fit": true}
+{"text": "So I mean, you see this?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 13, "copied": false, "fit": true}
+{"text": "I mean, God damn, look at this.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 14, "copied": false, "fit": true}
+{"text": "You know what? This shit's huge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 14, "copied": false, "fit": true}
+{"text": "Holy shit, we can just fuck around here all day.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 14, "copied": false, "fit": true}
+{"text": "Holy shit, look at those fucking carpets.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "Let's go, let's fucking go.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "I mean, look at this spot.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "Alright, we're just chillin'.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "Holy shit, look at those colors.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "You know what? We're just chilling.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true}
+{"text": "Holy shit, the lava is fucking hot.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true}
+{"text": "Is he just gonna stand there?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true}
+{"text": "Holy shit, look at that view.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true}
+{"text": "You seeing this shit?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true}
+{"text": "Holy shit, look at this.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 27, "copied": false, "fit": true}
+{"text": "I mean, I feel like, you know, fucking...", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 27, "copied": false, "fit": true}
+{"text": "What the hell is going on, boys?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "I mean, this water looks fucking deep, man.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "This spot is actually huge, boys.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "I mean, we're just vibing, buddy.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "God damn, this is a wild fucking desert, son.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "You ever think about just jumping that fountain, buddy?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "You seeing this shit, son?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "Where we even skating here, buddy?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true}
+{"text": "I mean, just asking questions, dude.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true}
+{"text": "I mean, this floor is slick as hell, man.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "I mean, it's right fucking here, buddy.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "This is a big fucking vibe, man.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "What the hell is going on here, buddy?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "It's a god damn masterpiece, dude.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 27, "copied": false, "fit": true}
+{"text": "I mean, that's a pretty sick spot, dude.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true}
+{"text": "I mean, this grass is fucking huge, man.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "This spot is sick, dude.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "Do you know what I mean, buddy?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "I mean, that's a lot of snow, son.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true}
+{"text": "Holy shit, look at that mountain, son.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "I mean, the flow here is sick, boys.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true}
+{"text": "Holy shit, this slide is fucking huge, man.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 27, "copied": false, "fit": true}
+{"text": "Is this the spot, buddy?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true}
+{"text": "I mean, spot on, dude.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 13, "copied": false, "fit": true}
+{"text": "We'll take it, boys.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true}
+{"text": "I mean, this spot is fucking freezing, man.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "Holy shit, this spot is fucking huge, man.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true}
+{"text": "I mean, look at that mountain, son.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "What the hell is going on with this pyramid, man?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "Are you kidding me, buddy?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 14, "copied": false, "fit": true}
+{"text": "This grass is fucking weird, buddy.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "Come on, move your ass, son.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true}
+{"text": "I mean, fucking frozen ice, dude.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true}
+{"text": "We're just chilling, man.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "I mean, this spot is fucking mental, dude.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "I mean, this spot is fucking sick, son.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "This is a sick fucking mountain, dude.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true}
+{"text": "Let's just chill out for a second, son.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 14, "copied": false, "fit": true}
+{"text": "Holy shit, this place is fucking creepy, man.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "This cave is fucking huge, dude.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true}
+{"text": "What the hell is going on with this bridge, man?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "Let's just chill out for a second, buddy.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true}
+{"text": "Holy shit, this water is fucking wet.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true, "untagged": true}
+{"text": "You seeing this snow?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, look at that snow.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this spot is fucking huge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "This is a fucking vibe.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 26, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, we're just chilling.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true, "untagged": true}
+{"text": "Where are we even going?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "This spot is fucking sick.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 4, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, we've done this before.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true, "untagged": true}
+{"text": "Yeah, just look at that shit.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this spot is fucking mental.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, really think about this spot.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true, "untagged": true}
+{"text": "What the hell is going on out here?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 12, "copied": false, "fit": true, "untagged": true}
+{"text": "You know what I'm talking about?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true, "untagged": true}
+{"text": "This is fucking huge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 15, "copied": false, "fit": true, "untagged": true}
+{"text": "Are we just gonna stand here?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 27, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this water is fucking everywhere.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true, "untagged": true}
+{"text": "This spot is sick.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "This is a god damn masterpiece.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this grass is fucking huge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true, "untagged": true}
+{"text": "This could be a fucking heater.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 26, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, this mountain is huge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "This fog is some bullshit.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it's good practice.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "This spot is fucking legendary.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, there's potential here.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 15, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this spot is actually kind of sick.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, this place is fucking hot.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, this fog is fucking thick.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 12, "copied": false, "fit": true, "untagged": true}
+{"text": "Do you think we can skate this lake?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, look at this fucking mountain.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "Do you think this lava is actually hot?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "Come on, just move.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, fucking frozen ice.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, we gotta hit that waterfall.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, we're just chilling.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true, "untagged": true}
+{"text": "Alright, let's see what these rails do.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, we're just chilling right now.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this spot is sick.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "This is some god damn skating.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 27, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, this ledge is fucking huge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, this lava is fucking hot.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "You know what? This place is huge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true, "untagged": true}
+{"text": "You ever seen a submarine this big?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true, "untagged": true}
+{"text": "Are we really just standing here?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true, "untagged": true}
+{"text": "What the hell is going on with this place?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true, "untagged": true}
+{"text": "Are you just gonna stand there?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 27, "copied": false, "fit": true, "untagged": true}
+{"text": "What the hell is going on with you?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true, "untagged": true}
+{"text": "This spot is actually kind of sick.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true, "untagged": true}
+{"text": "You ever think about that?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this grass is fucking nice.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this floor is fucking sick.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true, "untagged": true}
+{"text": "You know what's crazy? This height.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, it's freezing out here.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true, "untagged": true}
+{"text": "Look at this spot.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, we just chillin' right now.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true, "untagged": true}
+{"text": "This is a god damn vibe.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "It’s just... I mean, look at it.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 13, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this cave is fucking damp.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, look at that snowman.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, pick a fucking direction.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true, "untagged": true}
+{"text": "The pyramid is huge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true, "untagged": true}
+{"text": "This slide is huge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 27, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this sand is fucking weird.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, this is a big mountain.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "This is some next level shit.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, you see that height?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, look at that volcano.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, look at those rocks.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "This is a dope spot for the board.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 12, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, look at this fucking dock.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, we'll take it.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 13, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, you just can't do that.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this is some haunted shit.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 4, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it’s right fucking here.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, look at that water.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true, "untagged": true}
+{"text": "We can bring it.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 14, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this sand is fucking wild.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true, "untagged": true}
+{"text": "I'm acting like a fucking child.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, we could just stay here.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "Is it just me or is this fucking cold?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, this spot is clean.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true, "untagged": true}
+{"text": "This is a dope ledge.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "What the hell is going on with this snowman?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, the way the snow looks is sick.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, it's dark as hell.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, it's like a swamp in here.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "This spot is fucking mental.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, you couldn't just skate that.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 26, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this spot is fucking sick.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, that rail is fucking sick.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, the water is fucking deep.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, this bridge is sick.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, really think about this shit.", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true, "untagged": true}
+{"text": "You ever think about just skating forever?", "rule": "idle_ramble", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, we're just vibing.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Come on, come on.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, this place is big.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "God damn, look at that.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, we're just wandering.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Just chilling.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, that's pretty.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "Holy shit, just look at that.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "We just chilling, right?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "Let's go, let's fucking go.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "I mean, look at this shit.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "So we're just chilling, you know what I mean?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "I mean, come on.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 9, "copied": true, "fit": true}
+{"text": "Holy shit, this place is huge.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true}
+{"text": "You know what I fucking just realized?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "Just chilling, you know what I mean?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 12, "copied": false, "fit": true}
+{"text": "I mean, whatever.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 5, "copied": true, "fit": true}
+{"text": "Holy shit, look at that snow.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true}
+{"text": "I mean, right?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 4, "copied": true, "fit": true}
+{"text": "Alright, let's go.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 7, "copied": true, "fit": true}
+{"text": "Holy shit, it's just water.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "I mean, we're just chilling.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true}
+{"text": "I mean, fucking nothing.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 13, "copied": false, "fit": true}
+{"text": "Holy shit, this is fucking huge.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "Holy shit, it's just dark.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true}
+{"text": "God damn, it's quiet.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true}
+{"text": "I mean, it's fine.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true}
+{"text": "Holy shit, is it just me?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true}
+{"text": "Let's go, let's go.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true}
+{"text": "Come on, let's fucking move.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true}
+{"text": "I mean, we're just chilling, you know?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 27, "copied": false, "fit": true}
+{"text": "It's just fucking snow, man.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true}
+{"text": "God damn, this is fucking wild, man.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 15, "copied": false, "fit": true}
+{"text": "It's fine, man.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "It's just some fucking water, son.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true}
+{"text": "I mean, it's just hot as fuck, dude.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true}
+{"text": "I mean, we're just fucking rolling, buddy.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true}
+{"text": "God damn, let's just keep moving, boys.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "I mean, it's right fucking here, buddy.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true}
+{"text": "Holy shit, this floor is huge, dude.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "Holy shit, it's so hot out here, boys.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "I mean, this is some shit, son.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true}
+{"text": "Holy shit, this is fucking huge, boys.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 27, "copied": false, "fit": true}
+{"text": "Holy shit, this place is huge, dude.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "Come on, move it, buddy.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "This place is fucking creepy, man.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "Come on, keep it moving, man.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "It's just a mess, buddy.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 13, "copied": false, "fit": true}
+{"text": "Holy shit, look at that sand, buddy.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true}
+{"text": "I mean, that's just, that's the easiest part, sweetie.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 26, "copied": false, "fit": true}
+{"text": "God damn, we're just wandering, son.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true}
+{"text": "Oh my god, it's so fucking huge, buddy.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true}
+{"text": "It’s just fucking big, buddy.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 14, "copied": false, "fit": true}
+{"text": "I mean, it's just a big fucking mountain, man.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true}
+{"text": "I mean, we're just vibing, son.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true}
+{"text": "This place is fucking huge, dude.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "I mean, whatever, dude.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "We're just fucking rolling, dude.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true}
+{"text": "We'll take it, boys.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "God damn, we're just cruising, man.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true}
+{"text": "I mean, it's fucking freezing out here, man.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true}
+{"text": "I mean, it's just spooky, man.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "Is it just me or is this place huge, sweetie?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true}
+{"text": "I mean, this place is fucking huge, son.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true}
+{"text": "God damn, this is fucking haunted, buddy.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 4, "copied": false, "fit": true}
+{"text": "I mean, it's a vibe, buddy.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true}
+{"text": "I mean, this is just chill, buddy.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true}
+{"text": "I mean, I'm just chilling, man.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true}
+{"text": "I mean, it's good practice, boys.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true}
+{"text": "I mean, it's just fucking foggy in here.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, we've been walking forever.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "Just fucking skating.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "You know what I mean?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 15, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, we're just cruising.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, let's just keep going.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it's just foggy as hell.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 12, "copied": false, "fit": true, "untagged": true}
+{"text": "It's just vibes.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it's just hot out here.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true, "untagged": true}
+{"text": "Let's just go.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, that is a great fucking view.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, look at this rock.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, just some bullshit.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 27, "copied": false, "fit": true, "untagged": true}
+{"text": "Where the fuck are we going?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, looking good.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 27, "copied": false, "fit": true, "untagged": true}
+{"text": "It's all just fucking sand.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, look at that ship.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 12, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, just fucking exploring.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, this grass is fucking huge.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, we just keep moving.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true, "untagged": true}
+{"text": "This shit is actually pretty dope.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 26, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, it's freezing out here.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it's whatever.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, this place is fucking creepy.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 4, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, this fog is crazy.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, we're just vibing.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "What the hell is going on in here?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "Where the hell are we going?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, this grass is fucking huge.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, let's really think about this one.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this place is fucking big.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true, "untagged": true}
+{"text": "Just cruising.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true, "untagged": true}
+{"text": "It's so fucking cold.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, look at this place.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true, "untagged": true}
+{"text": "It's just big.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 13, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, this lava is fucking hot.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, just vibing.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "I'm just fucking skating.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "This place is fucking huge.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 14, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, this is some weird shit.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true, "untagged": true}
+{"text": "What the hell is going on here?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 4, "copied": false, "fit": true, "untagged": true}
+{"text": "Just keep rolling.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, look at that water.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 11, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this thing's crazy.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 15, "copied": false, "fit": true, "untagged": true}
+{"text": "Just fucking vibing.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, it's so cold.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it's just hot as fuck.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this place is fucking weird.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 12, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it's just fucking foggy out here.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 12, "copied": false, "fit": true, "untagged": true}
+{"text": "What the hell is going on out here?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, it's just dark as hell.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "We will go.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true, "untagged": true}
+{"text": "All right, fuck it, let's just keep rolling.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true, "untagged": true}
+{"text": "It's fine, it's fucking fine.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, look at that painting.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, it's just dark as fuck.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it’s just whatever.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 24, "copied": false, "fit": true, "untagged": true}
+{"text": "Just keep moving.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true, "untagged": true}
+{"text": "It's just fucking lava.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, it’s fucking foggy in here.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "Just skating.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 13, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, what the fuck are we doing here?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 14, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, it’s just vibes.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 4, "copied": false, "fit": true, "untagged": true}
+{"text": "You know what? This floor is sick.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 6, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, what the hell is going on?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 7, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, look at that mountain.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it's fucking empty.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true, "untagged": true}
+{"text": "This place is just fucking huge.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, look at that mountain.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true, "untagged": true}
+{"text": "You ever think about this place?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this place is fucking huge.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 5, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it's fucking quiet.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true, "untagged": true}
+{"text": "You know what's crazy?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 26, "copied": false, "fit": true, "untagged": true}
+{"text": "It's just a big clock.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 14, "copied": false, "fit": true, "untagged": true}
+{"text": "Do you see that pyramid?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it's fucking freezing.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 10, "copied": false, "fit": true, "untagged": true}
+{"text": "Just chillin'.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, look at that height.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "Just keepin' it moving.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "Just floating around.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 15, "copied": false, "fit": true, "untagged": true}
+{"text": "I'm never coming back here.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 8, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it's just a mess.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 21, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, we're just wandering.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 36, "copied": false, "fit": true, "untagged": true}
+{"text": "Do you think we should just keep going?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "God damn, this place is huge.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true, "untagged": true}
+{"text": "It's just some fucking water.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 23, "copied": false, "fit": true, "untagged": true}
+{"text": "You ever think about the clock?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 14, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, it's just vibes.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 16, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, just look at that mountain.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 9, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, look at that lava.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 22, "copied": false, "fit": true, "untagged": true}
+{"text": "Is it just me or is this place creepy as fuck?", "rule": "wander", "intent": "ramble", "mode": "free", "level": 17, "copied": false, "fit": true, "untagged": true}
+{"text": "It's fine. Not a big deal.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "Holy shit, it's hot in here.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 19, "copied": false, "fit": true, "untagged": true}
+{"text": "We're just fucking vibing.", "rule": "wander", "intent": "ramble", "mode": "free", "level": null, "copied": false, "fit": true, "untagged": true}
+{"text": "I mean, this is just, it's just fucking chill.", "rule": "wander", "intent": "ramble", "mode": "free", "level": 26, "copied": false, "fit": true, "untagged": true}

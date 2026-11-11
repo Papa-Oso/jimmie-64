@@ -409,6 +409,24 @@ void *dma_sample_data(uintptr_t devAddr, u32 size, s32 arg2, u8 *dmaIndexRef) {
 #endif
 }
 
+#if defined(VERSION_JP) || defined(VERSION_US)
+/* Sample buffers are an opportunistic cache, not fixed required allocations.
+ * Leave one slot unused: a 256-entry free queue wraps its u8 head to its tail
+ * and looks empty. Keep the first allocation attempt so a genuinely unusable
+ * pool still reports through soundAlloc instead of silently losing audio. */
+static bool sample_dma_cache_can_grow(u32 size) {
+    if (gSampleDmaNumListItems >= SAMPLE_DMA_COUNT - 1) {
+        return false;
+    }
+    if (gSampleDmaNumListItems == 0) {
+        return true;
+    }
+    size_t used = (size_t) (gNotesAndBuffersPool.cur - gNotesAndBuffersPool.start);
+    return used <= gNotesAndBuffersPool.size
+        && ALIGN16(size) <= gNotesAndBuffersPool.size - used;
+}
+#endif
+
 void init_sample_dma_buffers(UNUSED s32 arg0) {
 #if defined(VERSION_EU)
     sDmaBufSize = 0x400 * 4;
@@ -434,6 +452,11 @@ void init_sample_dma_buffers(UNUSED s32 arg0) {
             break;
         }
 #else
+#if defined(VERSION_JP) || defined(VERSION_US)
+        if (!sample_dma_cache_can_grow(sDmaBufSize)) {
+            break;
+        }
+#endif
         sSampleDmas[gSampleDmaNumListItems].buffer = soundAlloc(&gNotesAndBuffersPool, sDmaBufSize);
         if (sSampleDmas[gSampleDmaNumListItems].buffer == NULL) {
 #if defined(VERSION_EU)
@@ -481,6 +504,11 @@ out1:
             break;
         }
 #else
+#if defined(VERSION_JP) || defined(VERSION_US)
+        if (!sample_dma_cache_can_grow(sDmaBufSize)) {
+            break;
+        }
+#endif
         sSampleDmas[gSampleDmaNumListItems].buffer = soundAlloc(&gNotesAndBuffersPool, sDmaBufSize);
         if (sSampleDmas[gSampleDmaNumListItems].buffer == NULL) {
 #if defined(VERSION_EU)

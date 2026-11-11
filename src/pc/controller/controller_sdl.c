@@ -26,6 +26,54 @@
 #include "pc/djui/djui.h"
 #include "pc/djui/djui_panel_pause.h"
 #include "pc/djui/djui_hud_utils.h"
+#ifdef JIMMIE_NATIVE_HEAD
+#include "game/game_init.h"
+#include "game/ingame_menu.h"
+#include "goddard/jimmie_head.h"
+static SDL_Joystick *sJimmieTestPad;
+/* Process-local SDL device, opt-in diagnostic only. No OS input injection. */
+static void jimmie_test_pad_init(void) {
+    if (!getenv("JIMMIE_SDL_CONTROLLER_TEST")) return;
+    int index = SDL_JoystickAttachVirtual(SDL_JOYSTICK_TYPE_GAMECONTROLLER, 6, 21, 0);
+    if (index < 0) { jimmie_head_trace("sdl_virtual_failed"); return; }
+    sJimmieTestPad = SDL_JoystickOpen(index);
+    configGamepadNumber = index;
+    configBackgroundGamepad = true;
+    SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+    jimmie_head_trace(sJimmieTestPad ? "sdl_virtual_attached" : "sdl_virtual_failed");
+}
+static void jimmie_test_pad_update(void) {
+    if (!sJimmieTestPad) return;
+    static unsigned startSent;
+    u32 f = gGlobalTimer;
+    bool start = !startSent && f >= 600;
+    if (start) startSent = 1;
+    /* Level initialization rewinds gGlobalTimer: do not replay Start in-game. */
+    if (startSent) f = 0;
+    SDL_JoystickSetVirtualAxis(sJimmieTestPad, SDL_CONTROLLER_AXIS_LEFTX,
+        f >= 300 && f < 306 ? 20000 : f >= 320 && f < 326 ? -20000 : 0);
+    /* Advance the real opening dialogue, then walk briefly in Castle Grounds.
+     * Still ordinary SDL input; this diagnostic always invalidates PB recording. */
+    unsigned ms = SDL_GetTicks();
+    bool dialogA = startSent && ms >= 60000 && get_dialog_id() != -1 && gGlobalTimer % 20 == 0;
+    SDL_JoystickSetVirtualAxis(sJimmieTestPad, SDL_CONTROLLER_AXIS_LEFTY,
+        startSent && ms >= 74000 && ms < 78000 && get_dialog_id() == -1 ? -18000 : 0);
+    SDL_JoystickSetVirtualButton(sJimmieTestPad, SDL_CONTROLLER_BUTTON_A, (f >= 340 && f < 346) || dialogA);
+    SDL_JoystickSetVirtualButton(sJimmieTestPad, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, f >= 342 && f < 351);
+    SDL_JoystickSetVirtualButton(sJimmieTestPad, SDL_CONTROLLER_BUTTON_START, start);
+}
+static void jimmie_test_pad_trace(OSContPad *pad) {
+    if (!sJimmieTestPad || (gGlobalTimer != 301 && gGlobalTimer != 321 && gGlobalTimer != 343
+                          && gGlobalTimer != 349 && gGlobalTimer != 600)) return;
+    const char *path = getenv("JIMMIE_HEAD_TRACE");
+    FILE *f = path ? fopen(path, "a") : NULL;
+    if (f) {
+        fprintf(f, "{\"event\":\"sdl_pad\",\"frame\":%u,\"buttons\":%u,\"x\":%d,\"y\":%d,\"controller\":%d}\n",
+            gGlobalTimer, pad->button, pad->stick_x, pad->stick_y, SDL_IsGameController(configGamepadNumber));
+        fclose(f);
+    }
+}
+#endif
 
 #define MAX_JOYBINDS 32
 #define MAX_MOUSEBUTTONS 8 // arbitrary
@@ -144,6 +192,10 @@ static void controller_sdl_init(void) {
 
     controller_sdl_bind();
 
+#ifdef JIMMIE_NATIVE_HEAD
+    jimmie_test_pad_init();
+#endif
+
     init_ok = true;
     mouse_init_ok = true;
 }
@@ -242,6 +294,9 @@ static void controller_sdl_read(OSContPad *pad) {
 
     if (configDisableGamepads) { return; }
 
+#ifdef JIMMIE_NATIVE_HEAD
+    jimmie_test_pad_update();
+#endif
     SDL_GameControllerUpdate();
 
     if (sdl_cntrl != NULL && !SDL_GameControllerGetAttached(sdl_cntrl)) {
@@ -343,6 +398,9 @@ static void controller_sdl_read(OSContPad *pad) {
 
     update_analog_stick(&pad->stick_x, &pad->stick_y, leftx, lefty);
     update_analog_stick(&pad->ext_stick_x, &pad->ext_stick_y, rightx, righty);
+#ifdef JIMMIE_NATIVE_HEAD
+    jimmie_test_pad_trace(pad);
+#endif
 }
 
 static void controller_sdl_rumble_play(f32 strength, f32 length) {

@@ -571,8 +571,24 @@ static void import_texture_ci8(int tile) {
     gfx_rapi->upload_texture(rgba32_buf, width, height);
 }
 
+#ifdef JIMMIE_NATIVE_HEAD
+extern const uint8_t *jimmie_head_texture(const void *address);
+#endif
 static void import_texture(int tile) {
     tile = tile % MAX_TILES;
+#ifdef JIMMIE_NATIVE_HEAD
+    /* Only the two native Jimmie face buffers use this private upload path.
+     * The N64 load-block command truncates a 64x64 RGBA16 atlas to 64x32.
+     * Reuse its GPU cache entry, but refresh these tiny animated buffers. */
+    const uint8_t *face = jimmie_head_texture(rdp.loaded_texture[tile].addr);
+    if (face) {
+        gfx_flush();
+        gfx_texture_cache_lookup(tile, &rendering_state.textures[tile],
+                                 face, G_IM_FMT_RGBA, G_IM_SIZ_32b);
+        gfx_rapi->upload_texture(face, 64, 64);
+        return;
+    }
+#endif
     extern s32 dynos_tex_import(void **output, void *ptr, s32 tile, void *grapi, void **hashmap, void *pool, s32 *poolpos, s32 poolsize);
     if (dynos_tex_import((void **) &rendering_state.textures[tile], (void *) rdp.loaded_texture[tile].addr, tile, gfx_rapi, (void **) gfx_texture_cache.hashmap, (void *) gfx_texture_cache.pool, (int *) &gfx_texture_cache.pool_pos, MAX_CACHED_TEXTURES)) { return; }
     uint8_t fmt = rdp.texture_tile[tile].fmt;

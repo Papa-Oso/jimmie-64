@@ -2,6 +2,10 @@
 #include <string.h>
 
 #include "sm64.h"
+#ifdef JIMMIE_NATIVE_HEAD
+#include "model_ids.h"
+#include "goddard/jimmie_head.h"
+#endif
 #include "audio/external.h"
 #include "buffers/framebuffers.h"
 #include "buffers/zbuffer.h"
@@ -66,6 +70,9 @@ static s32 sRegister;
 static struct LevelCommand *sCurrentCmd;
 
 static u8 sFinishedLoadingPerm = false;
+#ifdef JIMMIE_NATIVE_HEAD
+static u8 sLoadedPermanentModels = false;
+#endif
 
 static s32 eval_script_area(s32 arg) {
     return (sWarpDest.areaIdx == arg);
@@ -325,6 +332,10 @@ static void level_cmd_load_mio0(void) {
 }
 
 static void level_cmd_load_mario_head(void) {
+#ifdef JIMMIE_NATIVE_HEAD
+    extern void jimmie_head_trace(const char *event);
+    jimmie_head_trace("head_loader_entered");
+#endif
     gSkipInterpolationTitleScreen = true;
     gGlobalTimer = 0;
     // TODO: Fix these hardcoded sizes
@@ -413,8 +424,15 @@ static void level_cmd_free_level_pool(void) {
     }
 
 
-    if (!sFinishedLoadingPerm) {
+    if (!sFinishedLoadingPerm
+#ifdef JIMMIE_NATIVE_HEAD
+        && sLoadedPermanentModels
+#endif
+    ) {
         sFinishedLoadingPerm = true;
+#ifdef JIMMIE_NATIVE_HEAD
+        jimmie_head_trace("permanent_models_loaded");
+#endif
         // make sure we don't free the pool with the permanent models
         gLevelPool = NULL;
     }
@@ -477,6 +495,12 @@ static void level_cmd_load_model_from_geo(void) {
 
     u32 id = arg0;
     dynos_model_load_geo(&id, sFinishedLoadingPerm ? MODEL_POOL_LEVEL : MODEL_POOL_PERMANENT, arg1, true);
+#ifdef JIMMIE_NATIVE_HEAD
+    /* Restored intro AREA pools precede the common model table. They must not
+     * mark that table loaded: otherwise Mario and shared actors become LEVEL
+     * models and are cleared by the first actual level's INIT_LEVEL. */
+    if (!sFinishedLoadingPerm && id == MODEL_MARIO) sLoadedPermanentModels = true;
+#endif
 
     sCurrentCmd = CMD_NEXT;
 }

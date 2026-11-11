@@ -54,6 +54,10 @@ void osContGetReadData(OSContPad *pad) {
     pad->ext_stick_y = 0;
     pad->errnum = 0;
 
+#if defined(JIMMIE_NATIVE_HEAD) && defined(_WIN32)
+    extern int jimmie_route_pad_read(OSContPad *);
+    if (jimmie_route_pad_read(pad)) return;
+#endif
     for (size_t i = 0; i < sizeof(controller_implementations) / sizeof(struct ControllerAPI *); i++) {
         controller_implementations[i]->read(pad);
     }

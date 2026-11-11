@@ -27,3 +27,8 @@
 *.lvl binary
 *.tex binary
 *.luac binary
+# Native companion identity hashes must survive Windows and Unix checkouts.
+mods/jimmie/*.lua text eol=lf
+
+# The reviewed rail prototype must match its canonical runtime helper.
+tools/raised_rails/*.lua text eol=lf

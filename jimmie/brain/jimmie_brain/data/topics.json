@@ -1,0 +1,32 @@
+{
+ "about": "What a line is about, found by these words in it. The director uses it two ways: a place or a fresh event suggests topics, and after he says a line he tends to stay on its topic for a little while, so chatter follows a thread. Tuning what he talks about, and where, is editing this file.",
+ "stay_s": 45,
+ "share": 0.6,
+ "topics": {
+  "food": ["eat", "eating", "ate", "toast", "pizza", "breakfast", "coffee", "caffeine", "hungry", "pretzel", "cookie", "fries", "burger", "sandwich", "meal", "sparkling", "vitamins", "cheese", "ranch", "snack"],
+  "weed": ["weed", "baked", "blunt", "dab", "stoner", "smoke", "smoking", "grow", "high"],
+  "body": ["hair", "haircut", "wig", "hands", "stomach", "headache", "heart", "knee", "hospital", "insurance", "shape", "throat", "migraine", "idiot", "worm"],
+  "tired": ["tired", "asleep", "sleep", "sleeping", "wake", "waking", "exhausted", "lazy", "laziest", "breather", "batteries", "battery", "dreams"],
+  "kid": ["kid", "grade", "sixth grade", "child", "teacher", "remember", "mom", "dad", "dad's", "little boy"],
+  "stuff": ["garage", "sale", "shirt", "shirts", "suspenders", "car", "car's", "truck", "trunk", "monitor", "lamp", "television", "settings", "button", "buttons", "zoom", "quality"],
+  "spooky": ["ghost", "haunted", "dark", "light", "lights", "creepy", "scared", "paranormal", "demon", "basement", "chills", "attic", "black", "freaking"],
+  "water": ["water", "wet", "fish", "fishy", "ship", "scuba", "faucet", "raining", "rain", "tank", "diving"],
+  "cold": ["freezing", "cold", "snow", "clammy", "bigfoot"],
+  "hot": ["sun", "lava", "fire", "fireballs", "hot", "heating"],
+  "games": ["game", "games", "played", "boss", "glitched", "glitchy", "hardest"],
+  "skate": ["skate", "skater", "board", "ramp", "flip", "flipping", "wheel", "punk"],
+  "animals": ["animal", "animals", "dog", "cow", "worms", "cricket", "skeeter", "bug", "lions", "polar", "beaver"]
+ },
+ "places": {
+  "4": ["spooky"], "7": ["spooky", "weed"], "17": ["spooky"], "26": ["spooky"],
+  "5": ["cold", "animals"], "10": ["cold"],
+  "8": ["hot", "food"], "22": ["hot"], "19": ["hot"],
+  "12": ["water", "animals"], "23": ["water"], "11": ["water"],
+  "6": ["stuff", "kid"], "16": ["stuff", "skate"], "9": ["skate", "animals"], "24": ["skate"],
+  "13": ["games", "kid"], "14": ["tired", "stuff"], "15": ["games"], "36": ["animals", "kid"]
+ },
+ "events": {
+  "trick_bailed": ["body", "skate"], "trick_completed": ["skate"], "death": ["games"], "star": ["games"],
+  "water_enter": ["water"], "fall": ["body"], "hurt": ["body"], "idle": ["tired", "food"]
+ }
+}

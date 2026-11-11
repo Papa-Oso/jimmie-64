@@ -1,0 +1,863 @@
+{
+  "about": "Jimmie's timing. The rule with the most criteria wins, then rolls its chance; losing the roll is silence. Edit freely: this file is the tuning surface.",
+  "gaps": {
+    "16": 6.0,
+    "free": 3.5
+  },
+  "rules": [
+    {
+      "id": "star",
+      "on": "star",
+      "intent": "celebrate",
+      "chance": 0.85,
+      "bank": [
+        "star_hype",
+        "holy_shits_real",
+        "holy_shit_dude"
+      ],
+      "write": true,
+      "bank_share": 0.25,
+      "direction": "Mario just grabbed a star. A quick burst, like a streamer reacting to his own good play."
+    },
+    {
+      "id": "star_run",
+      "on": "star",
+      "when": {
+        "mode": "16"
+      },
+      "intent": "celebrate",
+      "chance": 0.5,
+      "bank": [
+        "star_hype",
+        "holy_shit_dude"
+      ],
+      "write": true,
+      "bank_share": 0.3,
+      "direction": "Mario grabbed a star mid-run. Short. He has somewhere to be."
+    },
+    {
+      "id": "star_first",
+      "on": "star",
+      "when": {
+        "stars_session": 1
+      },
+      "intent": "celebrate",
+      "chance": 1.0,
+      "bank": [
+        "star_hype",
+        "holy_shits_real",
+        "holy_shit_dude"
+      ],
+      "write": true,
+      "direction": "First star of the session. He's up for it.",
+      "bank_share": 0.3
+    },
+    {
+      "id": "star_after_trouble",
+      "on": "star",
+      "when": {
+        "setbacks_visit": {
+          "gte": 1
+        }
+      },
+      "intent": "relief",
+      "chance": 0.9,
+      "write": true,
+      "presume": [
+        "setbacks_visit"
+      ],
+      "direction": "Mario fell, went back and finally got the star. Relief that a retry worked."
+    },
+    {
+      "id": "star_after_deaths",
+      "on": "star",
+      "when": {
+        "deaths_visit": {
+          "gte": 2
+        }
+      },
+      "intent": "relief",
+      "chance": 0.95,
+      "write": true,
+      "presume": [
+        "deaths_visit"
+      ],
+      "weight": 2,
+      "direction": "Mario died here more than once and finally got the star. Relief, with a dig at how long it took."
+    },
+    {
+      "id": "star_hot",
+      "on": "star",
+      "when": {
+        "hype": {
+          "gte": 55
+        },
+        "mode": "free"
+      },
+      "intent": "take_credit",
+      "chance": 0.5,
+      "write": true,
+      "direction": "Things are going well and Jimmie acts like it was his doing."
+    },
+    {
+      "id": "star_sixteen",
+      "on": "star",
+      "when": {
+        "stars": 16,
+        "mode": "16"
+      },
+      "intent": "hype_nerves",
+      "chance": 1.0,
+      "write": true,
+      "max_words": 12,
+      "direction": "That was the last star they need. Only Bowser is left. Bravado with nerves underneath.",
+      "staple_share": 0.0
+    },
+    {
+      "id": "death",
+      "on": "death",
+      "when": {
+        "actor": "mario"
+      },
+      "intent": "needle",
+      "chance": 0.85,
+      "write": true,
+      "delay_ms": 500,
+      "direction": "Mario just died. Jimmie gives him shit like a friend on the couch would. Not cruel.",
+      "bank": [
+        "come_on_real",
+        "no_no_real",
+        "thats_an_l",
+        "kidding"
+      ],
+      "bank_share": 0.3
+    },
+    {
+      "id": "death_run",
+      "on": "death",
+      "when": {
+        "actor": "mario",
+        "mode": "16"
+      },
+      "intent": "needle",
+      "chance": 0.4,
+      "write": true,
+      "delay_ms": 500,
+      "direction": "Mario died mid-run. One short reaction, then let him get back to it.",
+      "bank": [
+        "come_on_real",
+        "no_no_real"
+      ],
+      "bank_share": 0.3
+    },
+    {
+      "id": "death_again",
+      "on": "death",
+      "when": {
+        "actor": "mario",
+        "deaths_visit": 2
+      },
+      "intent": "fake_sympathy",
+      "chance": 0.9,
+      "write": true,
+      "presume": [
+        "deaths_visit"
+      ],
+      "delay_ms": 600,
+      "direction": "Second death in the same place. Obviously insincere sympathy.",
+      "bank": [
+        "kidding",
+        "unbelievable_real",
+        "i_cant"
+      ],
+      "bank_share": 0.3
+    },
+    {
+      "id": "death_streak",
+      "on": "death",
+      "when": {
+        "actor": "mario",
+        "deaths_streak": {
+          "gte": 3
+        }
+      },
+      "intent": "deadpan",
+      "chance": 0.85,
+      "write": true,
+      "presume": [
+        "deaths_streak"
+      ],
+      "delay_ms": 900,
+      "max_words": 3,
+      "cooldown_s": 40,
+      "direction": "Third death in a row or worse. One flat word or two. The pause before it is the joke.",
+      "bank": [
+        "unreal_real",
+        "unbelievable_real"
+      ],
+      "bank_share": 0.35
+    },
+    {
+      "id": "death_tilted",
+      "on": "death",
+      "when": {
+        "actor": "mario",
+        "deaths_streak": {
+          "gte": 3
+        },
+        "tilt": {
+          "gte": 75
+        }
+      },
+      "intent": "sincere",
+      "chance": 0.5,
+      "write": true,
+      "cooldown_s": 300,
+      "delay_ms": 800,
+      "direction": "It has gone badly for a while. For once he drops the act and says something actually decent, briefly."
+    },
+    {
+      "id": "hurt",
+      "on": "hurt",
+      "when": {
+        "actor": "mario"
+      },
+      "intent": "needle",
+      "chance": 0.35,
+      "write": true,
+      "cooldown_s": 15,
+      "max_words": 6,
+      "direction": "Mario took a hit. A wince or a jab, a few words.",
+      "bank": [
+        "come_on_real",
+        "what_the_hell"
+      ],
+      "bank_share": 0.25
+    },
+    {
+      "id": "big_fall",
+      "on": "fall",
+      "when": {
+        "actor": "mario"
+      },
+      "intent": "disbelief",
+      "chance": 0.7,
+      "write": true,
+      "cooldown_s": 12,
+      "direction": "Mario just fell a long way. Disbelief.",
+      "bank": [
+        "what_the_hell",
+        "unbelievable_real",
+        "unreal_real",
+        "god_damn_son"
+      ],
+      "bank_share": 0.35
+    },
+    {
+      "id": "setback_quiet",
+      "on": "setback",
+      "intent": "quiet",
+      "note": "He remembers the fall and uses it when the star finally comes."
+    },
+    {
+      "id": "call_shot",
+      "on": "trick_approach",
+      "when": {
+        "f.toward": true
+      },
+      "intent": "boast_call",
+      "chance": 0.7,
+      "bank": [
+        "watch_real"
+      ],
+      "write": true,
+      "bank_share": 0.35,
+      "max_words": 6,
+      "cooldown_s": 15,
+      "direction": "Jimmie is about to try a skate trick and Mario is looking. He calls his shot."
+    },
+    {
+      "id": "bail_called",
+      "on": "trick_bailed",
+      "when": {
+        "f.condition": "called_bail"
+      },
+      "intent": "own_it",
+      "chance": 1.0,
+      "payoff": true,
+      "bank": [
+        "fuck_real",
+        "bluster"
+      ],
+      "write": true,
+      "bank_share": 0.45,
+      "max_words": 6,
+      "direction": "He said watch this, then ate it. One word, or a face-saving excuse nobody believes."
+    },
+    {
+      "id": "bail_called_watch",
+      "on": "trick_bailed",
+      "when": {
+        "f.condition": "called_bail",
+        "last_said": "watch this shit"
+      },
+      "intent": "own_it",
+      "chance": 1.0,
+      "payoff": true,
+      "bank": [
+        "fuck_real"
+      ],
+      "note": "The owner's reference exchange from the pinball stream: 'Watch this shit.' ... 'Fuck.' Kept exactly."
+    },
+    {
+      "id": "bail_plain",
+      "on": "trick_bailed",
+      "when": {
+        "f.condition": "plain_bail"
+      },
+      "intent": "own_it",
+      "chance": 0.85,
+      "bank": [
+        "own_real",
+        "underplay_real"
+      ],
+      "write": true,
+      "bank_share": 0.3,
+      "max_words": 8,
+      "direction": "Jimmie bailed a trick nobody asked for. He owns it or plays it down."
+    },
+    {
+      "id": "bail_any",
+      "on": "trick_bailed",
+      "intent": "own_it",
+      "chance": 0.7,
+      "bank": [
+        "own_real"
+      ],
+      "write": true,
+      "max_words": 8,
+      "direction": "Jimmie bailed a skate trick.",
+      "bank_share": 0.25
+    },
+    {
+      "id": "bail_streak",
+      "on": "trick_bailed",
+      "when": {
+        "bails_streak": {
+          "gte": 3
+        },
+        "mode": "free"
+      },
+      "intent": "save_face",
+      "chance": 0.8,
+      "write": true,
+      "presume": [
+        "bails_streak"
+      ],
+      "cooldown_s": 45,
+      "direction": "He has bailed several tricks in a row. He blames the board, the floor, anything but himself.",
+      "staple_share": 0.0
+    },
+    {
+      "id": "land_called",
+      "on": "trick_completed",
+      "when": {
+        "f.condition": "called_land"
+      },
+      "intent": "boast",
+      "chance": 1.0,
+      "payoff": true,
+      "bank": [
+        "hype_real",
+        "clean"
+      ],
+      "write": true,
+      "bank_share": 0.35,
+      "max_words": 8,
+      "direction": "He called it and landed it. Insufferable about it."
+    },
+    {
+      "id": "land_left",
+      "on": "trick_completed",
+      "when": {
+        "f.condition": "left_land"
+      },
+      "intent": "needle",
+      "chance": 1.0,
+      "payoff": true,
+      "bank": [
+        "credit",
+        "where"
+      ],
+      "write": true,
+      "bank_share": 0.4,
+      "max_words": 9,
+      "direction": "He called a trick, landed it, and Mario had already walked off. He wants credit.",
+      "staple_share": 0.0
+    },
+    {
+      "id": "land_after_fall",
+      "on": "trick_completed",
+      "when": {
+        "f.condition": "landing_after_getup"
+      },
+      "intent": "relief",
+      "chance": 0.85,
+      "write": true,
+      "max_words": 8,
+      "direction": "He just got up from a fall and landed the next one clean. Vindicated."
+    },
+    {
+      "id": "land_plain",
+      "on": "trick_completed",
+      "intent": "boast",
+      "chance": 0.35,
+      "bank": [],
+      "write": true,
+      "max_words": 6,
+      "cooldown_s": 10,
+      "direction": "A clean trick nobody was watching. A small pleased noise at most."
+    },
+    {
+      "id": "land_streak",
+      "on": "trick_completed",
+      "when": {
+        "lands_streak": {
+          "gte": 3
+        },
+        "mode": "free"
+      },
+      "intent": "boast",
+      "chance": 0.6,
+      "write": true,
+      "presume": [
+        "lands_streak"
+      ],
+      "cooldown_s": 40,
+      "direction": "Several clean tricks in a row. His ego is getting dangerous.",
+      "staple_share": 0.0
+    },
+    {
+      "id": "precision_setup",
+      "on": [
+        "precision_setup",
+        "precision_attempt"
+      ],
+      "intent": "quiet",
+      "note": "Leave the player room."
+    },
+    {
+      "id": "precision_bit",
+      "on": "precision_jump",
+      "when": {
+        "mode": "16"
+      },
+      "intent": "bit",
+      "chance": 0.3,
+      "bits": [
+        "carrier",
+        "tor_tor_tor",
+        "gub_gub_gub",
+        "cum",
+        "bitch"
+      ],
+      "precision_ok": true,
+      "cooldown_s": 65,
+      "note": "The owner's request: he remembers Carrier at the worst possible moment."
+    },
+    {
+      "id": "precision_free",
+      "on": "precision_jump",
+      "when": {
+        "mode": "free"
+      },
+      "intent": "quiet"
+    },
+    {
+      "id": "water",
+      "on": "water_enter",
+      "when": {
+        "mode": "free"
+      },
+      "intent": "bit",
+      "chance": 0.8,
+      "bits": [
+        "honey_oil",
+        "greasy_old_bees",
+        "honeyoil"
+      ],
+      "cooldown_s": 60
+    },
+    {
+      "id": "water_run",
+      "on": "water_enter",
+      "when": {
+        "mode": "16"
+      },
+      "intent": "quiet"
+    },
+    {
+      "id": "mamma_mia",
+      "on": "mario_voice",
+      "when": {
+        "f.cue": "mamma_mia"
+      },
+      "intent": "bit",
+      "chance": 0.6,
+      "bits": [
+        "mamma_mia"
+      ],
+      "delay_ms": 900,
+      "cooldown_s": 90
+    },
+    {
+      "id": "arrive_castle_run",
+      "on": "arrival",
+      "when": {
+        "mode": "16",
+        "level": 6,
+        "level_visits": 1
+      },
+      "intent": "greet",
+      "chance": 1.0,
+      "bank": [
+        "castle_door"
+      ]
+    },
+    {
+      "id": "arrive_final_bowser",
+      "on": "arrival",
+      "when": {
+        "mode": "16",
+        "level": 21
+      },
+      "intent": "hype_nerves",
+      "chance": 1.0,
+      "bank": [
+        "bowser_entrance"
+      ],
+      "write": true,
+      "bank_share": 0.7
+    },
+    {
+      "id": "arrive_new",
+      "on": "arrival",
+      "when": {
+        "mode": "free",
+        "level_visits": 1
+      },
+      "intent": "greet",
+      "chance": 0.9,
+      "write": true,
+      "delay_ms": 700,
+      "cooldown_s": 8,
+      "direction": "They just walked into a place for the first time this session. He sizes it up as somewhere to skate, or just says hi to it.",
+      "bank": [
+        "good_morning_real"
+      ],
+      "bank_share": 0.08,
+      "staple_share": 0.15
+    },
+    {
+      "id": "arrive_again",
+      "on": "arrival",
+      "when": {
+        "mode": "free",
+        "level_visits": {
+          "gte": 2
+        }
+      },
+      "intent": "callback",
+      "chance": 0.55,
+      "write": true,
+      "delay_ms": 700,
+      "cooldown_s": 20,
+      "direction": "They are back in the same place yet again. He notices.",
+      "staple_share": 0.0
+    },
+    {
+      "id": "arrive_run",
+      "on": "arrival",
+      "when": {
+        "mode": "16"
+      },
+      "intent": "quiet"
+    },
+    {
+      "id": "key",
+      "on": "key",
+      "intent": "take_credit",
+      "chance": 0.8,
+      "write": true,
+      "direction": "Mario beat Bowser and got the key. Jimmie shares the win and takes more than his share.",
+      "staple_share": 0.0
+    },
+    {
+      "id": "grand_star",
+      "on": "grand_star",
+      "intent": "sincere",
+      "chance": 1.0,
+      "payoff": true,
+      "write": true,
+      "max_words": 14,
+      "direction": "They just beat the final Bowser. The run is done. Real excitement, for once not ironic.",
+      "staple_share": 0.0
+    },
+    {
+      "id": "idle_bit",
+      "on": "idle",
+      "when": {
+        "mode": "free",
+        "idle_s": {
+          "gte": 8
+        },
+        "since_spoke_s": {
+          "gte": 8
+        }
+      },
+      "lane": "ambient",
+      "intent": "bit",
+      "chance": 0.4,
+      "bits": [
+        "carrier",
+        "tor_tor_tor",
+        "gub_gub_gub",
+        "cum",
+        "pink_bitch",
+        "day_day",
+        "boom_boom",
+        "boing",
+        "goo",
+        "honeyoil"
+      ],
+      "cooldown_s": 25
+    },
+    {
+      "id": "idle_peach",
+      "on": "idle",
+      "when": {
+        "mode": "free",
+        "level": 6,
+        "idle_s": {
+          "gte": 8
+        },
+        "since_spoke_s": {
+          "gte": 12
+        }
+      },
+      "lane": "ambient",
+      "intent": "bit",
+      "chance": 0.35,
+      "bits": [
+        "peach"
+      ],
+      "cooldown_s": 240
+    },
+    {
+      "id": "idle_ramble",
+      "on": "idle",
+      "when": {
+        "mode": "free",
+        "idle_s": {
+          "gte": 6
+        },
+        "since_spoke_s": {
+          "gte": 6
+        }
+      },
+      "lane": "ambient",
+      "intent": "ramble",
+      "chance": 0.85,
+      "write": true,
+      "cooldown_s": 7,
+      "max_words": 18,
+      "direction": "Mario has been standing around. Jimmie fills the dead air the way he does on stream: a stray thought, a question to nobody, something about skating this spot.",
+      "staple_share": 0.0
+    },
+    {
+      "id": "idle_run",
+      "on": "idle",
+      "when": {
+        "mode": "16"
+      },
+      "intent": "quiet",
+      "note": "No nagging during a run."
+    },
+    {
+      "id": "wander_bit",
+      "on": "tick",
+      "when": {
+        "mode": "free",
+        "since_spoke_s": {
+          "gte": 7
+        },
+        "visit_s": {
+          "gte": 20
+        }
+      },
+      "lane": "ambient",
+      "intent": "bit",
+      "chance": 0.3,
+      "weight": 0.25,
+      "bits": [
+        "carrier",
+        "tor_tor_tor",
+        "gub_gub_gub",
+        "pink_bitch",
+        "day_day",
+        "boom_boom",
+        "boing",
+        "goo",
+        "honeyoil",
+        "honey_oil",
+        "greasy_old_bees"
+      ],
+      "cooldown_s": 45
+    },
+    {
+      "id": "wander",
+      "on": "tick",
+      "when": {
+        "mode": "free",
+        "since_spoke_s": {
+          "gte": 7
+        },
+        "visit_s": {
+          "gte": 6
+        }
+      },
+      "lane": "ambient",
+      "intent": "ramble",
+      "chance": 0.5,
+      "write": true,
+      "cooldown_s": 6,
+      "max_words": 16,
+      "direction": "Nothing has happened for a while and they are just exploring. He says whatever is on his mind.",
+      "staple_share": 0.0
+    },
+    {
+      "id": "tick_quiet",
+      "on": "tick",
+      "intent": "quiet"
+    },
+    {
+      "id": "chat_hello",
+      "on": "chat",
+      "when": {
+        "f.said": "hello"
+      },
+      "lane": "ambient",
+      "intent": "reply",
+      "chance": 1.0,
+      "write": true,
+      "staple_share": 0.0,
+      "bank_share": 0.0,
+      "payoff": true,
+      "precision_ok": true,
+      "max_words": 14,
+      "direction": "The player just said hello to him in chat. He greets them back the way he greets a chatter."
+    },
+    {
+      "id": "chat_bye",
+      "on": "chat",
+      "when": {
+        "f.said": "bye"
+      },
+      "lane": "ambient",
+      "intent": "reply",
+      "chance": 1.0,
+      "write": true,
+      "staple_share": 0.0,
+      "bank_share": 0.0,
+      "payoff": true,
+      "precision_ok": true,
+      "max_words": 14,
+      "direction": "The player said goodbye in chat. He signs off to them."
+    },
+    {
+      "id": "chat_praise",
+      "on": "chat",
+      "when": {
+        "f.said": "praise"
+      },
+      "lane": "ambient",
+      "intent": "reply",
+      "chance": 1.0,
+      "write": true,
+      "staple_share": 0.0,
+      "bank_share": 0.0,
+      "payoff": true,
+      "precision_ok": true,
+      "max_words": 14,
+      "direction": "The player said something nice or thanked him in chat. He takes it, briefly."
+    },
+    {
+      "id": "chat_diss",
+      "on": "chat",
+      "when": {
+        "f.said": "diss"
+      },
+      "lane": "ambient",
+      "intent": "reply",
+      "chance": 1.0,
+      "write": true,
+      "staple_share": 0.0,
+      "bank_share": 0.0,
+      "payoff": true,
+      "precision_ok": true,
+      "max_words": 14,
+      "direction": "The player insulted him in chat. He snaps back, joking, the way he does with a chatter who gives him shit."
+    },
+    {
+      "id": "chat_laugh",
+      "on": "chat",
+      "when": {
+        "f.said": "laugh"
+      },
+      "lane": "ambient",
+      "intent": "reply",
+      "chance": 1.0,
+      "write": true,
+      "staple_share": 0.0,
+      "bank_share": 0.0,
+      "payoff": true,
+      "precision_ok": true,
+      "max_words": 14,
+      "direction": "The player laughed in chat. He reacts to that."
+    },
+    {
+      "id": "chat_question",
+      "on": "chat",
+      "when": {
+        "f.said": "question"
+      },
+      "lane": "ambient",
+      "intent": "reply",
+      "chance": 1.0,
+      "write": true,
+      "staple_share": 0.0,
+      "bank_share": 0.0,
+      "payoff": true,
+      "precision_ok": true,
+      "max_words": 14,
+      "direction": "The player asked him something in chat. He answers off the cuff: yes, no, or he has no idea."
+    },
+    {
+      "id": "chat_other",
+      "on": "chat",
+      "when": {
+        "f.said": "other"
+      },
+      "lane": "ambient",
+      "intent": "reply",
+      "chance": 1.0,
+      "write": true,
+      "staple_share": 0.0,
+      "bank_share": 0.0,
+      "payoff": true,
+      "precision_ok": true,
+      "max_words": 14,
+      "direction": "The player typed something in chat. He acknowledges it."
+    }
+  ]
+}

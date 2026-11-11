@@ -85,6 +85,10 @@ WINDOWS_AUTO_BUILDER ?= 0
 
 # Setup extra cflags
 EXTRA_CFLAGS ?=
+JIMMIE_NATIVE_HEAD ?= 0
+ifeq ($(JIMMIE_NATIVE_HEAD),1)
+EXTRA_CFLAGS += -DJIMMIE_NATIVE_HEAD
+endif
 EXTRA_CPP_FLAGS ?=
 EXTRA_CFLAGS += -Wno-format-security -Wno-trigraphs -Wno-missing-braces -Wno-missing-field-initializers
 

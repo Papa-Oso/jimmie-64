@@ -6,6 +6,9 @@
 #include <unistd.h>
 
 #include "sm64.h"
+#include "goddard/jimmie_head.h"
+#include "pc/jimmie_run_bridge.h"
+#include "menu/jimmie_title_art.h"
 
 #include "pc/lua/smlua.h"
 #include "pc/lua/utils/smlua_text_utils.h"
@@ -380,13 +383,24 @@ void *audio_thread(UNUSED void *arg) {
 }
 
 void produce_one_frame(void) {
+#ifdef JIMMIE_NATIVE_HEAD
+    static s32 traceFirst = 1;
+    if (traceFirst) jimmie_head_trace("frame_entered");
+#endif
     CTX_EXTENT(CTX_NETWORK, network_update);
+#ifdef JIMMIE_NATIVE_HEAD
+    if (traceFirst) jimmie_head_trace("network_updated");
+#endif
 
     CTX_EXTENT(CTX_INTERP, patch_interpolations_before);
 
     CTX_EXTENT(CTX_GAME_LOOP, game_loop_one_iteration);
+#ifdef JIMMIE_NATIVE_HEAD
+    if (traceFirst) jimmie_head_trace("game_frame_completed");
+#endif
 
     CTX_EXTENT(CTX_SMLUA, smlua_update);
+    jimmie_run_update();
 
     // If we aren't threaded
     if (gAudioThread.state == INVALID) {
@@ -394,6 +408,10 @@ void produce_one_frame(void) {
     }
 
     CTX_EXTENT(CTX_RENDER, produce_interpolation_frames_and_delay);
+#ifdef JIMMIE_NATIVE_HEAD
+    if (traceFirst) jimmie_head_trace("render_frame_completed");
+    traceFirst = 0;
+#endif
 }
 
 // used for rendering 2D scenes fullscreen like the loading or crash screens
@@ -485,22 +503,28 @@ void* main_game_init(UNUSED void* dummy) {
     smlua_text_utils_init();
 
     mods_init();
+    jimmie_head_trace("mods_initialized");
     enable_queued_mods();
+    jimmie_head_trace("mods_enabled");
     LOADING_SCREEN_MUTEX(
         gCurrLoadingSegment.percentage = 0;
         loading_screen_set_segment_text("Starting Game");
     );
 
     audio_init();
+    jimmie_head_trace("audio_initialized");
     sound_init();
+    jimmie_head_trace("sound_initialized");
     network_player_init();
     mumble_init();
+    jimmie_head_trace("game_initialized");
 
     gGameInited = true;
     return NULL;
 }
 
 int main(int argc, char *argv[]) {
+    jimmie_run_boot();
     // handle terminal arguments
     if (!parse_cli_opts(argc, argv)) { return 0; }
 
@@ -527,6 +551,7 @@ int main(int argc, char *argv[]) {
 #endif
 
     configfile_load();
+    jimmie_run_load();
 
     legacy_folder_handler();
 
@@ -565,6 +590,7 @@ int main(int argc, char *argv[]) {
 
     // initialize sm64 data and controllers
     thread5_game_loop(NULL);
+    jimmie_head_trace("game_loop_initialized");
 
     // Initialize the audio thread if possible.
     // init_thread_handle(&gAudioThread, audio_thread, NULL, NULL, 0);
@@ -574,8 +600,20 @@ int main(int argc, char *argv[]) {
     // initialize djui
     djui_init();
     djui_unicode_init();
+#ifdef JIMMIE_NATIVE_HEAD
+    // The original title owns its controller until Start; menu panels consume
+    // the same pad and must be created only when the title hands control back.
+    if (gCLIOpts.network == NT_NONE && !gCLIOpts.coopnet) {
+        gDjuiInMainMenu = false;
+        gDjuiDisabled = true;
+    } else {
+        djui_init_late();
+    }
+#else
     djui_init_late();
+#endif
     djui_console_message_dequeue();
+    jimmie_head_trace("ui_initialized");
 
     show_update_popup();
 
@@ -610,7 +648,15 @@ int main(int argc, char *argv[]) {
         network_init(NT_NONE, false);
     }
 
+    // A CLI host is prepared already, but native Start still owns this screen.
+    // Let the ordinary SDL pad reach Goddard instead of a hidden DJUI panel.
+    if (jimmie_title_active() && gNetworkType == NT_SERVER) {
+        gDjuiInMainMenu = false;
+        gDjuiDisabled = true;
+    }
+
     // main loop
+    jimmie_head_trace("main_loop_started");
     while (true) {
         debug_context_reset();
         CTX_BEGIN(CTX_TOTAL);

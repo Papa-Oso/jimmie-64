@@ -1,0 +1,36 @@
+{
+  "source": "C:\\Github\\Repositories\\jimmie-64\\docs\\start-screen-20261107\\backdrop.png",
+  "source_sha256": "4d2bba92df616680567aec3c553f75ca57bb8ff4f362f29346ca3fc9974f1975",
+  "header_sha256": "2241f48f91ad1b2f154e5477dd92956156c99fc3bd931cff6924734687b9dfdf",
+  "tiles": 128,
+  "format": "RGBA16 big-endian bytes",
+  "safe_frame": [
+    96,
+    8,
+    320,
+    240
+  ],
+  "greetings": [
+    {
+      "file": "title_good_morning_01.ogg",
+      "source": "coopdx\\sm64coopdx\\mods\\jimmie\\sound\\real_good_morning_01.ogg",
+      "sha256": "615d531863f1ec063ab1a5b72f2698a659bc9336f683bd9b9ca13f1f7b42d8eb",
+      "text": "Good morning.",
+      "provenance": "real_vod; independently_asr; current speech_registry; not excluded"
+    },
+    {
+      "file": "title_good_morning_02.ogg",
+      "source": "coopdx\\sm64coopdx\\mods\\jimmie\\sound\\real_good_morning_02.ogg",
+      "sha256": "ec08ee24b1cb057080058702df06368d41bcc27db9676ec63d7f6046e7de6846",
+      "text": "What's up, good morning.",
+      "provenance": "real_vod; independently_asr; current speech_registry; not excluded"
+    },
+    {
+      "file": "title_good_morning_03.ogg",
+      "source": "coopdx\\sm64coopdx\\mods\\jimmie\\sound\\real_good_morning_03.ogg",
+      "sha256": "c2dff5a3ebdaeae90fee01f7a6a208880db0805f866c69bd884e69a221061933",
+      "text": "Good morning.",
+      "provenance": "real_vod; independently_asr; current speech_registry; not excluded"
+    }
+  ]
+}

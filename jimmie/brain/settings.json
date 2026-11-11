@@ -1,0 +1,5 @@
+{
+ "game": "../../build/us_pc",
+ "rom": "../../baserom.us.z64",
+ "config": "../../sm64config.txt"
+}

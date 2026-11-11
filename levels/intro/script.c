@@ -9,6 +9,9 @@
 #include "game/area.h"
 #include "game/level_update.h"
 #include "menu/level_select_menu.h"
+#ifdef JIMMIE_NATIVE_HEAD
+#include "menu/jimmie_title_art.h"
+#endif
 
 #include "levels/scripts.h"
 #include "levels/menu/header.h"
@@ -27,6 +30,9 @@ const LevelScript level_intro_splash_screen[] = {
     // Load "Super Mario 64" logo
     ALLOC_LEVEL_POOL(),
     AREA(/*index*/ 1, intro_geo_0002D0),
+#ifdef JIMMIE_NATIVE_HEAD
+        WARP_NODE(0xEE, 16, 7, 0xED, WARP_NO_CHECKPOINT), // existing companion title-silence marker
+#endif
     END_AREA(),
     FREE_LEVEL_POOL(),
 
@@ -53,13 +59,20 @@ const LevelScript level_intro_mario_head_regular[] = {
 
     ALLOC_LEVEL_POOL(),
     AREA(/*index*/ 1, intro_geo_mario_head_regular),
+#ifdef JIMMIE_NATIVE_HEAD
+        WARP_NODE(0xEE, 16, 7, 0xED, WARP_NO_CHECKPOINT),
+#endif
     END_AREA(),
     FREE_LEVEL_POOL(),
 
     SLEEP(/*frames*/ 2),
     BLACKOUT(/*active*/ FALSE),
     LOAD_AREA(/*area*/ 1),
+#ifdef JIMMIE_NATIVE_HEAD
+    CALL(/*arg*/ 0, /*func*/ jimmie_title_music_init),
+#else
     SET_MENU_MUSIC(/*seq*/ 0x0002),
+#endif
     TRANSITION(/*transType*/ WARP_TRANSITION_FADE_FROM_STAR, /*time*/ 20, /*color*/ 0x00, 0x00, 0x00),
     SLEEP(/*frames*/ 20),
     CALL_LOOP(/*arg*/ 1, /*func*/ lvl_intro_update),
@@ -79,6 +92,9 @@ const LevelScript level_intro_mario_head_dizzy[] = {
     ALLOC_LEVEL_POOL(),
 
     AREA(/*index*/ 1, intro_geo_mario_head_dizzy),
+#ifdef JIMMIE_NATIVE_HEAD
+        WARP_NODE(0xEE, 16, 7, 0xED, WARP_NO_CHECKPOINT),
+#endif
     END_AREA(),
 
     FREE_LEVEL_POOL(),
@@ -150,6 +166,9 @@ const LevelScript script_intro_L4[] = {
     SLEEP(/*frames*/ 16),
     CLEAR_LEVEL(),
     SLEEP(/*frames*/ 2),
+#ifdef JIMMIE_NATIVE_HEAD
+    SET_REG(/*value*/ LEVEL_CASTLE_GROUNDS),
+#endif
     EXIT_AND_EXECUTE(/*seg*/ 0x15, _scriptsSegmentRomStart, _scriptsSegmentRomEnd, level_main_scripts_entry),
 };
 

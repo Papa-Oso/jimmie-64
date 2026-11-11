@@ -13,6 +13,9 @@
 #include "pc/pc_main.h"
 #include "pc/fs/fmem.h"
 #include "audio/load.h"
+#ifdef JIMMIE_NATIVE_HEAD
+#include "menu/jimmie_title_art.h"
+#endif
 
 struct AudioOverride {
     bool enabled;
@@ -225,7 +228,7 @@ static bool audio_sanity_check(struct ModAudio* audio, bool isStream, const char
     return true;
 }
 
-struct ModAudio* audio_load_internal(const char* filename, bool isStream) {
+static struct ModAudio* audio_load_internal_path(const char* filename, bool isStream, bool nativePath) {
     if (!sModAudioPool) { smlua_audio_custom_init(); }
 
     // check file type
@@ -245,7 +248,7 @@ struct ModAudio* audio_load_internal(const char* filename, bool isStream) {
     }
 
     const char *filepath = filename;
-    if (!is_mod_fs_file(filename)) {
+    if (!nativePath && !is_mod_fs_file(filename)) {
 
         // normalize filename
         char normPath[SYS_MAX_PATH] = { 0 };
@@ -406,7 +409,7 @@ static f32 get_audio_volume(struct ModAudio* audio) {
 }
 
 struct ModAudio* audio_stream_load(const char* filename) {
-    return audio_load_internal(filename, true);
+    return audio_load_internal_path(filename, true, false);
 }
 
 void audio_stream_destroy(struct ModAudio* audio) {
@@ -650,8 +653,18 @@ static void audio_sample_destroy_copies(struct ModAudio* audio) {
 }
 
 struct ModAudio* audio_sample_load(const char* filename) {
-    return audio_load_internal(filename, false);
+    return audio_load_internal_path(filename, false, false);
 }
+
+#ifdef JIMMIE_NATIVE_HEAD
+/* Native title only; not exposed through the Lua bindings. */
+struct ModAudio* audio_sample_load_native_title(const char* filename) {
+    return audio_load_internal_path(filename, false, true);
+}
+struct ModAudio* audio_stream_load_native_title(const char* filename) {
+    return audio_load_internal_path(filename, true, true);
+}
+#endif
 
 void audio_sample_destroy(struct ModAudio* audio) {
     if (!audio_sanity_check(audio, false, "destroy")) { return; }
@@ -783,6 +796,9 @@ void audio_custom_update_volume(void) {
 }
 
 void audio_custom_shutdown(void) {
+#ifdef JIMMIE_NATIVE_HEAD
+    jimmie_title_audio_forget();
+#endif
     if (!sModAudioPool) { return; }
 
     audio_sample_destroy_pending_copies();

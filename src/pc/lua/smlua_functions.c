@@ -1087,6 +1087,10 @@ int smlua_func_return_self(lua_State* L) {
 void smlua_bind_functions(void) {
     lua_State* L = gLuaState;
 
+    #if defined(JIMMIE_NATIVE_HEAD) && defined(_WIN32)
+    extern void jimmie_route_bind(lua_State *);
+    jimmie_route_bind(L);
+    #endif
     // misc
     smlua_bind_function(L, "table_copy", smlua_func_table_copy);
     smlua_bind_function(L, "table_deepcopy", smlua_func_table_deepcopy);

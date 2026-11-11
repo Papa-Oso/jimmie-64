@@ -1,0 +1,27 @@
+{
+ "about": "How he reads what the player types in the game chat. The first kind whose words appear in the message decides which chat_ rule in rules.json answers (his replies for each are in real_lines.json). A message that names one of his bits gets that bit. A question or plain statement that shares a word or a topic with one of his real lines usually gets that line instead, so he seems to answer what was said. Tuning how he takes a message is editing this file.",
+ "about_share": 0.85,
+ "said": {
+  "hello": ["hi", "hey", "hello", "yo", "sup", "what's up", "whats up", "wassup", "howdy", "good morning", "gm", "how are you", "how's it going", "hows it going", "what's good", "greetings"],
+  "bye": ["bye", "goodbye", "good night", "goodnight", "gn", "see you", "see ya", "cya", "later dude", "peace out", "gotta go", "gtg", "i'm out", "im out"],
+  "diss": ["suck", "sucks", "trash", "garbage", "stupid", "dumb", "idiot", "loser", "fuck you", "shut up", "stfu", "boring", "bad", "terrible", "awful", "washed", "fraud", "bitch", "clown", "ugly", "hate you", "you fell", "skill issue", "worst", "lame", "bozo"],
+  "praise": ["nice", "sick", "great", "good job", "love you", "love it", "awesome", "clean", "let's go", "lets go", "gg", "pog", "sweet", "amazing", "incredible", "thanks", "thank you", "ty", "goat", "legend", "best", "cool", "well done", "good shit", "beautiful", "proud"],
+  "laugh": ["lol", "lmao", "lmfao", "haha", "hahaha", "rofl", "lul", "kek", "hehe", "that's funny", "thats funny"]
+ },
+ "question_starts": ["what", "what's", "whats", "who's", "how's", "why", "how", "who", "where", "when", "which", "do", "does", "did", "are", "is", "can", "could", "would", "will", "should", "have", "has", "you think", "wanna", "want to"],
+ "bits": {
+  "carrier": ["carrier"],
+  "honey_oil": ["honey oil", "honeyoil", "honey"],
+  "greasy_old_bees": ["bees", "bee"],
+  "pink_bitch": ["pink bitch", "lansing"],
+  "tor_tor_tor": ["tor"],
+  "gub_gub_gub": ["gub"],
+  "day_day": ["day day"],
+  "boom_boom": ["boom boom"],
+  "boing": ["boing"],
+  "goo": ["goo"],
+  "cum": ["cum"],
+  "peach": ["peach", "princess"]
+ },
+ "ignore": ["place", "old", "new", "big", "the", "and", "you", "are", "was", "for", "not", "but", "had", "has", "his", "her", "how", "why", "who", "all", "any", "can", "did", "get", "got", "him", "its", "let", "now", "one", "out", "see", "too", "two", "use", "way", "yes", "yet", "man", "son", "bro", "say", "our", "off", "lot", "bit", "that", "this", "what", "with", "have", "your", "you're", "about", "like", "just", "they", "them", "there", "think", "know", "want", "really", "going", "does", "don't", "dont", "fuck", "fucking", "shit", "dude", "jimmie", "jimmy", "mario", "yeah", "would", "could", "should", "when", "where", "here", "were", "from", "some", "been", "good", "much", "very", "well", "make", "time", "ever", "favorite", "thing", "things", "doing", "tell", "said", "right", "little", "gonna", "still", "into", "over", "down", "back", "then", "than", "only", "even", "more", "most", "need", "feel", "look", "something", "anything", "nothing", "because", "their", "will", "can't", "didn't", "that's", "what's", "it's", "i'm"]
+}

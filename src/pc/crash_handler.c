@@ -169,6 +169,12 @@ static struct {
 
 #endif
 
+#ifdef JIMMIE_NATIVE_HEAD
+#define JH_CRASH_TEXT(s) do { if (getenv("JIMMIE_HEAD_TRACE")) { fprintf(stderr, "%s\n", s); fflush(stderr); } } while (0)
+#else
+#define JH_CRASH_TEXT(s) ((void)0)
+#endif
+
 #define crash_handler_set_text(_x_, _y_, _r_, _g_, _b_, _fmt_, ...)     \
 {                                                                       \
     if (_x_ == -1) {                                                    \
@@ -181,6 +187,7 @@ static struct {
     pText->g = _g_;                                                     \
     pText->b = _b_;                                                     \
     snprintf(pText->s, 128, _fmt_, __VA_ARGS__);                        \
+    JH_CRASH_TEXT(pText->s);                                           \
     pText++;                                                            \
 }
 

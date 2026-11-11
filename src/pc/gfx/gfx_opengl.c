@@ -31,6 +31,13 @@
 #include "gfx_cc.h"
 #include "gfx_rendering_api.h"
 #include "gfx_pc.h"
+#include "goddard/jimmie_head.h"
+#ifdef JIMMIE_NATIVE_HEAD
+#include "game/game_init.h"
+#include "game/area.h"
+#include "game/level_update.h"
+#include "pc/djui/djui.h"
+#endif
 
 #define TEX_CACHE_STEP 512
 
@@ -868,7 +875,124 @@ static void gfx_opengl_start_frame(void) {
     glEnable(GL_SCISSOR_TEST);
 }
 
+
+#ifdef JIMMIE_NATIVE_HEAD
+/* Private rendered QA only. Read this renderer's own back buffer, without
+ * touching the camera, controller, object state or rail selection. The dedicated
+ * capture environment flag also requests an SDL hidden window. */
+static void jimmie_capture_game_frame(void) {
+    static unsigned observedTicks, attempts;
+    static unsigned previousTimer;
+    static s16 previousLevel, previousArea;
+    static bool havePrevious;
+    const char *directory = getenv("JIMMIE_GAME_FRAMES");
+    if (!directory || !directory[0] || attempts >= 360 || gDjuiDisabled
+        || !gCurrentArea || gMarioStates[0].action == 0) return;
+    if (havePrevious && previousTimer == gGlobalTimer
+        && previousLevel == gCurrLevelNum && previousArea == gCurrAreaIndex) return;
+    previousTimer = gGlobalTimer;
+    previousLevel = gCurrLevelNum;
+    previousArea = gCurrAreaIndex;
+    havePrevious = true;
+    if (observedTicks++ % 3 != 0) return;
+    unsigned serial = ++attempts;
+    SDL_Window *window = SDL_GL_GetCurrentWindow();
+    int width = 0, height = 0;
+    if (!window) return;
+    SDL_GL_GetDrawableSize(window, &width, &height);
+    /* At most 360 x 640 x 480 x 3 bytes, plus small headers and metadata. */
+    if (width < 1 || height < 1 || width > 640 || height > 480) {
+        fprintf(stderr, "[jimmie-visual] refused framebuffer size %dx%d\n", width, height);
+        attempts = 360;
+        return;
+    }
+    char name[128], path[1024];
+    snprintf(name, sizeof(name), "game-%04u-l%02d-a%02d-f%06u.ppm",
+        serial, gCurrLevelNum, gCurrAreaIndex, gGlobalTimer);
+    int pathLength = snprintf(path, sizeof(path), "%s/%s", directory, name);
+    if (pathLength < 0 || pathLength >= (int)sizeof(path)) {
+        fprintf(stderr, "[jimmie-visual] capture path too long\n");
+        attempts = 360;
+        return;
+    }
+    unsigned char *pixels = malloc((size_t)width * height * 3);
+    if (!pixels) { attempts = 360; return; }
+    GLint alignment;
+    glGetIntegerv(GL_PACK_ALIGNMENT, &alignment);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+    glPixelStorei(GL_PACK_ALIGNMENT, alignment);
+    FILE *f = fopen(path, "wb");
+    bool wrote = false;
+    if (f) {
+        wrote = fprintf(f, "P6\n%d %d\n255\n", width, height) > 0;
+        for (int y = height - 1; y >= 0; --y) {
+            if (fwrite(pixels + (size_t)y * width * 3, 3, width, f) != (size_t)width) wrote = false;
+        }
+        if (fclose(f) != 0) wrote = false;
+    }
+    free(pixels);
+    if (!wrote) {
+        fprintf(stderr, "[jimmie-visual] capture write failed\n");
+        attempts = 360;
+        return;
+    }
+    /* File identity and native game tick are emitted together after readback.
+     * Logs distinguish actual pixels from the Lua object's render-hook metadata. */
+    printf("[jimmie-visual] frame {\"file\":\"%s\",\"serial\":%u,"
+        "\"level\":%d,\"area\":%d,\"frame\":%u,\"renderFrame\":%u,"
+        "\"width\":%d,\"height\":%d,\"ticks\":%u}\n",
+        name, serial, gCurrLevelNum, gCurrAreaIndex, gGlobalTimer, frame_count,
+        width, height, SDL_GetTicks());
+    fflush(stdout);
+}
+#endif
+
 static void gfx_opengl_end_frame(void) {
+#ifdef JIMMIE_NATIVE_HEAD
+    jimmie_capture_game_frame();
+    /* Export this renderer's own back buffer for local visual regression.
+     * This never captures the desktop or another application's window. */
+    const char *directory = getenv("JIMMIE_HEAD_FRAMES");
+    static unsigned captured;
+    unsigned headFrame = jimmie_head_frame();
+    unsigned slot = headFrame >= 300 ? 4 : headFrame >= 150 ? 2 : headFrame >= 30 ? 1 : 0;
+    if (headFrame >= 690 && headFrame < 1180) {
+        unsigned target = (headFrame - 690) / 70, phase = (headFrame - 690) % 70;
+        if (phase == 13 || phase == 69) slot = 1u << (3 + target * 2 + (phase == 69));
+    }
+    bool gameCapture = false;
+    if (directory && getenv("JIMMIE_SDL_CONTROLLER_TEST") && !gDjuiDisabled
+        && gCurrLevelNum == LEVEL_CASTLE_GROUNDS && gMarioStates[0].action != 0) {
+        unsigned ms = SDL_GetTicks();
+        slot = ms >= 80000 ? 1u << 20 : ms >= 60000 ? 1u << 19 : ms >= 35000 ? 1u << 18 : 0;
+        gameCapture = true;
+    }
+    if (directory && slot && !(captured & slot)) {
+        captured |= slot;
+        SDL_Window *window = SDL_GL_GetCurrentWindow();
+        int width = 0, height = 0;
+        if (!window) return;
+        SDL_GL_GetDrawableSize(window, &width, &height);
+        if (width < 1 || height < 1 || width > 4096 || height > 4096) return;
+        unsigned char *pixels = malloc((size_t)width * height * 3);
+        if (!pixels) return;
+        GLint alignment;
+        glGetIntegerv(GL_PACK_ALIGNMENT, &alignment);
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+        glPixelStorei(GL_PACK_ALIGNMENT, alignment);
+        char path[1024];
+        snprintf(path, sizeof(path), "%s/%s-%06u.ppm", directory, gameCapture ? "game" : "head", gameCapture ? gGlobalTimer : headFrame);
+        FILE *f = fopen(path, "wb");
+        if (f) {
+            fprintf(f, "P6\n%d %d\n255\n", width, height);
+            for (int y = height - 1; y >= 0; --y) fwrite(pixels + (size_t)y * width * 3, 3, width, f);
+            fclose(f);
+        }
+        free(pixels);
+    }
+#endif
 }
 
 static void gfx_opengl_finish_render(void) {

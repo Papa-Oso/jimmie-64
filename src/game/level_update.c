@@ -8,6 +8,7 @@
 #include "audio/external.h"
 #include "level_update.h"
 #include "game_init.h"
+#include "pc/jimmie_run_bridge.h"
 #include "level_update.h"
 #include "main.h"
 #include "engine/math_util.h"
@@ -1534,6 +1535,7 @@ s32 update_current_play_mode() {
             changeLevel = play_mode_change_level();
             break;
         case PLAY_MODE_FRAME_ADVANCE:
+            jimmie_run_disqualify();
             changeLevel = play_mode_frame_advance();
             break;
     }
@@ -2034,6 +2036,7 @@ s32 lvl_exiting_credits(UNUSED s16 arg0, UNUSED s32 arg1) {
 }
 
 void fake_lvl_init_from_save_file(void) {
+    jimmie_run_begin_file();
     sWarpDest.type = WARP_TYPE_NOT_WARPING;
     sDelayedWarpOp = WARP_OP_NONE;
     gNeverEnteredCastle = !save_file_exists(gCurrSaveFileNum - 1) && (gServerSettings.skipIntro == 0);

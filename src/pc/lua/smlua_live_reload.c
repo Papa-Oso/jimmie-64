@@ -417,6 +417,7 @@ static void smlua_reload_module(lua_State *L, struct Mod* mod, struct ModFile *f
     LUA_STACK_CHECK_END(L);
 }
 
+#include "pc/jimmie_companion_profile.h"
 void smlua_live_reload_update(lua_State* L) {
     // only refresh every LIVE_RELOAD_TICK_COUNT ticks
     static int refreshTimer = 0;
@@ -442,6 +443,7 @@ void smlua_live_reload_update(lua_State* L) {
             // update modified time and reload the module
             file->modifiedTimestamp = timestamp;
             gLuaActiveModFile = file;
+            jimmie_companion_before_reload(mod, file);
             smlua_reload_module(L, mod, file);
         }
 

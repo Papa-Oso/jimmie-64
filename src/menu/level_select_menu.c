@@ -16,6 +16,14 @@
 #include "sm64.h"
 #include "pc/lua/utils/smlua_level_utils.h"
 #include "menu/intro_geo.h"
+#include "menu/jimmie_title_pb.h"
+#include "menu/jimmie_title_art.h"
+#ifdef JIMMIE_NATIVE_HEAD
+#include <stdlib.h>
+#include "goddard/jimmie_head.h"
+#include "pc/djui/djui.h"
+#include "pc/network/network.h"
+#endif
 
 #define STUB_LEVEL(textname, _1, _2, _3, _4, _5, _6, _7, _8) textname,
 #define DEFINE_LEVEL(textname, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10) textname,
@@ -176,7 +184,9 @@ s32 intro_default(void) {
 
 #ifndef VERSION_JP
     if (D_U_801A7C34 == 1) {
-        if (gGlobalTimer < 0x81) {
+        if (jimmie_title_active()) {
+            if (!(gPlayer1Controller->buttonPressed & START_BUTTON)) jimmie_title_greet();
+        } else if (gGlobalTimer < 0x81) {
             play_sound(SOUND_MARIO_HELLO, gGlobalSoundSource);
         } else {
             play_sound(SOUND_MARIO_PRESS_START_TO_PLAY, gGlobalSoundSource);
@@ -184,7 +194,11 @@ s32 intro_default(void) {
         D_U_801A7C34 = 0;
     }
 #endif
+#ifdef JIMMIE_NATIVE_HEAD
+    if (!(gPlayer1Controller->buttonPressed & START_BUTTON)) jimmie_title_audio_update();
+#endif
     print_intro_text();
+    jimmie_title_pb_draw();
 
     if (gPlayer1Controller->buttonPressed & START_BUTTON) {
         play_sound(SOUND_MENU_STAR_SOUND, gGlobalSoundSource);
@@ -197,7 +211,7 @@ s32 intro_default(void) {
         D_U_801A7C34 = 1;
 #endif
     }
-    return run_press_start_demo_timer(sp1C);
+    return jimmie_title_active() ? sp1C : run_press_start_demo_timer(sp1C);
 }
 
 s32 intro_game_over(void) {
@@ -228,12 +242,23 @@ s32 intro_game_over(void) {
 
 s32 intro_play_its_a_me_mario(void) {
     set_background_music(0, SEQ_SOUND_PLAYER, 0);
-    play_sound(SOUND_MENU_COIN_ITS_A_ME_MARIO, gGlobalSoundSource);
+    if (!jimmie_title_active()) play_sound(SOUND_MENU_COIN_ITS_A_ME_MARIO, gGlobalSoundSource);
     return 1;
 }
 
 s32 lvl_intro_update(s16 arg1, UNUSED s32 arg2) {
     s32 retVar = 0;
+#ifdef JIMMIE_NATIVE_HEAD
+    static s32 testStartSent;
+    if (arg1 == 1 && getenv("JIMMIE_HEAD_TEST_INTERACTION"))
+        gPlayer1Controller->buttonDown = A_BUTTON; /* hold off attract demo in fixture */
+    u32 testStartFrame = getenv("JIMMIE_HEAD_TEST_INTERACTION") ? 1250 : 300;
+    if (arg1 == 1 && !testStartSent && gGlobalTimer >= testStartFrame && getenv("JIMMIE_HEAD_TEST_START")) {
+        gPlayer1Controller->buttonPressed |= START_BUTTON;
+        testStartSent = 1;
+        jimmie_head_trace("test_start_pressed");
+    }
+#endif
 
     switch (arg1) {
         case 0:
@@ -249,5 +274,19 @@ s32 lvl_intro_update(s16 arg1, UNUSED s32 arg2) {
             retVar = level_select_input_loop();
             break;
     }
+#ifdef JIMMIE_NATIVE_HEAD
+    if (arg1 != 0 && retVar != 0) jimmie_title_stop_greeting();
+    if (arg1 != 0 && retVar != 0 && gDjuiDisabled) {
+        gDjuiDisabled = false;
+        if (gNetworkType == NT_SERVER) {
+            gDjuiInMainMenu = false;
+            jimmie_head_trace("title_handed_to_host");
+        } else {
+            gDjuiInMainMenu = true;
+            djui_init_late();
+            jimmie_head_trace("title_handed_to_menu");
+        }
+    }
+#endif
     return retVar;
 }

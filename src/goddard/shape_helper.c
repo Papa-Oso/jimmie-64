@@ -15,6 +15,7 @@
 #include "renderer.h"
 #include "shape_helper.h"
 #include "skin.h"
+#include "jimmie_head.h"
 
 #ifndef VERSION_EU
 #include <prevent_bss_reordering.h>
@@ -1249,6 +1250,7 @@ void animate_mario_head_normal(struct ObjAnimator *self) {
  * sparkle particles
  */
 s32 load_mario_head(void (*aniFn)(struct ObjAnimator *)) {
+    jimmie_head_reset();
     struct ObjNet *sp54; // net made with sp48 group
     UNUSED u8 pad4C[0x54 - 0x4c];
     struct ObjGroup *sp48; // Joint group
@@ -1414,6 +1416,8 @@ s32 load_mario_head(void (*aniFn)(struct ObjAnimator *)) {
     sp54->netType = 3;
     addto_group(gMarioFaceGrp, &sp48->header);
     addto_groupfirst(gMarioFaceGrp, &sp54->header);
+
+    jimmie_head_init(animator, sp48, camera);
 
     return 0;
 }
