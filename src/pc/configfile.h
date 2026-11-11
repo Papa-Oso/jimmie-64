@@ -9,6 +9,7 @@
 #define CONFIGFILE_BACKUP "sm64config-backup.txt"
 
 #define MAX_BINDS  3
+#define MAX_C_BINDS (MAX_BINDS + 1)
 #define MAX_VOLUME 127
 #define MAX_CONFIG_STRING 64
 #define MAX_SAVE_NAME_STRING 32
@@ -81,10 +82,10 @@ extern unsigned int configKeyStart[MAX_BINDS];
 extern unsigned int configKeyL[MAX_BINDS];
 extern unsigned int configKeyR[MAX_BINDS];
 extern unsigned int configKeyZ[MAX_BINDS];
-extern unsigned int configKeyCUp[MAX_BINDS];
-extern unsigned int configKeyCDown[MAX_BINDS];
-extern unsigned int configKeyCLeft[MAX_BINDS];
-extern unsigned int configKeyCRight[MAX_BINDS];
+extern unsigned int configKeyCUp[MAX_C_BINDS];
+extern unsigned int configKeyCDown[MAX_C_BINDS];
+extern unsigned int configKeyCLeft[MAX_C_BINDS];
+extern unsigned int configKeyCRight[MAX_C_BINDS];
 extern unsigned int configKeyStickUp[MAX_BINDS];
 extern unsigned int configKeyStickDown[MAX_BINDS];
 extern unsigned int configKeyStickLeft[MAX_BINDS];
@@ -190,6 +191,7 @@ extern bool configExCoopTheme;
 
 void enable_queued_mods(void);
 void enable_queued_dynos_packs(void);
+int configfile_bind_count(const unsigned int *binds);
 void configfile_reset_keybinds(bool extra);
 void configfile_load(void);
 void configfile_save(const char *filename);

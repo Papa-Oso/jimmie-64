@@ -107,10 +107,10 @@ static const unsigned int defaultConfigKeyStart[MAX_BINDS]      = { 0x0039,     
 static const unsigned int defaultConfigKeyL[MAX_BINDS]          = { 0x002A,     0x1009,     0x1104     };
 static const unsigned int defaultConfigKeyR[MAX_BINDS]          = { 0x0036,     0x100A,     0x101B     };
 static const unsigned int defaultConfigKeyZ[MAX_BINDS]          = { 0x0025,     0x1007,     0x101A     };
-static const unsigned int defaultConfigKeyCUp[MAX_BINDS]        = { 0x0148,     VK_INVALID, VK_INVALID };
-static const unsigned int defaultConfigKeyCDown[MAX_BINDS]      = { 0x0150,     VK_INVALID, VK_INVALID };
-static const unsigned int defaultConfigKeyCLeft[MAX_BINDS]      = { 0x014B,     VK_INVALID, VK_INVALID };
-static const unsigned int defaultConfigKeyCRight[MAX_BINDS]     = { 0x014D,     VK_INVALID, VK_INVALID };
+static const unsigned int defaultConfigKeyCUp[MAX_C_BINDS]      = { 0x0148,     VK_INVALID, VK_INVALID, VK_RSTICK_UP };
+static const unsigned int defaultConfigKeyCDown[MAX_C_BINDS]    = { 0x0150,     VK_INVALID, VK_INVALID, VK_RSTICK_DOWN };
+static const unsigned int defaultConfigKeyCLeft[MAX_C_BINDS]    = { 0x014B,     VK_INVALID, VK_INVALID, VK_RSTICK_LEFT };
+static const unsigned int defaultConfigKeyCRight[MAX_C_BINDS]   = { 0x014D,     VK_INVALID, VK_INVALID, VK_RSTICK_RIGHT };
 static const unsigned int defaultConfigKeyStickUp[MAX_BINDS]    = { 0x0011,     VK_INVALID, VK_INVALID };
 static const unsigned int defaultConfigKeyStickDown[MAX_BINDS]  = { 0x001F,     VK_INVALID, VK_INVALID };
 static const unsigned int defaultConfigKeyStickLeft[MAX_BINDS]  = { 0x001E,     VK_INVALID, VK_INVALID };
@@ -134,10 +134,10 @@ unsigned int configKeyStart[MAX_BINDS]            = { 0x0039,     0x1006,     VK
 unsigned int configKeyL[MAX_BINDS]                = { 0x002A,     0x1009,     0x1104     };
 unsigned int configKeyR[MAX_BINDS]                = { 0x0036,     0x100A,     0x101B     };
 unsigned int configKeyZ[MAX_BINDS]                = { 0x0025,     0x1007,     0x101A     };
-unsigned int configKeyCUp[MAX_BINDS]              = { 0x0148,     VK_INVALID, VK_INVALID };
-unsigned int configKeyCDown[MAX_BINDS]            = { 0x0150,     VK_INVALID, VK_INVALID };
-unsigned int configKeyCLeft[MAX_BINDS]            = { 0x014B,     VK_INVALID, VK_INVALID };
-unsigned int configKeyCRight[MAX_BINDS]           = { 0x014D,     VK_INVALID, VK_INVALID };
+unsigned int configKeyCUp[MAX_C_BINDS]            = { 0x0148,     VK_INVALID, VK_INVALID, VK_RSTICK_UP };
+unsigned int configKeyCDown[MAX_C_BINDS]          = { 0x0150,     VK_INVALID, VK_INVALID, VK_RSTICK_DOWN };
+unsigned int configKeyCLeft[MAX_C_BINDS]          = { 0x014B,     VK_INVALID, VK_INVALID, VK_RSTICK_LEFT };
+unsigned int configKeyCRight[MAX_C_BINDS]         = { 0x014D,     VK_INVALID, VK_INVALID, VK_RSTICK_RIGHT };
 unsigned int configKeyStickUp[MAX_BINDS]          = { 0x0011,     VK_INVALID, VK_INVALID };
 unsigned int configKeyStickDown[MAX_BINDS]        = { 0x001F,     VK_INVALID, VK_INVALID };
 unsigned int configKeyStickLeft[MAX_BINDS]        = { 0x001E,     VK_INVALID, VK_INVALID };
@@ -686,12 +686,25 @@ const char *configfile_backup_name(void) {
     return CONFIGFILE_BACKUP;
 }
 
+int configfile_bind_count(const unsigned int *binds) {
+    if (binds == configKeyCUp || binds == configKeyCDown || binds == configKeyCLeft || binds == configKeyCRight) {
+        return MAX_C_BINDS;
+    }
+    return MAX_BINDS;
+}
+
 // Loads the config file specified by 'filename'
 static void configfile_load_internal(const char *filename, bool* error) {
     fs_file_t *file;
     char *line;
     unsigned int temp;
     *error = false;
+
+    // Old configs store three C binds. Seed their implicit stick direction even when loading a backup.
+    configKeyCUp[MAX_BINDS]    = VK_RSTICK_UP;
+    configKeyCDown[MAX_BINDS]  = VK_RSTICK_DOWN;
+    configKeyCLeft[MAX_BINDS]  = VK_RSTICK_LEFT;
+    configKeyCRight[MAX_BINDS] = VK_RSTICK_RIGHT;
 
 #ifdef DEVELOPMENT
     printf("Loading configuration from '%s'\n", filename);
@@ -768,10 +781,12 @@ static void configfile_load_internal(const char *filename, bool* error) {
                         case CONFIG_TYPE_UINT:
                             sscanf(tokens[1], "%u", option->uintValue);
                             break;
-                        case CONFIG_TYPE_BIND:
-                            for (int i = 0; i < MAX_BINDS && i < numTokens - 1; ++i)
+                        case CONFIG_TYPE_BIND: {
+                            int count = configfile_bind_count(option->uintValue);
+                            for (int i = 0; i < count && i < numTokens - 1; ++i)
                                 sscanf(tokens[i + 1], "%x", option->uintValue + i);
                             break;
+                        }
                         case CONFIG_TYPE_FLOAT:
                             sscanf(tokens[1], "%f", option->floatValue);
                             break;
@@ -918,12 +933,14 @@ static void configfile_save_option(FILE *file, const struct ConfigOption *option
         case CONFIG_TYPE_FLOAT:
             fprintf(file, "%s %f\n", option->name, *option->floatValue);
             break;
-        case CONFIG_TYPE_BIND:
+        case CONFIG_TYPE_BIND: {
+            int count = configfile_bind_count(option->uintValue);
             fprintf(file, "%s ", option->name);
-            for (int i = 0; i < MAX_BINDS; ++i)
+            for (int i = 0; i < count; ++i)
                 fprintf(file, "%04x ", option->uintValue[i]);
             fprintf(file, "\n");
             break;
+        }
         case CONFIG_TYPE_STRING:
             fprintf(file, "%s %s\n", option->name, option->stringValue);
             break;

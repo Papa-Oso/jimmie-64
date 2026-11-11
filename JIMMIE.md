@@ -35,6 +35,13 @@ double-click **Play Jimmie 64**, and drag your `.z64` ROM onto the game window w
 In the game's chat, type `/j16 16` for the 16-star run or `/j16 free` to explore. Type anything
 else to talk to him.
 
+### Nintendo Switch Pro Controller
+
+Hold **ZL** to crouch (N64 Z). Tilt the **right stick** more than halfway up, down, left, or right
+to press the corresponding N64 C button. To change one, open **Options → Controls → N64 Binds**,
+select its right-stick binding, then tilt the stick or press the button you want to use.
+If you have multiple controllers connected, pick the one you're using under **Options → Controls → Gamepad**.
+
 ## What is in here
 
 | Folder | What it is |

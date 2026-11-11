@@ -6,7 +6,8 @@ struct DjuiBind {
     struct DjuiBase base;
     struct DjuiText* text;
     struct DjuiRect* rect;
-    struct DjuiButton* buttons[MAX_BINDS];
+    struct DjuiButton* buttons[MAX_C_BINDS];
+    int buttonCount;
     unsigned int* configKey;
 };
 

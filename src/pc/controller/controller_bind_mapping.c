@@ -129,8 +129,12 @@ const char* translate_bind_to_name(int bind) {
             case 12: return "[DPAD Down]";
             case 13: return "[DPAD Left]";
             case 14: return "[DPAD Right]";
-            case 0x1A: return "[L Trig]";
-            case 0x1B: return "[R Trig]";
+            case VK_LTRIGGER - VK_BASE_SDL_GAMEPAD:     return "[LT/ZL]";
+            case VK_RTRIGGER - VK_BASE_SDL_GAMEPAD:     return "[RT/ZR]";
+            case VK_RSTICK_UP - VK_BASE_SDL_GAMEPAD:    return "[RS Up]";
+            case VK_RSTICK_DOWN - VK_BASE_SDL_GAMEPAD:  return "[RS Down]";
+            case VK_RSTICK_LEFT - VK_BASE_SDL_GAMEPAD:  return "[RS Left]";
+            case VK_RSTICK_RIGHT - VK_BASE_SDL_GAMEPAD: return "[RS Right]";
             default: return name;
         }
     }

@@ -75,10 +75,12 @@ static void jimmie_test_pad_trace(OSContPad *pad) {
 }
 #endif
 
-#define MAX_JOYBINDS 32
-#define MAX_MOUSEBUTTONS 8 // arbitrary
-#define MAX_JOYBUTTONS 32  // arbitrary; includes virtual keys for triggers
+#define MAX_MOUSEBUTTONS 8 // buttons captured by the binding UI
+#define MAX_JOYBINDS 64 // 20 actions with 3 binds each, plus the fourth bind on each C button
+#define MAX_RAW_JOYBUTTONS 32
+#define MAX_JOYBUTTONS (VK_RSTICK_RIGHT - VK_BASE_SDL_GAMEPAD + 1)
 #define AXIS_THRESHOLD (30 * 256)
+#define CSTICK_THRESHOLD 0x4000
 
 static bool init_ok = false;
 static bool haptics_enabled = false;
@@ -105,17 +107,17 @@ static s16 invert_s16(s16 val) {
 }
 
 static inline void controller_add_binds(const u32 mask, const u32 *btns) {
-    for (u32 i = 0; i < MAX_BINDS; ++i) {
-        if (btns[i] >= VK_BASE_SDL_GAMEPAD && btns[i] <= VK_BASE_SDL_GAMEPAD + VK_SIZE) {
-            if (btns[i] >= VK_BASE_SDL_MOUSE && num_mouse_binds < MAX_JOYBINDS) {
-                mouse_binds[num_mouse_binds][0] = btns[i] - VK_BASE_SDL_MOUSE;
-                mouse_binds[num_mouse_binds][1] = mask;
-                ++num_mouse_binds;
-            } else if (num_joy_binds < MAX_JOYBINDS) {
-                joy_binds[num_joy_binds][0] = btns[i] - VK_BASE_SDL_GAMEPAD;
-                joy_binds[num_joy_binds][1] = mask;
-                ++num_joy_binds;
-            }
+    const int count = configfile_bind_count(btns);
+    for (int i = 0; i < count; ++i) {
+        u32 key = btns[i];
+        if (key >= VK_BASE_SDL_GAMEPAD && key < VK_BASE_SDL_GAMEPAD + MAX_JOYBUTTONS && num_joy_binds < MAX_JOYBINDS) {
+            joy_binds[num_joy_binds][0] = key - VK_BASE_SDL_GAMEPAD;
+            joy_binds[num_joy_binds][1] = mask;
+            ++num_joy_binds;
+        } else if (key > VK_BASE_SDL_MOUSE && key <= VK_BASE_SDL_MOUSE + 32 && num_mouse_binds < MAX_JOYBINDS) {
+            mouse_binds[num_mouse_binds][0] = key - VK_BASE_SDL_MOUSE;
+            mouse_binds[num_mouse_binds][1] = mask;
+            ++num_mouse_binds;
         }
     }
 }
@@ -273,7 +275,7 @@ static void controller_sdl_read(OSContPad *pad) {
     u32 buttons_down = 0;
     if (!gInteractableOverridePad) {
         for (u32 i = 0; i < num_mouse_binds; ++i)
-            if (mouse & SDL_BUTTON(mouse_binds[i][0]))
+            if (mouse & (1u << (mouse_binds[i][0] - 1)))
                 buttons_down |= mouse_binds[i][1];
     }
     pad->button |= buttons_down;
@@ -343,7 +345,8 @@ static void controller_sdl_read(OSContPad *pad) {
         }
         if (axis_count >= 4) {
             rightx = SDL_JoystickGetAxis(sdl_joystick, 2);
-            righty = SDL_JoystickGetAxis(sdl_joystick, 5); // Specific to N64 controller
+            // Six-axis N64 adapters place right Y after the two triggers.
+            righty = SDL_JoystickGetAxis(sdl_joystick, axis_count >= 6 ? 5 : 3);
         }
         if (axis_count >= 6) {
             ltrig = SDL_JoystickGetAxis(sdl_joystick, 3);
@@ -351,7 +354,7 @@ static void controller_sdl_read(OSContPad *pad) {
         }
 
         int button_count = SDL_JoystickNumButtons(sdl_joystick);
-        for (int i = 0; i < button_count && i < MAX_JOYBUTTONS; ++i) {
+        for (int i = 0; i < button_count && i < MAX_RAW_JOYBUTTONS; ++i) {
             update_button(i, SDL_JoystickGetButton(sdl_joystick, i));
         }
     }
@@ -373,6 +376,10 @@ static void controller_sdl_read(OSContPad *pad) {
 
     update_button(VK_LTRIGGER - VK_BASE_SDL_GAMEPAD, ltrig > AXIS_THRESHOLD);
     update_button(VK_RTRIGGER - VK_BASE_SDL_GAMEPAD, rtrig > AXIS_THRESHOLD);
+    update_button(VK_RSTICK_UP - VK_BASE_SDL_GAMEPAD, righty < -CSTICK_THRESHOLD);
+    update_button(VK_RSTICK_DOWN - VK_BASE_SDL_GAMEPAD, righty > CSTICK_THRESHOLD);
+    update_button(VK_RSTICK_LEFT - VK_BASE_SDL_GAMEPAD, rightx < -CSTICK_THRESHOLD);
+    update_button(VK_RSTICK_RIGHT - VK_BASE_SDL_GAMEPAD, rightx > CSTICK_THRESHOLD);
 
     for (u32 i = 0; i < num_joy_binds; ++i)
         if (joy_buttons[joy_binds[i][0]])
@@ -390,11 +397,6 @@ static void controller_sdl_read(OSContPad *pad) {
         pad->stick_y = -128;
     else if (ystick == STICK_UP)
         pad->stick_y = 127;
-
-    if (rightx < -0x4000) pad->button |= L_CBUTTONS;
-    if (rightx > 0x4000) pad->button |= R_CBUTTONS;
-    if (righty < -0x4000) pad->button |= U_CBUTTONS;
-    if (righty > 0x4000) pad->button |= D_CBUTTONS;
 
     update_analog_stick(&pad->stick_x, &pad->stick_y, leftx, lefty);
     update_analog_stick(&pad->ext_stick_x, &pad->ext_stick_y, rightx, righty);

@@ -71,7 +71,8 @@ void keyboard_on_text_editing(char* text, int cursorPos) {
 }
 
 static void keyboard_add_binds(int mask, unsigned int *scancode) {
-    for (int i = 0; i < MAX_BINDS && num_keybinds < MAX_KEYBINDS; ++i) {
+    int count = configfile_bind_count(scancode);
+    for (int i = 0; i < count && num_keybinds < MAX_KEYBINDS; ++i) {
         if (scancode[i] < VK_BASE_KEYBOARD + VK_SIZE) {
             keyboard_mapping[num_keybinds][0] = scancode[i];
             keyboard_mapping[num_keybinds][1] = mask;

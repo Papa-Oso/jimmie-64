@@ -9,6 +9,12 @@
 #define VK_LTRIGGER 0x101A
 #define VK_RTRIGGER 0x101B
 
+// Right-stick directions follow the 32 button slots used by raw joysticks.
+#define VK_RSTICK_UP    0x1020
+#define VK_RSTICK_DOWN  0x1021
+#define VK_RSTICK_LEFT  0x1022
+#define VK_RSTICK_RIGHT 0x1023
+
 // fake buttons for binding the stick directions
 #define STICK_UP    0x80000
 #define STICK_DOWN  0x40000

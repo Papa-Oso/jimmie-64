@@ -23,17 +23,21 @@ static void djui_bind_button_on_bind(struct DjuiBase* caller) {
     u32 key = controller_get_raw_key();
     if (key == VK_INVALID) { return; }
 
-    // invalidate key
-    for (int i = 0; i < MAX_BINDS; i++) {
+    for (int i = 0; i < bind->buttonCount; i++) {
         if (i == button->base.tag) { continue; }
         if (bind->configKey[i] == key) {
-            key = VK_INVALID;
+            if (key == VK_RSTICK_UP || key == VK_RSTICK_DOWN || key == VK_RSTICK_LEFT || key == VK_RSTICK_RIGHT) {
+                // A default stick bind may already occupy the last slot. Move it to the selected slot.
+                bind->configKey[i] = VK_INVALID;
+            } else {
+                key = VK_INVALID;
+            }
         }
     }
 
     // set key
     bind->configKey[button->base.tag] = key;
-    djui_text_set_text(button->text, translate_bind_to_name(key));
+    djui_bind_refresh(bind);
     djui_interactable_set_binding(NULL);
     play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
     controller_reconfigure();
@@ -49,6 +53,7 @@ struct DjuiBind* djui_bind_create(struct DjuiBase* parent, const char* message, 
     struct DjuiBase* base     = &bind->base;
 
     bind->configKey = configKey;
+    bind->buttonCount = configfile_bind_count(configKey);
 
     djui_base_init(parent, base, NULL, djui_bind_destroy);
     djui_base_set_size_type(&bind->base, DJUI_SVT_RELATIVE, DJUI_SVT_ABSOLUTE);
@@ -71,17 +76,19 @@ struct DjuiBind* djui_bind_create(struct DjuiBase* parent, const char* message, 
     djui_base_set_color(&rect->base, 0, 0, 0, 0);
     bind->rect = rect;
 
-    for (int i = 0; i < MAX_BINDS; i++) {
+    f32 buttonWidth = 0.99f / bind->buttonCount;
+    f32 buttonSpacing = (1.0f - buttonWidth) / (bind->buttonCount - 1);
+    for (int i = 0; i < bind->buttonCount; i++) {
         unsigned int key = configKey[i];
         struct DjuiButton* button = djui_button_create(&rect->base, translate_bind_to_name(key), DJUI_BUTTON_STYLE_NORMAL, djui_bind_button_on_click);
         djui_base_set_size_type(&button->base, DJUI_SVT_RELATIVE, DJUI_SVT_RELATIVE);
-        djui_base_set_size(&button->base, 0.33f, 1.0f);
+        djui_base_set_size(&button->base, buttonWidth, 1.0f);
+        djui_base_set_alignment(&button->base, DJUI_HALIGN_LEFT, DJUI_VALIGN_CENTER);
+        djui_base_set_location_type(&button->base, DJUI_SVT_RELATIVE, DJUI_SVT_ABSOLUTE);
+        djui_base_set_location(&button->base, i * buttonSpacing, 0);
+        djui_text_set_font_scale(button->text, button->text->fontScale * MAX_BINDS / bind->buttonCount);
         button->base.tag = i;
         djui_interactable_hook_bind(&button->base, djui_bind_button_on_bind);
-
-        enum DjuiHAlign hAlign = DJUI_HALIGN_LEFT;
-        if (i > 0) { hAlign = (i == 1) ? DJUI_HALIGN_CENTER : DJUI_HALIGN_RIGHT; }
-        djui_base_set_alignment(&button->base, hAlign, DJUI_VALIGN_CENTER);
 
         bind->buttons[i] = button;
     }
@@ -92,7 +99,7 @@ struct DjuiBind* djui_bind_create(struct DjuiBase* parent, const char* message, 
 void djui_bind_refresh(struct DjuiBind *bind) {
     if (!bind || !bind->configKey) { return; }
 
-    for (s32 i = 0; i < MAX_BINDS; ++i) {
+    for (s32 i = 0; i < bind->buttonCount; ++i) {
         struct DjuiButton *button = bind->buttons[i];
         if (!button) { continue; }
 
@@ -110,7 +117,7 @@ void djui_bind_unbind(struct DjuiBase* caller) {
     }
 
     struct DjuiBind *bind = (struct DjuiBind *) caller->parent->parent;
-    for (s32 i = 0; i < MAX_BINDS; ++i) {
+    for (s32 i = 0; i < bind->buttonCount; ++i) {
         if (&bind->buttons[i]->base == caller) {
             bind->configKey[i] = VK_INVALID;
 
