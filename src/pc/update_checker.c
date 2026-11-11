@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #if defined(_WIN32)
 #include <windows.h>
 #include <wininet.h>
@@ -10,9 +12,13 @@
 #include "pc/djui/djui.h"
 #include "pc/network/version.h"
 #include "pc/loading.h"
+#include "pc/jimmie_version.h"
 
-#define URL "https://raw.githubusercontent.com/coop-deluxe/sm64coopdx/refs/heads/main/src/pc/network/version.h"
-#define VERSION_IDENTIFIER "#define SM64COOPDX_VERSION \""
+// Jimmie 64: the check is against this fork's own releases, not the upstream port's.
+// It is a plain download of one small public file; nothing about the player is sent.
+#define URL "https://raw.githubusercontent.com/Papa-Oso/jimmie-64/refs/heads/main/src/pc/jimmie_version.h"
+#define VERSION_IDENTIFIER "#define JIMMIE_VERSION \""
+#define UPDATE_TIMEOUT_MS 3000
 
 /*
 
@@ -23,7 +29,7 @@ downloading and parsing a source file.
 */
 
 static char sVersionUpdateTextBuffer[256] = { 0 };
-static char sRemoteVersionStr[8] = { 0 };
+static char sRemoteVersionStr[16] = { 0 };
 
 struct Version {
     int maj, min, fix;
@@ -91,13 +97,14 @@ void parse_version(const char *data) {
     size_t len = strlen(VERSION_IDENTIFIER);
     version += len;
     const char *end = strchr(version, '"');
+    if (end == NULL) { return; }
     size_t versionLength = (size_t)(end - version);
     if (versionLength > sizeof(sRemoteVersionStr) - 1) { return; }
     memcpy(sRemoteVersionStr, version, versionLength);
     sRemoteVersionStr[versionLength] = '\0';
 
     string_to_version(sRemoteVersionStr, &sRemoteVersion);
-    string_to_version(get_version(), &sClientVersion);
+    string_to_version(JIMMIE_VERSION, &sClientVersion);
 }
 
 // function to download a text file from the internet
@@ -105,22 +112,28 @@ void get_version_remote(void) {
     sRemoteVersionStr[0] = '\0';
 
 #if defined(_WIN32)
-    char buffer[0xFF] = { 0 };
+    char buffer[0x400] = { 0 };
 
     // initialize WinINet
     HINTERNET hInternet = InternetOpenA("sm64coopdx", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
     if (!hInternet) {
         printf("Failed to check for updates!\n");
-        InternetCloseHandle(hInternet);
         return;
     }
+    // give up after three seconds: no internet must never hold the game up
+    DWORD timeout = UPDATE_TIMEOUT_MS;
+    InternetSetOptionA(hInternet, INTERNET_OPTION_CONNECT_TIMEOUT, &timeout, sizeof(timeout));
+    InternetSetOptionA(hInternet, INTERNET_OPTION_SEND_TIMEOUT, &timeout, sizeof(timeout));
+    InternetSetOptionA(hInternet, INTERNET_OPTION_RECEIVE_TIMEOUT, &timeout, sizeof(timeout));
 
     // open the URL
-    HINTERNET hUrl = InternetOpenUrlA(hInternet, URL, NULL, 0, INTERNET_FLAG_RELOAD, 0);
+    // JIMMIE_UPDATE_URL lets a test point the check at a stand-in file; players never set it.
+    const char *url = getenv("JIMMIE_UPDATE_URL");
+    if (url == NULL || url[0] == '\0') { url = URL; }
+    HINTERNET hUrl = InternetOpenUrlA(hInternet, url, NULL, 0, INTERNET_FLAG_RELOAD, 0);
     if (!hUrl) {
         printf("Failed to check for updates!\n");
         InternetCloseHandle(hInternet);
-        InternetCloseHandle(hUrl);
         return;
     }
 
@@ -185,13 +198,11 @@ void check_for_updates(void) {
     if (sRemoteVersionStr[0] == 'v' && is_version_newer(sClientVersion, sRemoteVersion)) {
         snprintf(
             sVersionUpdateTextBuffer, 256,
-            "\\#ffffa0\\%s\n\\#dcdcdc\\%s: %s\n%s: %s",
-            DLANG(NOTIF, UPDATE_AVAILABLE),
-            DLANG(NOTIF, LATEST_VERSION),
+            "\\#ffffa0\\A new Jimmie 64 is out\n\\#dcdcdc\\Latest: %s   Yours: %s\nRun \"Update Jimmie 64\" in the game folder",
             sRemoteVersionStr,
-            DLANG(NOTIF, YOUR_VERSION),
-            get_version()
+            JIMMIE_VERSION
         );
+        printf("Jimmie 64 update available: %s (this is %s)\n", sRemoteVersionStr, JIMMIE_VERSION);
         gUpdateMessage = true;
     }
 }

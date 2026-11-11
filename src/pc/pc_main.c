@@ -494,7 +494,8 @@ void* main_game_init(UNUSED void* dummy) {
     enable_queued_dynos_packs();
     sync_objects_init_system();
 
-    if (gCLIOpts.network != NT_SERVER && !gCLIOpts.skipUpdateCheck) {
+    // Jimmie 64 always starts as its own host, so the check runs for a host too.
+    if (!gCLIOpts.skipUpdateCheck) {
         check_for_updates();
     }
 

@@ -29,6 +29,9 @@ Windows 10 or 11, 64-bit. Nothing else needs installing.
   run it goes away by itself and Jimmie settles into exploring with you. At each star it shows
   how far ahead or behind you are.
 - Type anything else in chat to talk to Jimmie: say hello, ask him something, give him a hard time.
+- When a newer Jimmie 64 is out, the start screen says UPDATE READY; `Update Jimmie 64.cmd` opens the
+  download page. Nothing installs by itself. The check downloads one small public file from this
+  repository at start-up and sends nothing about you; with no internet it is skipped.
 
 ## Controls
 

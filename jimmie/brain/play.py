@@ -178,7 +178,7 @@ def main() -> int:
     env.update(APPDATA=str(PROFILE / "appdata"), LOCALAPPDATA=str(PROFILE / "localappdata"), TEMP=str(PROFILE / "temp"),
                TMP=str(PROFILE / "temp"), JIMMIE_NATIVE_HEAD="1", SDL_JOYSTICK_RAWINPUT="0",
                JIMMIE_ROUTE_CHANNEL=channel.name, JIMMIE_HEAD_TRACE=str(session / "native.jsonl"))
-    args = [str(GAME / "sm64coopdx.exe"), "--server", "58468", "--playercount", "1", "--windowed", "--skip-update-check",
+    args = [str(GAME / "sm64coopdx.exe"), "--server", "58468", "--playercount", "1", "--windowed",
             "--no-discord", "--disable-mods", "--enable-mod", "jimmie", "--console", "--savepath", str(PROFILE / SAVE)]
     for extra in os.environ.get("JIMMIE_PLAY_EXTRA_MODS", "").split(","):   # timing tests add the input-tape mod
         if extra:
@@ -190,6 +190,8 @@ def main() -> int:
         if not a.sound:
             env["SDL_AUDIODRIVER"] = "dummy"
         args += ["--backend", "opengl", "--skip-intro", "--hide-loading-screen"]
+    if a.smoke or os.environ.get("JIMMIE_PLAY_PROFILE"):      # automated starts never go online
+        args.append("--skip-update-check")
     llm_proc = brain = None
     try:
         if not a.no_brain:
