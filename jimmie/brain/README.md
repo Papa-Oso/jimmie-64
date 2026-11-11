@@ -7,7 +7,7 @@ game; it does not change `jimmie-64/main`, the saves, or any earlier build.
 ## Play it
 
 Double-click **Play Jimmie.cmd**. It starts the brain, then the game, with its own save in
-`profile/`. Type `/j16 16` in the game's chat for the 16-star run, `/j16 free` for exploring.
+`profile/`. The game decides by itself whether a file is a 16-star run or exploring; nothing to type.
 
 Double-click **Bake New Lines.cmd** (game closed, about an hour) whenever you want him to have
 more to say. Each run adds a new batch; nothing already in the pool is repeated.

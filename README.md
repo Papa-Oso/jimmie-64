@@ -25,7 +25,9 @@ Windows 10 or 11, 64-bit. Nothing else needs installing.
 
 ## In the game
 
-- Open chat and type `/j16 free` to explore, or `/j16 16` for the 16-star run.
+- Just play. A clock runs from the moment you pick a file. If you are clearly not doing a 16-star
+  run it goes away by itself and Jimmie settles into exploring with you. At each star it shows
+  how far ahead or behind you are.
 - Type anything else in chat to talk to Jimmie: say hello, ask him something, give him a hard time.
 
 ## Controls

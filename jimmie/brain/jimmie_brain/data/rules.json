@@ -584,6 +584,24 @@
       "intent": "quiet"
     },
     {
+      "id": "run_again",
+      "on": "attempt",
+      "when": {
+        "f.n": {
+          "gte": 2
+        }
+      },
+      "intent": "callback",
+      "chance": 0.7,
+      "write": true,
+      "staple_share": 0.0,
+      "bank_share": 0.0,
+      "delay_ms": 1500,
+      "cooldown_s": 30,
+      "max_words": 14,
+      "direction": "The player just started the game over from the beginning again this session. He notices they are back at the start. No advice, nothing about time, pace or records."
+    },
+    {
       "id": "key",
       "on": "key",
       "intent": "take_credit",

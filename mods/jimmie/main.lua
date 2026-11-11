@@ -3064,16 +3064,54 @@ if type(jimmie_run_state) == "function" then
     local TELLS = require("jimmie_run_tells")
     local tells = TELLS.new()
     local lastPhase, lastStars, lastVerdict, flashUntil, flashText = nil, 0, nil, 0, nil
+    -- Splits, attempt count and the text-box variants live in one global table: this closure is
+    -- close to Lua's limit of local variables.
+    JIMMIE_RUN = { attempts = 0, delta = nil, splits = nil, variants = nil, rows = {} }
+    do
+        local okS, SPLITS = pcall(require, "jimmie_run_splits")
+        if okS and type(SPLITS) == "table" and type(mod_storage_load_number) == "function" then
+            JIMMIE_RUN.fmt = SPLITS.delta
+            JIMMIE_RUN.splits = SPLITS.new(mod_storage_load_number, mod_storage_save_number)
+        end
+        local okV, variants = pcall(require, "jimmie_dialog_variants")
+        local okD, boxes = pcall(require, "jimmie_dialogs")
+        if okV and okD and type(variants) == "table" and type(boxes) == "table" then
+            JIMMIE_RUN.variants = variants
+            for _, d in ipairs(boxes) do if variants[d[1]] then JIMMIE_RUN.rows[d[1]] = d end end
+        end
+    end
+    -- From the second attempt of a session on, text boxes that have variants use one, in turn.
+    local function retext(attempt)
+        if not JIMMIE_RUN.variants or type(smlua_text_utils_dialog_replace) ~= "function" then return end
+        for id, list in pairs(JIMMIE_RUN.variants) do
+            local d = JIMMIE_RUN.rows[id]
+            local text = attempt >= 2 and list[(attempt - 2) % #list + 1] or (d and d[5])
+            if d and text then pcall(smlua_text_utils_dialog_replace, id, 1, d[2], d[3], d[4], text) end
+        end
+    end
+    -- Changing his mode is the game's decision, not something the player typed: no chat message.
+    local function set_mode(name)
+        local chat = djui_chat_message_create
+        djui_chat_message_create = function() end
+        pcall(JIMMIE_ROUTE16.command, name)
+        djui_chat_message_create = chat
+    end
     local function say(row) print("[jrun] " .. Personality.json(row)) end
     local function run_update()
         local phase, ms, best, stars = jimmie_run_state()
         if phase == 1 and lastPhase ~= 1 then
             tells.begin()
             lastStars, lastVerdict = 0, nil
-            say({ event = "begin", best_ms = best })
+            JIMMIE_RUN.attempts, JIMMIE_RUN.delta = JIMMIE_RUN.attempts + 1, nil
+            say({ event = "begin", best_ms = best, attempt = JIMMIE_RUN.attempts })
+            retext(JIMMIE_RUN.attempts)
+            if JIMMIE_RUN.attempts >= 2 and JIMMIE_BRAIN then
+                pcall(JIMMIE_BRAIN.fact, "attempt", "mario", { n = JIMMIE_RUN.attempts })
+            end
         end
         if phase == 2 and lastPhase == 1 then
             say({ event = "finish", ms = ms, best_ms = best, stars = stars })
+            if JIMMIE_RUN.splits and lastVerdict ~= "not" then JIMMIE_RUN.splits.finish(ms <= best, jimmie_run_split) end
             flashText, flashUntil = (ms <= best and "NEW BEST " or "FINISH ") .. TELLS.clock(ms), ms + 1e12
         end
         lastPhase = phase
@@ -3083,8 +3121,11 @@ if type(jimmie_run_state) == "function" then
         local t, level = ms / 1000, np.currLevelNum
         if stars > lastStars then
             tells.star(t, level, stars)
-            flashText, flashUntil = string.format("STAR %d  %s", stars, TELLS.clock(jimmie_run_split(stars))), ms + 4000
-            say({ event = "split", star = stars, ms = jimmie_run_split(stars), level = level })
+            JIMMIE_RUN.delta = nil
+            if JIMMIE_RUN.splits and tells.verdict() ~= "not" then JIMMIE_RUN.delta = JIMMIE_RUN.splits.star(stars, jimmie_run_split(stars)) end
+            flashText, flashUntil = string.format("STAR %d  %s", stars, TELLS.clock(jimmie_run_split(stars))), ms + 6000
+            if JIMMIE_RUN.delta and JIMMIE_RUN.fmt then flashText = flashText .. "  " .. JIMMIE_RUN.fmt(JIMMIE_RUN.delta) end
+            say({ event = "split", star = stars, ms = jimmie_run_split(stars), level = level, delta_ms = JIMMIE_RUN.delta })
             lastStars = stars
         end
         if get_global_timer() % 10 == 0 then
@@ -3095,8 +3136,8 @@ if type(jimmie_run_state) == "function" then
         if verdict ~= lastVerdict then
             say({ event = "verdict", verdict = verdict, why = why, s = math.floor(t), level = level, stars = stars })
             -- Jimmie follows the decision: route companion for a run, free roam otherwise.
-            if verdict == "run" then pcall(JIMMIE_ROUTE16.command, "16")
-            elseif verdict == "not" then pcall(JIMMIE_ROUTE16.command, "free") end
+            if verdict == "run" then set_mode("16")
+            elseif verdict == "not" then set_mode("free") end
             lastVerdict = verdict
         end
     end
@@ -3121,7 +3162,10 @@ if type(jimmie_run_state) == "function" then
             local sw = djui_hud_measure_text(sub) * 0.3
             djui_hud_set_color(0, 0, 0, 170)
             djui_hud_print_text(sub, (width - sw) / 2 + 1, y + 18, 0.3)
-            djui_hud_set_color(255, 220, 90, 255)
+            -- A split is green when ahead of the reference, red when behind; everything else gold.
+            if ms < flashUntil and JIMMIE_RUN.delta then
+                if JIMMIE_RUN.delta < 0 then djui_hud_set_color(110, 230, 120, 255) else djui_hud_set_color(240, 110, 100, 255) end
+            else djui_hud_set_color(255, 220, 90, 255) end
             djui_hud_print_text(sub, (width - sw) / 2, y + 17, 0.3)
         end
         djui_hud_reset_color()

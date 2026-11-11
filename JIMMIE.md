@@ -32,8 +32,8 @@ double-click **Play Jimmie 64**, and drag your `.z64` ROM onto the game window w
 
    The first time, the game shows its own screen asking for your ROM. Drag your `.z64` file onto it.
 
-In the game's chat, type `/j16 16` for the 16-star run or `/j16 free` to explore. Type anything
-else to talk to him.
+Just play: a clock runs from the moment you pick a file, and goes away by itself if you are
+clearly not doing a 16-star run. Type anything in the game's chat to talk to him.
 
 ### Nintendo Switch Pro Controller
 
