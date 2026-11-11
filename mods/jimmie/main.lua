@@ -1755,6 +1755,191 @@ local function update_host(m,allowed)
         afk=VOICE and VOICE.afk,history=history})
 end
 
+-- motion:introscene. Jimmie's introduction: on a new file he arrives in the bridge scene in place of Lakitu.
+-- The game's own scene is left exactly as it is (trigger, camera, text box, timing). Lakitu and his cloud are only
+-- made invisible, and Jimmie is drawn around where Lakitu is: small, flitting in loops with twirls and sparkles,
+-- growing as he flies in, then still in front of Mario for the text. When the text box closes he becomes the
+-- normal companion on that spot. Globals, because this file is at Lua's limit of locals.
+JIMMIE_INTRO={}
+function jimmie_intro_lakitu()
+    local o=obj_get_first_with_behavior_id(id_bhvCameraLakitu)
+    while o do
+        if o.oBehParams2ndByte~=0 and o.activeFlags~=0 then return o end      -- 0 is the camera Lakitu in the mirror room
+        o=obj_get_next_with_same_behavior_id(o)
+    end
+    return nil
+end
+function jimmie_intro_hide(lak,delete)
+    obj_set_model_extended(lak,E_MODEL_NONE)
+    for _,id in ipairs({id_bhvCloud,id_bhvCloudPart}) do
+        local c=obj_get_first_with_behavior_id(id)
+        while c do
+            local nxt=obj_get_next_with_same_behavior_id(c)
+            if math.abs(c.oPosX-lak.oPosX)+math.abs(c.oPosY-lak.oPosY)+math.abs(c.oPosZ-lak.oPosZ)<900 then
+                if delete then obj_mark_for_deletion(c) else obj_set_model_extended(c,E_MODEL_NONE) end
+            end
+            c=nxt
+        end
+    end
+    if delete then obj_mark_for_deletion(lak) end
+end
+function jimmie_intro_sparkles(x,y,z,count,spread)
+    for _=1,count do
+        spawn_non_sync_object(id_bhvSparkleSpawn,E_MODEL_NONE,x+(math.random()-.5)*spread,y+math.random()*spread,z+(math.random()-.5)*spread,nil)
+    end
+end
+function jimmie_intro_step(m)
+    local s=JIMMIE_INTRO
+    if s.done then return false end
+    local lak=jimmie_intro_lakitu()
+    if not lak then
+        if s.seen then s.done=true end                                         -- the scene is over, or was never on this file
+        return false
+    end
+    s.seen=true
+    if lak.oAction==0 then
+        -- Waiting for Mario to step on the bridge. If he gets past it without triggering the scene (the speedrun
+        -- skip), there is no introduction: Jimmie is simply the companion from then on.
+        if m.pos.z<-2150 then s.done=true;log('[jimmie-intro] phase=skipped frame='..tostring(get_global_timer()));return false end
+        -- He cannot be created once the scene has frozen Mario, so he is created now and kept out of sight.
+        if not (jimmie and originalBoard) then spawn_jimmie() end
+        if jimmie and originalBoard then PHYS=nil;jimmie.oPosY=-10000;originalBoard.oPosY=-10000 end
+        if not s.waiting then s.waiting=true;log('[jimmie-intro] phase=waiting frame='..tostring(get_global_timer())) end
+        return true
+    end
+    jimmie_intro_hide(lak,false)
+    if lak.oAction<2 then return true end
+    if not (jimmie and originalBoard) then spawn_jimmie() end
+    if not (jimmie and originalBoard) then return true end
+    local x,y,z=lak.oPosX,lak.oPosY,lak.oPosZ
+    local dx,dz=m.pos.x-x,m.pos.z-z
+    local heading=math.atan2(dx,dz)+(JIMMIE_INTRO_TURN or math.pi/2)            -- he stands sideways on the board; turned so his face is toward Mario
+    if lak.oCameraLakituFinishedDialog~=0 then
+        -- The text box has closed and control is back. From here he is the ordinary companion: he drops to the
+        -- ground from where he hovered. Lakitu and the cloud, already invisible, are removed.
+        obj_scale_xyz(jimmie,.62,.62,-.62);obj_scale_xyz(originalBoard,.62,.62,-.62)
+        PHYS={x=x,y=y,z=z,vx=0,vy=0,vz=0,yaw=heading,prevYaw=heading,onGround=false,pushT=0,airT=0}
+        PHYS_AIR=false
+        jimmie_intro_sparkles(x,y,z,14,170)
+        jimmie_intro_hide(lak,true)
+        s.done=true;log('[jimmie-intro] phase=companion frame='..tostring(get_global_timer()))
+        return false
+    end
+    if s.frame==get_global_timer() then return true end                          -- once per frame, whichever path called
+    s.frame=get_global_timer();s.tick=(s.tick or 0)+1
+    if not s.arrived then s.arrived=true;jimmie_intro_sparkles(x,y,z,10,200);log('[jimmie-intro] phase=arrive frame='..tostring(get_global_timer())) end
+    if lak.oCameraLakituSpeed==0 and not s.talking then s.talking=true;s.twirl=14;log('[jimmie-intro] phase=talk frame='..tostring(get_global_timer())) end
+    local far=math.sqrt(dx*dx+dz*dz+(m.pos.y-y)^2)
+    local k=1-math.max(0,math.min(1,(far-500)/2500));k=k*k*(3-2*k)
+    local size=.16+(.62-.16)*k                                                   -- a speck far away, full size by the time he stops
+    -- Flitting: he darts in loops and bobs around the path Lakitu flies, less and less as that path slows, and is
+    -- still by the time it stops. The path itself, and so the scene's length, is the game's own.
+    local wild=math.max(0,math.min(1,lak.oCameraLakituSpeed/45));local t=s.tick
+    local fx=wild*130*math.sin(t*.47)*math.cos(t*.13)
+    local fy=wild*85*math.sin(t*.83+1.1)+ (1-wild)*6*math.sin(t*.21)            -- a gentle bob while he hovers and talks
+    local fz=wild*130*math.cos(t*.39+.6)
+    -- Twirls: a quick spin on his own axis every second and a half while darting, and one as he settles.
+    local spin=0
+    if wild>.15 and t%44<13 then spin=(t%44)/13*2*math.pi end
+    if s.twirl and s.twirl>0 then spin=(1-s.twirl/14)*2*math.pi;s.twirl=s.twirl-1 end
+    PHYS=nil;jimmieSpeed=10
+    jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ=x+fx,y+fy,z+fz
+    jimmie.oFaceAngleYaw,jimmie.oFaceAnglePitch,jimmie.oFaceAngleRoll=skate_model_angles(heading+spin,0,0)
+    local fc=s.talking and 'fly_cam' or 'fly'
+    if OriginalBank.clips[fc] then
+        -- Flying pose, off the board; the board waits out of sight until he joins Mario.
+        originalController.bank:apply(jimmie,originalBoard,fc,(s.tick%24)/24,0);originalBoard.oPosY=-10000
+    else update_pose_animation(1/30) end
+    obj_scale_xyz(jimmie,size,size,-size);obj_scale_xyz(originalBoard,size,size,-size)
+    if not s.talking then jimmie_intro_sparkles(x+fx,y+fy+60*size,z+fz,2,150*size)
+    elseif t%9==0 then jimmie_intro_sparkles(x+fx,y+fy+90,z+fz,1,120) end
+    return true
+end
+-- motion:mirrorroom. In the mirror room upstairs the game shows the camera man in the mirror, behind Mario's
+-- reflection. That is Jimmie now: the Lakitu there and his cloud are made invisible and a second Jimmie on his board
+-- is drawn where Lakitu is, looking the way Lakitu looks. Nothing about the room or the camera is changed.
+JIMMIE_MIRROR={}
+function jimmie_mirror_step()
+    local s=JIMMIE_MIRROR
+    local lak=obj_get_first_with_behavior_id(id_bhvCameraLakitu)
+    while lak and not (lak.oBehParams2ndByte==0 and lak.activeFlags~=0) do lak=obj_get_next_with_same_behavior_id(lak) end
+    if not lak then s.body=nil;s.board=nil;return end
+    jimmie_intro_hide(lak,false)
+    if not (s.body and s.board and s.body.activeFlags~=0 and s.board.activeFlags~=0) then
+        if id_bhvjimmie==nil or E_MODEL_jimmie==nil or originalBoardModel==nil then return end
+        local okA,body=pcall(spawn_non_sync_object,id_bhvjimmie,E_MODEL_jimmie,lak.oPosX,-10000,lak.oPosZ,function(o) end)
+        local okB,board=pcall(spawn_non_sync_object,id_bhvjimmie,originalBoardModel,lak.oPosX,-10000,lak.oPosZ,function(o) end)
+        if not (okA and okB and body and board) then return end
+        s.body,s.board=body,board
+        smlua_anim_util_set_animation(body,OriginalBank.clips.pose.body);smlua_anim_util_set_animation(board,OriginalBank.clips.pose.board)
+        if not s.logged then s.logged=true;log('[jimmie-mirror] shown frame='..tostring(get_global_timer())) end
+    end
+    -- The game hides its Lakitu while the camera is outside the room; follow that.
+    local hidden=(lak.header.gfx.node.flags & GRAPH_RENDER_INVISIBLE)~=0
+    local face=lak.oFaceAngleYaw*math.pi/32768
+    local yaw=skate_model_angles(face+math.pi/2,0,0)
+    for _,o in ipairs({s.body,s.board}) do
+        o.oPosX,o.oPosZ=lak.oPosX,lak.oPosZ
+        o.oPosY=hidden and -10000 or (lak.oPosY-150)
+        o.oFaceAngleYaw,o.oFaceAnglePitch,o.oFaceAngleRoll=yaw,0,0
+        local a=o.header.gfx.animInfo;a.animFrame=0;a.animFrameAccelAssist=0;a.animAccel=65536
+    end
+end
+-- motion:opening. The opening fly-in to the pipe (and the ending, which reuses the same flying camera man):
+-- Lakitu is made invisible and Jimmie is drawn where he is, in his flying pose, with a sparkle trail. The cutscene
+-- object keeps running exactly as before; nothing here moves it, the camera or Mario.
+JIMMIE_OPENING={}
+function jimmie_opening_step()
+    local s=JIMMIE_OPENING
+    local lak=obj_get_first_with_behavior_id(id_bhvBeginningLakitu)
+    if not lak or lak.activeFlags==0 then
+        if s.body then
+            if s.body.activeFlags~=0 then obj_mark_for_deletion(s.body) end
+            if s.board and s.board.activeFlags~=0 then obj_mark_for_deletion(s.board) end
+            if s.stick and s.stick.activeFlags~=0 then obj_mark_for_deletion(s.stick) end;s.stick=nil
+            s.body=nil;s.board=nil;log('[jimmie-opening] gone frame='..tostring(get_global_timer()))
+        end
+        return
+    end
+    jimmie_intro_hide(lak,false)
+    if not (s.body and s.body.activeFlags~=0) then
+        if id_bhvjimmie==nil or E_MODEL_jimmie==nil or originalBoardModel==nil or not OriginalBank.clips.fly_cam then return end
+        local okA,body=pcall(spawn_non_sync_object,id_bhvjimmie,E_MODEL_jimmie,lak.oPosX,-10000,lak.oPosZ,function(o) end)
+        local okB,board=pcall(spawn_non_sync_object,id_bhvjimmie,originalBoardModel,lak.oPosX,-10000,lak.oPosZ,function(o) end)
+        if not (okA and okB and body and board) then return end
+        s.body,s.board,s.tick=body,board,0
+        smlua_anim_util_set_animation(body,OriginalBank.clips.fly_cam.body);smlua_anim_util_set_animation(board,OriginalBank.clips.fly_cam.board)
+        log('[jimmie-opening] shown frame='..tostring(get_global_timer()))
+    end
+    s.tick=s.tick+1
+    local hidden=(lak.header.gfx.node.flags & GRAPH_RENDER_INVISIBLE)~=0
+    local o=s.body
+    o.oPosX,o.oPosZ=lak.oPosX,lak.oPosZ
+    o.oPosY=hidden and -10000 or (lak.oPosY-90+10*math.sin(s.tick*.3))
+    local yaw=skate_model_angles(lak.oFaceAngleYaw*math.pi/32768+math.pi/2,0,0)
+    o.oFaceAngleYaw,o.oFaceAnglePitch,o.oFaceAngleRoll=yaw,0,0
+    local a=o.header.gfx.animInfo;local f=s.tick%24;a.animFrame=f;a.animFrameAccelAssist=f*65536;a.animAccel=65536
+    s.board.oPosY=-10000
+    -- The camera stick in his hand: a small model of our own, placed at his holding hand and pointing where he faces.
+    if not (s.stick and s.stick.activeFlags~=0) then
+        local id=smlua_model_util_get_id('jimmie_camstick_geo')
+        if id and id~=E_MODEL_ERROR_MODEL then
+            local ok,st=pcall(spawn_non_sync_object,id_bhvjimmie,id,o.oPosX,-10000,o.oPosZ,function(q) end)
+            if ok and st then s.stick=st end
+        end
+    end
+    if s.stick then
+        local f=lak.oFaceAngleYaw*math.pi/32768;local fx,fz=math.sin(f),math.cos(f);local side=JIMMIE_STICK_SIDE or 24
+        s.stick.oPosX=o.oPosX+fx*59+fz*side;s.stick.oPosZ=o.oPosZ+fz*59-fx*side
+        s.stick.oPosY=hidden and -10000 or (o.oPosY+89)
+        s.stick.oFaceAngleYaw,s.stick.oFaceAnglePitch,s.stick.oFaceAngleRoll=lak.oFaceAngleYaw,0,0
+        obj_scale_xyz(s.stick,.62,.62,.62)
+    end
+    if not hidden and s.tick%2==0 then jimmie_intro_sparkles(o.oPosX,o.oPosY+40,o.oPosZ,1,110) end
+end
+-- motion:camicon. The camera man in the corner of the screen is Jimmie.
+JIMMIE_CAM_ICON=get_texture_info('jimmie_cam_head')
+if JIMMIE_CAM_ICON then texture_override_set('texture_hud_char_lakitu',JIMMIE_CAM_ICON) end
 local function on_update()
     railPresentation:clear() -- early returns, pause and ownership changes fail closed
     if in_jimmie_title() then
@@ -1775,6 +1960,8 @@ local function on_update()
         despawn_jimmie() -- owner loss must clear crash/death state even without scene hooks
         return
     end
+    jimmie_mirror_step()
+    jimmie_opening_step()
     if companionSpawn:observe(m) then
         despawn_jimmie()
         originalScene=originalScene+1
@@ -1810,6 +1997,7 @@ local function on_update()
         if rejoinHost then rejoinHost:pause() end
         step_original_crash(true)
         step_recovery(0,true)
+        jimmie_intro_step(m)
         if VOICE then
             local finishing=JIMMIE_ROUTE16 and JIMMIE_ROUTE16.starDuringDance(m)
             if wasGameplayAllowed or VOICE.keptDanceSound~=finishing then VOICE.clearScene(true,finishing) end
@@ -1903,6 +2091,8 @@ local function on_update()
     load_all_sounds()
     if step_original_crash(false) then
         -- Crash renderer is the exclusive owner this tick.
+    elseif jimmie_intro_step(m) then
+        -- The bridge scene owns him this tick (or he has not arrived yet).
     elseif step_skate_opportunity() then
         update_pose_animation(1 / 30)
     elseif not try_rejoin(1 / 30) then
