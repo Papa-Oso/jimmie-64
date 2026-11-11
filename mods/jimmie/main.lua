@@ -698,13 +698,22 @@ local function flight_playback_seconds(native, dt)
 end
 
 -- motion:crashcause. Odds out of 1000 that a trick fails. Globals, because this file is at Lua's limit of local names.
+-- motion:keepup. More than 450 units behind a moving Mario: no falls until he has caught up.
+function jimmie_behind()
+    local m=gMarioStates[0]
+    if not (m and jimmie and jimmie.activeFlags~=0) or m.forwardVel<12 then return false end
+    local dx,dz=m.pos.x-jimmie.oPosX,m.pos.z-jimmie.oPosZ
+    return dx*dx+dz*dz>450*450
+end
 function jimmie_bail_odds(clip,kind,speed)
+    if jimmie_behind() then return 0 end
     local q=OriginalBank and OriginalBank.clips[clip]
     local base=kind=='grind' and 40 or (q and q.odds) or (clip=='kickflip' or clip=='heelflip') and 70 or (clip=='bs_pop_shuvit' or clip=='fs_pop_shuvit') and 45 or 20
     return base+math.max(0,math.min(60,((tonumber(speed) or 0)-25)*2))
 end
 -- Total odds at touchdown, the part known at take-off, and the name of the biggest landing cause.
 function jimmie_landing_odds(p,event,speed,planned)
+    if jimmie_behind() then return 0,0,nil end
     local base=p.trickBase or jimmie_bail_odds(event.clip,event.kind,speed)
     local extra,why=0,nil
     if event.kind=='trick' and event.early and not p.doomed then extra,why=350,'landed-early' end
@@ -1968,6 +1977,13 @@ function jimmie_swim_step()
     if not (m and m.marioObj) then return end
     local mx,my,mz=m.pos.x,m.pos.y,m.pos.z;local f=m.faceAngle.y*math.pi/32768
     local tx,tz=mx+math.sin(f)*130-math.cos(f)*190,mz+math.cos(f)*130+math.sin(f)*190
+    -- Never beside Mario through a wall: try his other side, then behind him; otherwise stay out of sight.
+    local shut=false
+    if not jimmie_open(mx,my,mz,tx,my,tz) then
+        local ax,az=mx+math.sin(f)*130+math.cos(f)*190,mz+math.cos(f)*130-math.sin(f)*190
+        local bx,bz=mx-math.sin(f)*180,mz-math.cos(f)*180
+        if jimmie_open(mx,my,mz,ax,my,az) then tx,tz=ax,az elseif jimmie_open(mx,my,mz,bx,my,bz) then tx,tz=bx,bz else shut=true end
+    end
     local mode=nil
     if jimmie and jimmie.activeFlags~=0 then s.alone=0
     else
@@ -2003,6 +2019,7 @@ function jimmie_swim_step()
     if jimmie_leap_step(s,mode,tx,ty,tz) then return end
     local dx,dy,dz=tx-s.x,ty-s.y,tz-s.z;local d=math.sqrt(dx*dx+dz*dz)
     if d>2500 then s.x,s.y,s.z=tx,ty,tz;dx,dy,dz,d=0,0,0,0 end
+    if not shut and not jimmie_open(mx,my,mz,s.x,my,s.z) then s.x,s.z=tx,tz;dx,dz,d=0,0,0 end   -- a wall came between them
     local step=math.min(26,d*.07);local nx,nz=s.x,s.z
     if d>1 then nx,nz=s.x+dx/d*step,s.z+dz/d*step end
     local ax,az=nx-mx,nz-mz;local ad=math.sqrt(ax*ax+az*az)
@@ -2020,11 +2037,16 @@ function jimmie_swim_step()
     local o=s.body
     o.oPosX,o.oPosZ=s.x,s.z
     if mode=='swim' then o.oPosY=s.y-30+5*math.sin(s.tick*.13) else o.oPosY=s.y+10*math.sin(s.tick*.3) end
+    -- motion:bubbles. The game's own bubble, from his mouth, about once a second while he swims.
+    if mode=='swim' and not shut and s.tick%32==0 and id_bhvBubbleMaybe and E_MODEL_BUBBLE then
+        pcall(spawn_non_sync_object,id_bhvBubbleMaybe,E_MODEL_BUBBLE,s.x+math.sin(s.face)*45,o.oPosY+70,s.z+math.cos(s.face)*45,function(q) end)
+    end
     local yaw=skate_model_angles(s.face+math.pi/2,0,0)
     o.oFaceAngleYaw,o.oFaceAnglePitch,o.oFaceAngleRoll=yaw,0,0
     local a=o.header.gfx.animInfo;local fr=s.tick%24;a.animFrame=fr;a.animFrameAccelAssist=fr*65536;a.animAccel=65536
     s.board.oPosY=-10000
-    if mode=='fly' and s.tick%3==0 then jimmie_intro_sparkles(o.oPosX,o.oPosY+40,o.oPosZ,1,110) end
+    if shut then o.oPosY=-10000 end
+    if mode=='fly' and not shut and s.tick%3==0 then jimmie_intro_sparkles(o.oPosX,o.oPosY+40,o.oPosZ,1,110) end
 end
 -- motion:leap. One Jimmie, not two: he dives from where he was skating into the water beside Mario, and leaps
 -- from the water to the spot where he gets back on his board. Looks only.
@@ -2108,6 +2130,16 @@ function jimmie_pull_step()
     local t=(s.t-1)/39;local b=.62*jimmie_pull_size(t)
     originalController.bank:apply(jimmie,originalBoard,'board_pull',t,0)
     obj_scale_xyz(jimmie,.62,.62,-.62);obj_scale_xyz(originalBoard,b,b,-b)
+    return true
+end
+-- motion:wallsafe. True when nothing solid lies between two points at Mario's chest height (sampled every 60 units).
+function jimmie_open(ax,ay,az,bx,by,bz)
+    local d=math.sqrt((bx-ax)^2+(bz-az)^2);local n=math.max(1,math.ceil(d/60))
+    for i=1,n do
+        local q={x=ax+(bx-ax)*i/n,y=ay+(by-ay)*i/n,z=az+(bz-az)*i/n}
+        if resolve_and_return_wall_collisions(q,60,45)~=nil then return false end
+        if find_floor_height(q.x,q.y+150,q.z)<-10000 then return false end
+    end
     return true
 end
 local function on_update()

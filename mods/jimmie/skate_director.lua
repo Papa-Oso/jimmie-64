@@ -230,7 +230,7 @@ function D:launch(speed, jumpFollow)
 end
 
 function D:motion(s, playerSpeed, social, safeLaunch, rejoin, event, movingTrickStable)
-    local catchingUp=rejoin or social>560
+    local catchingUp=rejoin or social>420 -- motion:keepup (was 560): no optional tricks until he is closer
     local movingSetup=self.state=="setup" and self.setupMoving
     local state=rejoin and "rejoin" or "keep_up"
     if not movingSetup then self:enter(state,rejoin and "following-checked-route" or "pace-moving-Mario") end

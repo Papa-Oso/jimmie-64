@@ -146,11 +146,18 @@ function O:playersClear(a,b,ctx)
 end
 function O:begin(plan,kind,p,ctx,rail)
  if not plan or not finite(plan.duration) or plan.duration<1 or plan.duration>60 then return nil end
+ -- motion:keepup. While Mario is moving fast, a crossing hop travels at his pace instead of a fixed slow one and
+ -- the crouch before it is 2 frames instead of 5. The path is the one already proved; only its timing changes.
+ local quick=false
+ if kind=='follow' and not plan.contactEntry and ctx.player then
+  local sp=math.sqrt((ctx.player.vx or 0)^2+(ctx.player.vz or 0)^2)
+  if sp>=16 then quick=true;plan.duration=math.max(9,math.min(plan.duration,math.ceil(dist(plan.a,plan.b)/math.max(22,sp)))) end
+ end
  if self.world.invalidateRails then self.world:invalidateRails() end
  self.episode=self.episode+1
  self.task={plan=plan,kind=kind,balanceClip=rail and self:chooseBalance(ctx,rail.visual) or nil,phase='air',frame=ctx.frame,scene=ctx.scene,instance=ctx.instance,
   phys=ctx.phys,area=ctx.area,step=0,expected=cp(p),variant=self:chooseVariant(kind),rail=rail,
-  terrain=ctx.terrain,started=ctx.time,approachOrigin=cp(p),windup=plan.contactEntry and 0 or O.WINDUP}
+  terrain=ctx.terrain,started=ctx.time,approachOrigin=cp(p),windup=plan.contactEntry and 0 or (quick and 2 or O.WINDUP)}
  if plan.contactEntry then
   if not startGrind(self.task,p.vx,p.vy,p.vz) then self.task=nil;return nil end
  end
