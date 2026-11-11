@@ -20,7 +20,10 @@ function M.apply(g,brace,body,ticks,owns)
  brace.oGraphYOffset=body.oGraphYOffset;brace.oInteractType=0;brace.oCollisionDistance=0
  local p,r=body.header.gfx.pos,body.header.gfx.angle
  g.obj_set_gfx_pos(brace,p.x,p.y,p.z);g.obj_set_gfx_angle(brace,r.x,r.y,r.z)
- g.obj_scale(brace,M.SCALE)
+ -- motion:bracefix. Drawn with the body's own scale: since the regular stance the body is mirrored front to back,
+ -- and a brace drawn un-mirrored sat on the wrong side in every pose that is not symmetric (pushes, leans, tricks).
+ local sc=body.header.gfx.scale
+ if sc and g.obj_scale_xyz then g.obj_scale_xyz(brace,sc.x,sc.y,sc.z) else g.obj_scale(brace,M.SCALE) end
  return true
 end
 return M

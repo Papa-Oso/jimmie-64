@@ -702,5 +702,12 @@ CHANGES.append(dict(
     marker=('main.lua', 'motion:airswim'),
     edits={'main.lua': [('        smlua_anim_util_set_animation(s.body,OriginalBank.clips[mode].body);smlua_anim_util_set_animation(s.board,OriginalBank.clips[mode].board)\n', '        -- motion:airswim. Beside Mario he swims through the air too; the flying pose stays for the camera-man scenes and his dives.\n        smlua_anim_util_set_animation(s.body,OriginalBank.clips.swim.body);smlua_anim_util_set_animation(s.board,OriginalBank.clips.swim.board)\n'), ("    if mode=='fly' and not shut and s.tick%3==0 then jimmie_intro_sparkles(o.oPosX,o.oPosY+40,o.oPosZ,1,110) end\n", '')]}))
 
+# 22. Neck brace (2026-11-11, Josh: "his neck brace doesnt stay on his neck when he skates"): it followed the body's
+#     animation but not the body's mirror.
+CHANGES.append(dict(
+    name='bracefix', what='the neck brace is mirrored like the body, so it stays on his neck in pushes, leans and tricks',
+    marker=('stock_brace.lua', 'motion:bracefix'),
+    edits={'stock_brace.lua': [(' g.obj_scale(brace,M.SCALE)\n', " -- motion:bracefix. Drawn with the body's own scale: since the regular stance the body is mirrored front to back,\n -- and a brace drawn un-mirrored sat on the wrong side in every pose that is not symmetric (pushes, leans, tricks).\n local sc=body.header.gfx.scale\n if sc and g.obj_scale_xyz then g.obj_scale_xyz(brace,sc.x,sc.y,sc.z) else g.obj_scale(brace,M.SCALE) end\n")]}))
+
 # Tried and dropped on 2026-11-10: a dust puff at the pop and landing (the game's own white puff objects).
 # It spawned without errors but was too faint to see on sand in the captures, so it is not applied.
