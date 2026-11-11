@@ -472,10 +472,15 @@ CHANGES.append(dict(
 # 11. Hair: the side part Josh approved on 2026-11-07, which had never been carried into the current model.
 #     Today's hair with only the crown changed (see ../hair-part/hair_v3.py and its README). Whole-file change:
 #     the three outfit model files are replaced; the board and brace files are not touched.
-SIDEPART = HERE.parent / 'hair-part' / 'built_sidepart' / 'bin'
+#
+# 12. Skin: a little colour. Josh picked "B medium" on 2026-11-11 (see ../skin-tone/README.md). Only skin colours
+#     changed, on the model and in the drawn face. It lives in the same three model files as the side part, so the
+#     two are one whole-file change: these files have both. (The side-part-only files are still in
+#     ../hair-part/built_sidepart/bin.)
+MODEL = HERE.parent / 'skin-tone' / 'built' / 'medium' / 'bin'
 CHANGES.append(dict(
-    name='sidepart', what='his hair has the approved side part (three outfit model files replaced; same hair otherwise)',
-    files={'actors/jimmie_orig_%s_geo.bin' % n: SIDEPART / ('jimmie_orig_%s_geo.bin' % n) for n in ('rg', 'vest', 'tee')}))
+    name='model', what='approved side part and skin colour "B medium" (three outfit model files replaced; nothing else in them changed)',
+    files={'actors/jimmie_orig_%s_geo.bin' % n: MODEL / ('jimmie_orig_%s_geo.bin' % n) for n in ('rg', 'vest', 'tee')}))
 
 # Tried and dropped on 2026-11-10: a dust puff at the pop and landing (the game's own white puff objects).
 # It spawned without errors but was too faint to see on sand in the captures, so it is not applied.
