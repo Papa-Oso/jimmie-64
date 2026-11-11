@@ -1981,7 +1981,7 @@ function jimmie_swim_step()
         if s.body then
             if s.body.activeFlags~=0 then obj_mark_for_deletion(s.body) end
             if s.board and s.board.activeFlags~=0 then obj_mark_for_deletion(s.board) end
-            s.body=nil;s.board=nil;s.clip=nil;log('[jimmie-swim] out frame='..tostring(get_global_timer()))
+            s.body=nil;s.board=nil;s.clip=nil;s.leap=nil;s.out=nil;log('[jimmie-swim] out frame='..tostring(get_global_timer()))
         end
         return
     end
@@ -2000,6 +2000,7 @@ function jimmie_swim_step()
     end
     s.tick=s.tick+1
     local ty=my+(mode=='fly' and 70 or 0)
+    if jimmie_leap_step(s,mode,tx,ty,tz) then return end
     local dx,dy,dz=tx-s.x,ty-s.y,tz-s.z;local d=math.sqrt(dx*dx+dz*dz)
     if d>2500 then s.x,s.y,s.z=tx,ty,tz;dx,dy,dz,d=0,0,0,0 end
     local step=math.min(26,d*.07);local nx,nz=s.x,s.z
@@ -2024,6 +2025,90 @@ function jimmie_swim_step()
     local a=o.header.gfx.animInfo;local fr=s.tick%24;a.animFrame=fr;a.animFrameAccelAssist=fr*65536;a.animAccel=65536
     s.board.oPosY=-10000
     if mode=='fly' and s.tick%3==0 then jimmie_intro_sparkles(o.oPosX,o.oPosY+40,o.oPosZ,1,110) end
+end
+-- motion:leap. One Jimmie, not two: he dives from where he was skating into the water beside Mario, and leaps
+-- from the water to the spot where he gets back on his board. Looks only.
+function jimmie_leap_step(s,mode,tx,ty,tz)
+    local L=s.leap
+    if not L then
+        if s.dive then L={x=s.dive.x,y=s.dive.y,z=s.dive.z,t=0,kind='in'};s.dive=nil
+        elseif s.out then L={x=s.x,y=s.y,z=s.z,t=0,kind='out',ex=s.out.x,ey=s.out.y,ez=s.out.z}
+        else return false end
+        local ex,ez=L.ex or tx,L.ez or tz;local d=math.sqrt((ex-L.x)^2+(ez-L.z)^2)
+        if L.kind=='in' then L.n=math.max(14,math.min(45,math.floor(d/40)));L.h=120+d*.12
+        else L.n=math.max(10,math.min(18,math.floor(d/30)));L.h=110 end
+        s.leap=L
+        smlua_anim_util_set_animation(s.body,OriginalBank.clips.fly.body);smlua_anim_util_set_animation(s.board,OriginalBank.clips.fly.board)
+        log('[jimmie-leap] '..L.kind..' frames='..tostring(L.n)..' frame='..tostring(get_global_timer()))
+    end
+    L.t=L.t+1;local u=L.t/L.n;local ex,ey,ez
+    if L.kind=='in' then
+        ex,ey,ez=tx,ty,tz;local w=find_water_level(tx,tz)
+        if w and ey>w-45 then ey=w-45 end
+    else ex,ey,ez=L.ex,L.ey,L.ez;s.hold=20 end
+    local x,y,z=L.x+(ex-L.x)*u,L.y+(ey-L.y)*u+L.h*math.sin(math.pi*u),L.z+(ez-L.z)*u
+    if (ex-L.x)^2+(ez-L.z)^2>1 then s.face=math.atan2(ex-L.x,ez-L.z) end
+    local o=s.body
+    o.oPosX,o.oPosY,o.oPosZ=x,y,z
+    o.oFaceAngleYaw,o.oFaceAnglePitch,o.oFaceAngleRoll=skate_model_angles(s.face+math.pi/2,0,0),0,0
+    local a=o.header.gfx.animInfo;local fr=s.tick%24;a.animFrame=fr;a.animFrameAccelAssist=fr*65536;a.animAccel=65536
+    s.board.oPosY=-10000
+    if L.t>=L.n then
+        s.x,s.y,s.z=ex,ey,ez;s.leap=nil;s.clip=nil
+        if L.kind=='out' then s.out=nil;s.hold=0 end
+    end
+    return true
+end
+-- motion:boardpull. When the skater comes back right after the swimming or flying Jimmie, he first stands for
+-- 40 frames and pulls a toy-sized board out from behind his back, tosses it down, it pops to full size and he hops
+-- on. When Mario has been swimming for two seconds the skater simply leaves (the swimming Jimmie takes over).
+-- Looks only; he does not move while the clip plays.
+JIMMIE_PULL={}
+function jimmie_pull_size(t)
+    local k={{0,.45},{.62,.45},{.70,1.2},{.78,1},{1,1}}                    -- same table as SIZE in swim/pull_motion.py
+    for i=1,#k-1 do
+        if t<=k[i+1][1] then return k[i][2]+(k[i+1][2]-k[i][2])*(t-k[i][1])/(k[i+1][1]-k[i][1]) end
+    end
+    return 1
+end
+function jimmie_pull_step()
+    local s=JIMMIE_PULL
+    if not (jimmie and originalBoard and jimmie.activeFlags~=0 and originalBoard.activeFlags~=0) then s.t=nil;s.wait=nil;s.wet=0;s.had=false;return false end
+    if not s.had then
+        s.had=true
+        if JIMMIE_SWIM and JIMMIE_SWIM.body and JIMMIE_SWIM.body.activeFlags~=0 and OriginalBank.clips.board_pull then
+            -- he is still in the water: wait, unseen, until he has leapt over to this spot
+            s.wait=0;JIMMIE_SWIM.out={x=jimmie.oPosX,y=jimmie.oPosY,z=jimmie.oPosZ}
+        end
+    end
+    local m=gMarioStates[0]
+    if s.wait then
+        s.wait=s.wait+1
+        if JIMMIE_SWIM.out==nil or s.wait>30 then
+            s.wait=nil;JIMMIE_SWIM.out=nil;JIMMIE_SWIM.hold=0;s.t=0
+            log('[jimmie-pull] begin frame='..tostring(get_global_timer()))
+        else
+            PHYS=nil;jimmieSpeed=0
+            originalController.bank:apply(jimmie,originalBoard,'board_pull',0,0)
+            obj_scale_xyz(jimmie,.001,.001,-.001);obj_scale_xyz(originalBoard,.001,.001,-.001)
+            return true
+        end
+    end
+    if not s.t then
+        if m and (m.action & ACT_FLAG_SWIMMING)~=0 then s.wet=(s.wet or 0)+1 else s.wet=0 end
+        if s.wet>60 and not dying and not PHYS_AIR and opportunityMotion==nil then
+            s.wet=0;JIMMIE_SWIM.dive={x=jimmie.oPosX,y=jimmie.oPosY,z=jimmie.oPosZ};despawn_jimmie();log('[jimmie-pull] dived frame='..tostring(get_global_timer()))
+            return true
+        end
+        return false
+    end
+    s.t=s.t+1
+    if s.t>40 then s.t=nil;log('[jimmie-pull] end frame='..tostring(get_global_timer()));return false end
+    PHYS=nil;jimmieSpeed=0
+    local t=(s.t-1)/39;local b=.62*jimmie_pull_size(t)
+    originalController.bank:apply(jimmie,originalBoard,'board_pull',t,0)
+    obj_scale_xyz(jimmie,.62,.62,-.62);obj_scale_xyz(originalBoard,b,b,-b)
+    return true
 end
 local function on_update()
     railPresentation:clear() -- early returns, pause and ownership changes fail closed
@@ -2177,6 +2262,8 @@ local function on_update()
     load_all_sounds()
     if step_original_crash(false) then
         -- Crash renderer is the exclusive owner this tick.
+    elseif jimmie_pull_step() then
+        -- He is pulling out his board this tick.
     elseif jimmie_intro_step(m) then
         -- The bridge scene owns him this tick (or he has not arrived yet).
     elseif step_skate_opportunity() then
