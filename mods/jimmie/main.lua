@@ -1821,6 +1821,7 @@ function jimmie_intro_step(m)
         PHYS={x=x,y=y,z=z,vx=0,vy=0,vz=0,yaw=heading,prevYaw=heading,onGround=false,pushT=0,airT=0}
         PHYS_AIR=false
         jimmie_intro_sparkles(x,y,z,14,170)
+        if s.stick and s.stick.activeFlags~=0 then obj_mark_for_deletion(s.stick) end;s.stick=nil
         jimmie_intro_hide(lak,true)
         s.done=true;log('[jimmie-intro] phase=companion frame='..tostring(get_global_timer()))
         return false
@@ -1851,6 +1852,8 @@ function jimmie_intro_step(m)
         originalController.bank:apply(jimmie,originalBoard,fc,(s.tick%24)/24,0);originalBoard.oPosY=-10000
     else update_pose_animation(1/30) end
     obj_scale_xyz(jimmie,size,size,-size);obj_scale_xyz(originalBoard,size,size,-size)
+    jimmie_stick_place(s,jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ,math.atan2(dx,dz),false,size)
+    stop_sound(SOUND_AIR_LAKITU_FLY,lak.header.gfx.cameraToObject)
     if not s.talking then jimmie_intro_sparkles(x+fx,y+fy+60*size,z+fz,2,150*size)
     elseif t%9==0 then jimmie_intro_sparkles(x+fx,y+fy+90,z+fz,1,120) end
     return true
@@ -1914,6 +1917,7 @@ function jimmie_opening_step()
     s.tick=s.tick+1
     local hidden=(lak.header.gfx.node.flags & GRAPH_RENDER_INVISIBLE)~=0
     local o=s.body
+    stop_sound(SOUND_AIR_LAKITU_FLY_HIGHPRIO,lak.header.gfx.cameraToObject)
     o.oPosX,o.oPosZ=lak.oPosX,lak.oPosZ
     o.oPosY=hidden and -10000 or (lak.oPosY-90+10*math.sin(s.tick*.3))
     local yaw=skate_model_angles(lak.oFaceAngleYaw*math.pi/32768+math.pi/2,0,0)
@@ -1940,6 +1944,21 @@ end
 -- motion:camicon. The camera man in the corner of the screen is Jimmie.
 JIMMIE_CAM_ICON=get_texture_info('jimmie_cam_head')
 if JIMMIE_CAM_ICON then texture_override_set('texture_hud_char_lakitu',JIMMIE_CAM_ICON) end
+-- motion:camfix. Places the camera stick at a flying Jimmie's holding hand, pointing the way he faces.
+function jimmie_stick_place(s,x,y,z,face,hidden,size)
+    if not (s.stick and s.stick.activeFlags~=0) then
+        local id=smlua_model_util_get_id('jimmie_camstick_geo')
+        if not id or id==E_MODEL_ERROR_MODEL then return end
+        local ok,st=pcall(spawn_non_sync_object,id_bhvjimmie,id,x,-10000,z,function(q) end)
+        if not (ok and st) then return end
+        s.stick=st
+    end
+    local k=(size or .62)/.62;local fx,fz=math.sin(face),math.cos(face);local side=(JIMMIE_STICK_SIDE or 24)*k
+    s.stick.oPosX=x+fx*59*k+fz*side;s.stick.oPosZ=z+fz*59*k-fx*side
+    s.stick.oPosY=hidden and -10000 or (y+89*k)
+    s.stick.oFaceAngleYaw,s.stick.oFaceAnglePitch,s.stick.oFaceAngleRoll=math.floor(face*32768/math.pi)%65536,0,0
+    obj_scale_xyz(s.stick,size or .62,size or .62,size or .62)
+end
 local function on_update()
     railPresentation:clear() -- early returns, pause and ownership changes fail closed
     if in_jimmie_title() then

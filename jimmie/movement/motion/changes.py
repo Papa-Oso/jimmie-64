@@ -543,12 +543,8 @@ CHANGES.append(dict(
     marker=('original_clip_bank.lua', 'motion:flypose'),
     edits={'original_clip_bank.lua': [(BANK_END, (HERE / 'fly_bank_fragment.lua').read_text(encoding='utf-8') + BANK_END)]}))
 
-# 12c2b. The camera stick model (rod, line, film camera; our own shapes, ../camera-man/make_camstick.py).
-CAMSTICK = HERE.parent / 'camera-man' / 'actors' / 'jimmie_camstick'
-CHANGES.append(dict(
-    name='camstick_files', what='the camera stick model Jimmie holds as the camera man',
-    files={'actors/jimmie_camstick/geo.inc.c': CAMSTICK / 'geo.inc.c', 'actors/jimmie_camstick/model.inc.c': CAMSTICK / 'model.inc.c',
-           'actors/jimmie_camstick_geo.bin': HERE.parent / 'camera-man' / 'bin' / 'jimmie_camstick_geo.bin'}))
+# 12c2b. (The first camera-stick shape, camera-man/actors-v1 and bin/, was installed 2026-11-11 and replaced the same day
+#        by the second shape below, change camstick2_files.)
 
 # 12c3. The opening fly-in (and the ending wave): Jimmie is the flying camera man.
 CHANGES.append(dict(
@@ -574,6 +570,34 @@ CHANGES.append(dict(
        "if JIMMIE_CAM_ICON then texture_override_set('texture_hud_char_lakitu',JIMMIE_CAM_ICON) end\n"
        "local function on_update()\n"),
     ]}))
+
+# 12c4. Follow-ups Josh asked to have checked (2026-11-11): he holds the camera stick on the bridge too, the
+#       camera hangs lower on its line (model file), and Lakitu's flying sound is silenced in both scenes.
+CHANGES.append(dict(
+    name='camfix', what='camera stick on the bridge too; Lakitu flying sound silenced in the opening and on the bridge',
+    marker=('main.lua', 'motion:camfix'),
+    edits={'main.lua': [
+      ("local function on_update()\n", "-- motion:camfix. Places the camera stick at a flying Jimmie's holding hand, pointing the way he faces.\nfunction jimmie_stick_place(s,x,y,z,face,hidden,size)\n    if not (s.stick and s.stick.activeFlags~=0) then\n        local id=smlua_model_util_get_id('jimmie_camstick_geo')\n        if not id or id==E_MODEL_ERROR_MODEL then return end\n        local ok,st=pcall(spawn_non_sync_object,id_bhvjimmie,id,x,-10000,z,function(q) end)\n        if not (ok and st) then return end\n        s.stick=st\n    end\n    local k=(size or .62)/.62;local fx,fz=math.sin(face),math.cos(face);local side=(JIMMIE_STICK_SIDE or 24)*k\n    s.stick.oPosX=x+fx*59*k+fz*side;s.stick.oPosZ=z+fz*59*k-fx*side\n    s.stick.oPosY=hidden and -10000 or (y+89*k)\n    s.stick.oFaceAngleYaw,s.stick.oFaceAnglePitch,s.stick.oFaceAngleRoll=math.floor(face*32768/math.pi)%65536,0,0\n    obj_scale_xyz(s.stick,size or .62,size or .62,size or .62)\nend\nlocal function on_update()\n"),
+      # bridge: stick in his hand while he flies in and talks; gone when he lands
+      ("    obj_scale_xyz(jimmie,size,size,-size);obj_scale_xyz(originalBoard,size,size,-size)\n",
+       "    obj_scale_xyz(jimmie,size,size,-size);obj_scale_xyz(originalBoard,size,size,-size)\n"
+       "    jimmie_stick_place(s,jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ,math.atan2(dx,dz),false,size)\n"
+       "    stop_sound(SOUND_AIR_LAKITU_FLY,lak.header.gfx.cameraToObject)\n"),
+      ("        jimmie_intro_sparkles(x,y,z,14,170)\n",
+       "        jimmie_intro_sparkles(x,y,z,14,170)\n"
+       "        if s.stick and s.stick.activeFlags~=0 then obj_mark_for_deletion(s.stick) end;s.stick=nil\n"),
+      # opening: silence the same sound there
+      ("    s.tick=s.tick+1\n    local hidden=(lak.header.gfx.node.flags & GRAPH_RENDER_INVISIBLE)~=0\n    local o=s.body\n",
+       "    s.tick=s.tick+1\n    local hidden=(lak.header.gfx.node.flags & GRAPH_RENDER_INVISIBLE)~=0\n    local o=s.body\n"
+       "    stop_sound(SOUND_AIR_LAKITU_FLY_HIGHPRIO,lak.header.gfx.cameraToObject)\n"),
+    ]}))
+
+# 12c5. Camera stick, second shape: the camera hangs lower on its line. Goes with `camfix`.
+CAMSTICK2 = HERE.parent / 'camera-man' / 'actors' / 'jimmie_camstick'
+CHANGES.append(dict(
+    name='camstick2_files', what='camera stick model with the camera hanging lower on its line',
+    files={'actors/jimmie_camstick/geo.inc.c': CAMSTICK2 / 'geo.inc.c', 'actors/jimmie_camstick/model.inc.c': CAMSTICK2 / 'model.inc.c',
+           'actors/jimmie_camstick_geo.bin': HERE.parent / 'camera-man' / 'bin2' / 'jimmie_camstick_geo.bin'}))
 
 # Tried and dropped on 2026-11-10: a dust puff at the pop and landing (the game's own white puff objects).
 # It spawned without errors but was too faint to see on sand in the captures, so it is not applied.
