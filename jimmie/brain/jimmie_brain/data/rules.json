@@ -474,6 +474,23 @@
       "intent": "quiet"
     },
     {
+      "id": "mario_move",
+      "on": "mario_move",
+      "when": {
+        "mode": "free"
+      },
+      "intent": "celebrate",
+      "chance": 0.3,
+      "write": true,
+      "staple_share": 0.0,
+      "bank_share": 0.0,
+      "delay_ms": 500,
+      "cooldown_s": 40,
+      "max_words": 12,
+      "direction": "Mario just pulled off a showy move right in front of him: a triple jump, a long jump or a wall kick. He is impressed for a second, like a skater watching a friend land something. No advice.",
+      "note": "Owner, 2026-11-11: Jimmie reacts to what Mario does, fly on the wall, no UI. Free roam only, so runs stay as they were."
+    },
+    {
       "id": "water",
       "on": "water_enter",
       "when": {

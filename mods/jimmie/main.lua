@@ -1975,6 +1975,7 @@ JIMMIE_SWIM={}
 function jimmie_swim_step()
     local s=JIMMIE_SWIM;local m=gMarioStates[0]
     if not (m and m.marioObj) then return end
+    if s.body and not (jimmie_is_mine(s.body) and jimmie_is_mine(s.board)) then jimmie_swim_forget() end
     local mx,my,mz=m.pos.x,m.pos.y,m.pos.z;local f=m.faceAngle.y*math.pi/32768
     local tx,tz=mx+math.sin(f)*130-math.cos(f)*190,mz+math.cos(f)*130+math.sin(f)*190
     -- Never beside Mario through a wall: try his other side, then behind him; otherwise stay out of sight.
@@ -1989,7 +1990,8 @@ function jimmie_swim_step()
     else
         s.alone=(s.alone or 0)+1
         if (m.action & ACT_FLAG_SWIMMING)~=0 or my<m.waterLevel-100 then mode='swim'
-        elseif s.alone>45 and m.floor and m.floor.object~=nil and math.abs(my-m.floorHeight)<4 then mode='fly' end
+        elseif s.alone>45 and m.floor and m.floor.object~=nil and math.abs(my-m.floorHeight)<4 then mode='fly'
+        elseif s.alone>45 and m.action==ACT_FLYING then mode='fly' end   -- motion:flywing. Mario flying with the Wing Cap
     end
     if obj_get_first_with_behavior_id(id_bhvBeginningLakitu) then mode=nil end
     if mode then s.hold=20;s.mode=mode else s.hold=(s.hold or 0)-1 end
@@ -2012,7 +2014,8 @@ function jimmie_swim_step()
     end
     if s.clip~=mode then
         s.clip=mode
-        smlua_anim_util_set_animation(s.body,OriginalBank.clips[mode].body);smlua_anim_util_set_animation(s.board,OriginalBank.clips[mode].board)
+        -- motion:airswim. Beside Mario he swims through the air too; the flying pose stays for the camera-man scenes and his dives.
+        smlua_anim_util_set_animation(s.body,OriginalBank.clips.swim.body);smlua_anim_util_set_animation(s.board,OriginalBank.clips.swim.board)
     end
     s.tick=s.tick+1
     local ty=my+(mode=='fly' and 70 or 0)
@@ -2020,11 +2023,11 @@ function jimmie_swim_step()
     local dx,dy,dz=tx-s.x,ty-s.y,tz-s.z;local d=math.sqrt(dx*dx+dz*dz)
     if d>2500 then s.x,s.y,s.z=tx,ty,tz;dx,dy,dz,d=0,0,0,0 end
     if not shut and not jimmie_open(mx,my,mz,s.x,my,s.z) then s.x,s.z=tx,tz;dx,dz,d=0,0,0 end   -- a wall came between them
-    local step=math.min(26,d*.07);local nx,nz=s.x,s.z
+    local step=mode=='fly' and math.min(95,d*.3) or math.min(26,d*.07);local nx,nz=s.x,s.z
     if d>1 then nx,nz=s.x+dx/d*step,s.z+dz/d*step end
     local ax,az=nx-mx,nz-mz;local ad=math.sqrt(ax*ax+az*az)
     if ad<170 and ad>1 then nx,nz=mx+ax/ad*170,mz+az/ad*170 end
-    s.y=s.y+math.max(-14,math.min(14,dy*.08))
+    local rise=mode=='fly' and 70 or 14;s.y=s.y+math.max(-rise,math.min(rise,dy*(mode=='fly' and .3 or .08)))
     if mode=='swim' then
         -- stay in open water: under the surface, off the bottom, never into ground
         local water,floor=find_water_level(nx,nz),find_floor_height(nx,s.y+200,nz)
@@ -2046,7 +2049,6 @@ function jimmie_swim_step()
     local a=o.header.gfx.animInfo;local fr=s.tick%24;a.animFrame=fr;a.animFrameAccelAssist=fr*65536;a.animAccel=65536
     s.board.oPosY=-10000
     if shut then o.oPosY=-10000 end
-    if mode=='fly' and not shut and s.tick%3==0 then jimmie_intro_sparkles(o.oPosX,o.oPosY+40,o.oPosZ,1,110) end
 end
 -- motion:leap. One Jimmie, not two: he dives from where he was skating into the water beside Mario, and leaps
 -- from the water to the spot where he gets back on his board. Looks only.
@@ -2138,9 +2140,71 @@ function jimmie_open(ax,ay,az,bx,by,bz)
     for i=1,n do
         local q={x=ax+(bx-ax)*i/n,y=ay+(by-ay)*i/n,z=az+(bz-az)*i/n}
         if resolve_and_return_wall_collisions(q,60,45)~=nil then return false end
-        if find_floor_height(q.x,q.y+150,q.z)<-10000 then return false end
+        if JIMMIE_SWIM.mode~='fly' and find_floor_height(q.x,q.y+150,q.z)<-10000 then return false end
     end
     return true
+end
+-- motion:stalefix. When the level or area changes the game frees every object. The swimming / flying Jimmie must
+-- drop its handles then, or it would move (and later delete) whatever object the game puts in the same slot next.
+function jimmie_swim_forget()
+    local s=JIMMIE_SWIM
+    s.body=nil;s.board=nil;s.clip=nil;s.leap=nil;s.out=nil;s.dive=nil;s.hold=0;s.alone=0
+    if JIMMIE_PULL then JIMMIE_PULL.wait=nil;JIMMIE_PULL.t=nil end
+end
+function jimmie_is_mine(o)
+    if not o or o.activeFlags==0 then return false end
+    local r=obj_has_behavior_id(o,id_bhvjimmie)
+    return r==true or r==1
+end
+hook_event(HOOK_ON_WARP,jimmie_swim_forget)
+if HOOK_ON_CLEAR_AREAS then hook_event(HOOK_ON_CLEAR_AREAS,jimmie_swim_forget) end
+-- motion:react. He reacts to what Mario does, with his body only: a cheer for a triple jump, long jump, wall kick
+-- or star; a wince when Mario is hurt, lands a big fall or dies. Played over his riding stance for 24 frames while
+-- he keeps rolling; never during a trick, a grind, a fall or in the air. Nothing here moves him or Mario.
+JIMMIE_REACT={cool={}}
+function jimmie_react_step(m)
+    local s=JIMMIE_REACT;local f=get_global_timer()
+    if not m or not m.marioObj then return end
+    -- what Mario just did
+    local act=m.action;local cause,kind=nil,nil
+    if act~=s.act then
+        if act==ACT_TRIPLE_JUMP or act==ACT_SPECIAL_TRIPLE_JUMP or act==ACT_FLYING_TRIPLE_JUMP then cause,kind='triple_jump','cheer'
+        elseif act==ACT_LONG_JUMP then cause,kind='long_jump','cheer'
+        elseif act==ACT_WALL_KICK_AIR then cause,kind='wall_kick','cheer'
+        elseif act==ACT_HARD_BACKWARD_GROUND_KB or act==ACT_HARD_FORWARD_GROUND_KB then cause,kind='big_fall','wince'
+        elseif (act & ACT_GROUP_MASK)==ACT_GROUP_CUTSCENE and (act==ACT_STANDING_DEATH or act==ACT_DEATH_ON_BACK or act==ACT_DEATH_ON_STOMACH
+            or act==ACT_QUICKSAND_DEATH or act==ACT_ELECTROCUTION or act==ACT_SUFFOCATION) then cause,kind='death','wince' end
+    end
+    s.act=act
+    if not cause and s.hurt and m.hurtCounter>s.hurt then cause,kind='hurt','wince' end
+    s.hurt=m.hurtCounter
+    if not cause and s.stars and m.numStars>s.stars then cause,kind='star','cheer' end
+    s.stars=m.numStars
+    if cause then
+        -- the same move twice in a row is not news: long jumps at most every 10 seconds, the rest every 4
+        local wait=(cause=='long_jump' and 300 or 120)
+        if f-(s.cool[cause] or -9999)>=wait then s.cool[cause]=f;s.want={kind=kind,cause=cause,frame=f} end
+    end
+    if s.want and f-s.want.frame>(s.want.cause=='star' and 600 or 45) then s.want=nil end      -- too late to react
+    local p=PHYS
+    local free=jimmie and originalBoard and jimmie.activeFlags~=0 and p and p.onGround and not PHYS_AIR and not dying
+        and opportunityMotion==nil and not p.windup and not p.manual and not p.fakie
+    if not free then s.t=nil;return end
+    if s.want and not s.t then
+        local dx,dz=m.pos.x-jimmie.oPosX,m.pos.z-jimmie.oPosZ
+        if dx*dx+dz*dz<1800*1800 and OriginalBank.clips['react_'..s.want.kind] then
+            s.t=0;s.kind=s.want.kind
+            log('[jimmie-react] '..s.kind..' cause='..s.want.cause..' frame='..tostring(f))
+            local c=s.want.cause
+            if JIMMIE_BRAIN and (c=='triple_jump' or c=='long_jump' or c=='wall_kick') then pcall(JIMMIE_BRAIN.fact,'mario_move','mario',{move=c}) end
+        end
+        s.want=nil
+    end
+    if s.t then
+        s.t=s.t+1
+        if s.t>24 then s.t=nil;return end
+        originalController.bank:apply(jimmie,originalBoard,'react_'..s.kind,(s.t-1)/23,0)
+    end
 end
 local function on_update()
     railPresentation:clear() -- early returns, pause and ownership changes fail closed
@@ -2304,6 +2368,7 @@ local function on_update()
         update_movement(1 / 30)
         update_pose_animation(1 / 30)
     end
+    jimmie_react_step(m)
     update_jumps()
     update_host(m,true)
     director_bridge(m,true)
@@ -2779,7 +2844,7 @@ function apply_live_command(payload)
         else
             log("[runmode] module not loaded")
         end
-    elseif name == "warp" then
+    elseif name == "warp" and JIMMIE_DEV_COMMANDS then
         -- Measurement-only: move Mario to a level/area/act for collision probing.
         local level, area, act = tonumber(payload.level), tonumber(payload.area), tonumber(payload.act)
         if level ~= nil and type(warp_to_level) == "function" then
@@ -2891,7 +2956,7 @@ function apply_live_command(payload)
                     (okW and wall ~= nil) and "1" or "0"))
             end
         end
-    elseif name == "stage" then
+    elseif name == "stage" and JIMMIE_DEV_COMMANDS then
         -- Measurement-only staged placement for mechanism verification. Attempts
         -- memory-only writes to Mario position/velocity and a freefall action.
         -- Documented MarioState fields are read-only; this logs whether the engine

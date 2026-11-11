@@ -26,6 +26,10 @@ MOTION = PROJECT / "docs/movement-review-20261109/motion/apply_motion.py"
 EDITS = {
     # Jimmie's own skate outcomes reach the brain from the place that already witnesses them.
     "main.lua": [
+        # Timing rule 5: the two developer commands that can warp or place Mario are off in every
+        # build a player gets. A test harness that needs them sets the global JIMMIE_DEV_COMMANDS itself.
+        ('    elseif name == "warp" then\n', '    elseif name == "warp" and JIMMIE_DEV_COMMANDS then\n'),
+        ('    elseif name == "stage" then\n', '    elseif name == "stage" and JIMMIE_DEV_COMMANDS then\n'),
         ('    print("[jimmie-skate-memory] "..Personality.json(fact))\n',
          '    print("[jimmie-skate-memory] "..Personality.json(fact))\n'
          '    if JIMMIE_BRAIN then JIMMIE_BRAIN.skate(fact) end\n'),
