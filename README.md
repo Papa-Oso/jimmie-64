@@ -4,7 +4,7 @@ This is a fork of [sm64coopdx](https://github.com/coop-deluxe/sm64coopdx) that a
 skateboarding companion for Super Mario 64 who talks like a real person, does 50 named tricks, and
 answers what you type in chat.
 
-- **Play it:** get the installer or zip from [Releases](https://github.com/Papa-Oso/jimmie-64/releases/latest). You need your own Super Mario 64 (US) ROM.
+- **Play it:** download the zip from [Releases](https://github.com/Papa-Oso/jimmie-64/releases/latest). You need your own Super Mario 64 (US) ROM.
 - **What it is and how to build it:** [JIMMIE.md](JIMMIE.md)
 - **Read first:** [JIMMIE_NOTICE.md](JIMMIE_NOTICE.md). Unofficial fan project, not affiliated with Nintendo. Jimmie is a real streamer used with his permission, and his voice in the game is an AI clone.
 
