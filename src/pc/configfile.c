@@ -702,7 +702,9 @@ static void configfile_load_internal(const char *filename, bool* error) {
         // Create a new config file and save defaults
         printf("Config file '%s' not found. Creating it.\n", filename);
         configfile_save(filename);
-        return;
+        // A first run still needs the steps below: without them the master volume stays at
+        // zero and mods named on the command line are not enabled until the second start.
+        goto APPLY_DEFAULTS_AND_CLI;
     }
 
     // Go through each line in the file
@@ -813,6 +815,7 @@ NEXT_OPTION:
 
     fs_close(file);
 
+APPLY_DEFAULTS_AND_CLI:
     if (configGraphicsBackend < GAPI_GL || configGraphicsBackend > GAPI_MAX) { configGraphicsBackend = GAPI_GL; }
 
     if (configFramerateMode < 0 || configFramerateMode > RRM_MAX) { configFramerateMode = 0; }
