@@ -81,6 +81,8 @@ def main() -> int:
     main_lua = mod / "main.lua"
     main_lua.write_bytes(main_lua.read_bytes().rstrip() + b"\n\n;(function()\n" + install.encode("utf-8") + b"\nend)()\n")
     shutil.copy2(HERE / "lua/jimmie_brain_link.lua", mod / "jimmie_brain_link.lua")
+    shutil.copy2(HERE / "lua/jimmie_run_tells.lua", mod / "jimmie_run_tells.lua")
+    shutil.copy2(HERE / "lua/jimmie_dialogs.lua", mod / "jimmie_dialogs.lua")
 
     # The title screen plays the game's own title music. The parent build carries a recording of
     # music from another game; without the file the engine falls back to the normal sequence

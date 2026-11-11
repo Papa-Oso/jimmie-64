@@ -60,7 +60,7 @@ function M.new(d)
   if not a or not a.curAnim or g.throwMatrix~=nil or o.oGraphYOffset~=0 then return nil end
   if not samePoint(root(o),expected.root) or not sameAngles(native(o),expected.native) then return nil end
   local scale=g.scale
-  if not scale or not same(scale.x,.62,1e-6) or not same(scale.y,.62,1e-6) or not same(scale.z,.62,1e-6) then return nil end
+  if not scale or not same(scale.x,.62,1e-6) or not same(scale.y,.62,1e-6) or not same(math.abs(scale.z),.62,1e-6) then return nil end
   if d.animationName(o)~=name or a.animFrame~=frame or a.animFrameAccelAssist~=frame*65536 or a.animAccel~=65536 then return nil end
   -- Flag 2 prevents the native renderer advancing the controller-selected frame.
   if a.curAnim.flags~=5 then return nil end

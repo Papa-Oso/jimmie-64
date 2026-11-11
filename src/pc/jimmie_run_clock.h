@@ -11,6 +11,7 @@ typedef struct {
     JrcPhase phase;
     int64_t boot_us, last_us;
     uint64_t elapsed_us, best_us;
+    uint64_t split_us[16];          /* elapsed time when each star was collected; 0 = not yet */
     int file, stars;
     bool storage_ready, storage_fault;
     char path[1024];

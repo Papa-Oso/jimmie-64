@@ -76,14 +76,33 @@ class Channel:
         self.mapping.close()
 
 
+SAVE = "save"            # the folder inside profile/ that holds the save, settings and ROM
+
+
+def new_run() -> None:
+    """A fresh attempt: an empty save in its own folder, so the normal save is never touched.
+
+    The run folder keeps its own best time and run records; the ROM and settings are copied from
+    the normal folder the first time. Only the run folder's save file is removed."""
+    global SAVE
+    normal, run = PROFILE / "save", PROFILE / "run"
+    run.mkdir(parents=True, exist_ok=True)
+    for name in ("baserom.us.z64", "sm64config.txt"):
+        if not (run / name).exists() and (normal / name).is_file():
+            shutil.copy2(normal / name, run / name)
+    for name in ("sm64_save_file.bin", "sm64_save_file.bin.bak"):
+        (run / name).unlink(missing_ok=True)
+    SAVE = "run"
+
+
 def setup_profile() -> None:
     for name in ("save", "temp", "appdata", "localappdata"):
         (PROFILE / name).mkdir(parents=True, exist_ok=True)
     # With no ROM to copy, the game shows its own first-run screen and asks the player for theirs.
-    if not (PROFILE / "save/baserom.us.z64").exists() and ROM.is_file():
-        shutil.copy2(ROM, PROFILE / "save/baserom.us.z64")
-    if not (PROFILE / "save/sm64config.txt").exists() and CONFIG.is_file():
-        shutil.copy2(CONFIG, PROFILE / "save/sm64config.txt")
+    if not (PROFILE / SAVE / "baserom.us.z64").exists() and ROM.is_file():
+        shutil.copy2(ROM, PROFILE / SAVE / "baserom.us.z64")
+    if not (PROFILE / SAVE / "sm64config.txt").exists() and CONFIG.is_file():
+        shutil.copy2(CONFIG, PROFILE / SAVE / "sm64config.txt")
 
 
 def llm_up(port: int) -> bool:
@@ -113,7 +132,7 @@ def start_llm(cfg: dict, session: Path):
 
 def start_brain(cfg: dict, session: Path, llm: str | None, voice: str):
     env = dict(os.environ, TORCHINDUCTOR_CACHE_DIR=str(HERE / "work/torch-cache"), PYTHONIOENCODING="utf-8")
-    args = [str(PYTHON), "-B", "-m", "jimmie_brain", "run", str(session / "stdout.log"), str(PROFILE / "save/sav"),
+    args = [str(PYTHON), "-B", "-m", "jimmie_brain", "run", str(session / "stdout.log"), str(PROFILE / SAVE / "sav"),
             "--journal", str(session / "brain.jsonl")]
     if llm is None:
         args += ["--pool", str(HERE / "work/pool")]
@@ -136,12 +155,18 @@ def main() -> int:
                    help="record the game's own audio output (up to 125 s) so tools/measure_latency.py can time each line")
     p.add_argument("--llm", help="'scripted' for stand-in lines, or a server URL; default starts the local model")
     p.add_argument("--voice", choices=("qwen", "null"))
+    p.add_argument("--new-run", action="store_true",
+                   help="start a 16-star attempt on an empty save kept apart from your normal save")
+    p.add_argument("--run-test", action="store_true",
+                   help="with --smoke: let the automated start be timed as a run (uses a separate test record)")
     a = p.parse_args()
     cfg = settings()
     if not (GAME / "sm64coopdx.exe").is_file():
         raise SystemExit(f"The game was not found in {GAME}. Build it first (see the setup notes).")
     if subprocess.run(["tasklist", "/FI", "IMAGENAME eq sm64coopdx.exe"], capture_output=True, text=True).stdout.count("sm64coopdx.exe"):
         raise SystemExit("A game is already open. Close it first.")
+    if a.new_run:
+        new_run()
     setup_profile()
     session = HERE / "sessions" / datetime.now().strftime("%Y%m%d-%H%M%S")
     session.mkdir(parents=True)
@@ -152,9 +177,11 @@ def main() -> int:
                TMP=str(PROFILE / "temp"), JIMMIE_NATIVE_HEAD="1", SDL_JOYSTICK_RAWINPUT="0",
                JIMMIE_ROUTE_CHANNEL=channel.name, JIMMIE_HEAD_TRACE=str(session / "native.jsonl"))
     args = [str(GAME / "sm64coopdx.exe"), "--server", "58468", "--playercount", "1", "--windowed", "--skip-update-check",
-            "--no-discord", "--disable-mods", "--enable-mod", "jimmie", "--console", "--savepath", str(PROFILE / "save")]
+            "--no-discord", "--disable-mods", "--enable-mod", "jimmie", "--console", "--savepath", str(PROFILE / SAVE)]
     if a.smoke:
         env.update(JIMMIE_HEAD_TEST_START="1")
+        if a.run_test:
+            env.update(JIMMIE_RUN_TEST="1")
         if not a.sound:
             env["SDL_AUDIODRIVER"] = "dummy"
         args += ["--backend", "opengl", "--skip-intro", "--hide-loading-screen"]

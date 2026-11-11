@@ -477,10 +477,65 @@ CHANGES.append(dict(
 #     changed, on the model and in the drawn face. It lives in the same three model files as the side part, so the
 #     two are one whole-file change: these files have both. (The side-part-only files are still in
 #     ../hair-part/built_sidepart/bin.)
-MODEL = HERE.parent / 'skin-tone' / 'built' / 'medium' / 'bin'
+# 2026-11-11: with the regular stance the head is pre-mirrored in these files (side part, B medium skin, head mirrored).
+MODEL = HERE.parent / 'regular-stance' / 'bin'
 CHANGES.append(dict(
     name='model', what='approved side part and skin colour "B medium" (three outfit model files replaced; nothing else in them changed)',
     files={'actors/jimmie_orig_%s_geo.bin' % n: MODEL / ('jimmie_orig_%s_geo.bin' % n) for n in ('rg', 'vest', 'tee')}))
+
+# 12a. Regular stance (Josh, 2026-11-11: the real Jimmie skates regular, left foot forward). Every clip had him
+#      goofy. Body and board are drawn mirrored front-to-back, which swaps which foot leads in every clip at once
+#      without regenerating any of them or changing any timing. The model files pre-mirror the head so the side part
+#      and face stay the way round Josh approved. Checks that insisted on the old scale accept the mirrored one.
+CHANGES.append(dict(
+    name='regular', what='he rides regular (left foot forward) instead of goofy: the model is drawn mirrored; no clip or timing changes',
+    marker=('main.lua', 'motion:regular'),
+    edits={
+     'main.lua': [
+      ("    obj_scale(obj, 0.62)\n",
+       "    -- motion:regular. Mirrored front-to-back so he rides left foot forward.\n    obj_scale_xyz(obj, 0.62, 0.62, -0.62)\n"),
+      # Rolling backwards, frontside and backside swap.
+      ("                if p.fakieTrick and result.kind=='trick' then result.trick='fakie '..result.trick end\n",
+       "                if p.fakieTrick and result.kind=='trick' then\n"
+       "                    local swapped=result.trick:gsub('frontside','@'):gsub('backside','frontside'):gsub('@','backside')\n"
+       "                    result.trick='fakie '..swapped\n"
+       "                end\n"),
+      # Rolling backwards the model is turned half way round, so the lean has to be turned back.
+      ("    local bank = math.floor(math.max(-1800, math.min(1800, turn * -24000)))\n",
+       "    local bank = math.floor(math.max(-1800, math.min(1800, turn * -24000)))\n"
+       "    if PHYS and PHYS.fakie and math.abs(PHYS.fakie.yaw) > math.pi / 2 then bank = -bank end\n"),
+     ],
+     'original_clip_bank.lua': [(BANK_END, (HERE / 'regular_bank_fragment.lua').read_text(encoding='utf-8') + BANK_END)],
+     'native_crash.lua': [
+      ("math.abs(scale[k]-M.SCALE)>.00001", "math.abs(math.abs(scale[k])-M.SCALE)>.00001"),
+     ],
+     'skate_rail_binding.lua': [
+      ("not same(scale.z,.62,1e-6) then return nil end", "not same(math.abs(scale.z),.62,1e-6) then return nil end"),
+     ]}))
+
+# 12b. Jimmie's introduction (Josh, 2026-11-11): on a new file he arrives in the bridge scene instead of Lakitu.
+#      The game's scene is untouched; Lakitu and his cloud are hidden and Jimmie is drawn in his place, flitting.
+CHANGES.append(dict(
+    name='introscene', pending=True, what='on a new file Jimmie arrives in the bridge scene instead of Lakitu: small, flitting and twirling with sparkles, then the normal companion',
+    marker=('main.lua', 'motion:introscene'),
+    edits={'main.lua': [
+      ("local function on_update()\n", "-- motion:introscene. Jimmie's introduction: on a new file he arrives in the bridge scene in place of Lakitu.\n-- The game's own scene is left exactly as it is (trigger, camera, text box, timing). Lakitu and his cloud are only\n-- made invisible, and Jimmie is drawn around where Lakitu is: small, flitting in loops with twirls and sparkles,\n-- growing as he flies in, then still in front of Mario for the text. When the text box closes he becomes the\n-- normal companion on that spot. Globals, because this file is at Lua's limit of locals.\nJIMMIE_INTRO={}\nfunction jimmie_intro_lakitu()\n    local o=obj_get_first_with_behavior_id(id_bhvCameraLakitu)\n    while o do\n        if o.oBehParams2ndByte~=0 and o.activeFlags~=0 then return o end      -- 0 is the camera Lakitu in the mirror room\n        o=obj_get_next_with_same_behavior_id(o)\n    end\n    return nil\nend\nfunction jimmie_intro_hide(lak,delete)\n    obj_set_model_extended(lak,E_MODEL_NONE)\n    for _,id in ipairs({id_bhvCloud,id_bhvCloudPart}) do\n        local c=obj_get_first_with_behavior_id(id)\n        while c do\n            local nxt=obj_get_next_with_same_behavior_id(c)\n            if math.abs(c.oPosX-lak.oPosX)+math.abs(c.oPosY-lak.oPosY)+math.abs(c.oPosZ-lak.oPosZ)<900 then\n                if delete then obj_mark_for_deletion(c) else obj_set_model_extended(c,E_MODEL_NONE) end\n            end\n            c=nxt\n        end\n    end\n    if delete then obj_mark_for_deletion(lak) end\nend\nfunction jimmie_intro_sparkles(x,y,z,count,spread)\n    for _=1,count do\n        spawn_non_sync_object(id_bhvSparkleSpawn,E_MODEL_NONE,x+(math.random()-.5)*spread,y+math.random()*spread,z+(math.random()-.5)*spread,nil)\n    end\nend\nfunction jimmie_intro_step(m)\n    local s=JIMMIE_INTRO\n    if s.done then return false end\n    local lak=jimmie_intro_lakitu()\n    if not lak then\n        if s.seen then s.done=true end                                         -- the scene is over, or was never on this file\n        return false\n    end\n    s.seen=true\n    if lak.oAction==0 then\n        -- Waiting for Mario to step on the bridge. If he gets past it without triggering the scene (the speedrun\n        -- skip), there is no introduction: Jimmie is simply the companion from then on.\n        if m.pos.z<-2150 then s.done=true;log('[jimmie-intro] phase=skipped frame='..tostring(get_global_timer()));return false end\n        -- He cannot be created once the scene has frozen Mario, so he is created now and kept out of sight.\n        if not (jimmie and originalBoard) then spawn_jimmie() end\n        if jimmie and originalBoard then PHYS=nil;jimmie.oPosY=-10000;originalBoard.oPosY=-10000 end\n        if not s.waiting then s.waiting=true;log('[jimmie-intro] phase=waiting frame='..tostring(get_global_timer())) end\n        return true\n    end\n    jimmie_intro_hide(lak,false)\n    if lak.oAction<2 then return true end\n    if not (jimmie and originalBoard) then spawn_jimmie() end\n    if not (jimmie and originalBoard) then return true end\n    local x,y,z=lak.oPosX,lak.oPosY,lak.oPosZ\n    local dx,dz=m.pos.x-x,m.pos.z-z\n    local heading=math.atan2(dx,dz)+(JIMMIE_INTRO_TURN or -math.pi/2)            -- he stands sideways on the board; turned so his face is toward Mario\n    if lak.oCameraLakituFinishedDialog~=0 then\n        -- The text box has closed and control is back. From here he is the ordinary companion: he drops to the\n        -- ground from where he hovered. Lakitu and the cloud, already invisible, are removed.\n        obj_scale(jimmie,.62);obj_scale(originalBoard,.62)\n        PHYS={x=x,y=y,z=z,vx=0,vy=0,vz=0,yaw=heading,prevYaw=heading,onGround=false,pushT=0,airT=0}\n        PHYS_AIR=false\n        jimmie_intro_sparkles(x,y,z,14,170)\n        jimmie_intro_hide(lak,true)\n        s.done=true;log('[jimmie-intro] phase=companion frame='..tostring(get_global_timer()))\n        return false\n    end\n    if s.frame==get_global_timer() then return true end                          -- once per frame, whichever path called\n    s.frame=get_global_timer();s.tick=(s.tick or 0)+1\n    if not s.arrived then s.arrived=true;jimmie_intro_sparkles(x,y,z,10,200);log('[jimmie-intro] phase=arrive frame='..tostring(get_global_timer())) end\n    if lak.oCameraLakituSpeed==0 and not s.talking then s.talking=true;s.twirl=14;log('[jimmie-intro] phase=talk frame='..tostring(get_global_timer())) end\n    local far=math.sqrt(dx*dx+dz*dz+(m.pos.y-y)^2)\n    local k=1-math.max(0,math.min(1,(far-500)/2500));k=k*k*(3-2*k)\n    local size=.16+(.62-.16)*k                                                   -- a speck far away, full size by the time he stops\n    -- Flitting: he darts in loops and bobs around the path Lakitu flies, less and less as that path slows, and is\n    -- still by the time it stops. The path itself, and so the scene's length, is the game's own.\n    local wild=math.max(0,math.min(1,lak.oCameraLakituSpeed/45));local t=s.tick\n    local fx=wild*130*math.sin(t*.47)*math.cos(t*.13)\n    local fy=wild*85*math.sin(t*.83+1.1)+ (1-wild)*6*math.sin(t*.21)            -- a gentle bob while he hovers and talks\n    local fz=wild*130*math.cos(t*.39+.6)\n    -- Twirls: a quick spin on his own axis every second and a half while darting, and one as he settles.\n    local spin=0\n    if wild>.15 and t%44<13 then spin=(t%44)/13*2*math.pi end\n    if s.twirl and s.twirl>0 then spin=(1-s.twirl/14)*2*math.pi;s.twirl=s.twirl-1 end\n    PHYS=nil;jimmieSpeed=10\n    jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ=x+fx,y+fy,z+fz\n    jimmie.oFaceAngleYaw,jimmie.oFaceAnglePitch,jimmie.oFaceAngleRoll=skate_model_angles(heading+spin,0,0)\n    update_pose_animation(1/30)\n    obj_scale(jimmie,size);obj_scale(originalBoard,size)\n    if not s.talking then jimmie_intro_sparkles(x+fx,y+fy+60*size,z+fz,2,150*size)\n    elseif t%9==0 then jimmie_intro_sparkles(x+fx,y+fy+90,z+fz,1,120) end\n    return true\nend\nlocal function on_update()\n"),
+      # While the text box is up the game counts as paused and the companion code stops early; the scene runs there too.
+      ("        step_original_crash(true)\n        step_recovery(0,true)\n",
+       "        step_original_crash(true)\n        step_recovery(0,true)\n        jimmie_intro_step(m)\n"),
+      ("    elseif step_skate_opportunity() then\n        update_pose_animation(1 / 30)\n",
+       "    elseif jimmie_intro_step(m) then\n        -- The bridge scene owns him this tick (or he has not arrived yet).\n"
+       "    elseif step_skate_opportunity() then\n        update_pose_animation(1 / 30)\n"),
+    ]}))
+
+# 12c. The mirror room: Jimmie is the camera man seen in the mirror (Josh: "just show jimmie in the mirror").
+CHANGES.append(dict(
+    name='mirrorroom', pending=True, what='in the mirror room upstairs, the camera man seen in the mirror is Jimmie on his board instead of Lakitu',
+    marker=('main.lua', 'motion:mirrorroom'),
+    edits={'main.lua': [
+      ("local function on_update()\n", "-- motion:mirrorroom. In the mirror room upstairs the game shows the camera man in the mirror, behind Mario's\n-- reflection. That is Jimmie now: the Lakitu there and his cloud are made invisible and a second Jimmie on his board\n-- is drawn where Lakitu is, looking the way Lakitu looks. Nothing about the room or the camera is changed.\nJIMMIE_MIRROR={}\nfunction jimmie_mirror_step()\n    local s=JIMMIE_MIRROR\n    local lak=obj_get_first_with_behavior_id(id_bhvCameraLakitu)\n    while lak and not (lak.oBehParams2ndByte==0 and lak.activeFlags~=0) do lak=obj_get_next_with_same_behavior_id(lak) end\n    if not lak then s.body=nil;s.board=nil;return end\n    jimmie_intro_hide(lak,false)\n    if not (s.body and s.board and s.body.activeFlags~=0 and s.board.activeFlags~=0) then\n        if id_bhvjimmie==nil or E_MODEL_jimmie==nil or originalBoardModel==nil then return end\n        local okA,body=pcall(spawn_non_sync_object,id_bhvjimmie,E_MODEL_jimmie,lak.oPosX,-10000,lak.oPosZ,function(o) end)\n        local okB,board=pcall(spawn_non_sync_object,id_bhvjimmie,originalBoardModel,lak.oPosX,-10000,lak.oPosZ,function(o) end)\n        if not (okA and okB and body and board) then return end\n        s.body,s.board=body,board\n        smlua_anim_util_set_animation(body,OriginalBank.clips.pose.body);smlua_anim_util_set_animation(board,OriginalBank.clips.pose.board)\n        if not s.logged then s.logged=true;log('[jimmie-mirror] shown frame='..tostring(get_global_timer())) end\n    end\n    -- The game hides its Lakitu while the camera is outside the room; follow that.\n    local hidden=(lak.header.gfx.node.flags & GRAPH_RENDER_INVISIBLE)~=0\n    local face=lak.oFaceAngleYaw*math.pi/32768\n    local yaw=skate_model_angles(face-math.pi/2,0,0)\n    for _,o in ipairs({s.body,s.board}) do\n        o.oPosX,o.oPosZ=lak.oPosX,lak.oPosZ\n        o.oPosY=hidden and -10000 or (lak.oPosY-150)\n        o.oFaceAngleYaw,o.oFaceAnglePitch,o.oFaceAngleRoll=yaw,0,0\n        local a=o.header.gfx.animInfo;a.animFrame=0;a.animFrameAccelAssist=0;a.animAccel=65536\n    end\nend\nlocal function on_update()\n"),
+      ("    if companionSpawn:observe(m) then\n", "    jimmie_mirror_step()\n    if companionSpawn:observe(m) then\n"),
+    ]}))
 
 # Tried and dropped on 2026-11-10: a dust puff at the pop and landing (the game's own white puff objects).
 # It spawned without errors but was too faint to see on sand in the captures, so it is not applied.

@@ -56,15 +56,17 @@ bool jrc_load_pb(JrcState *s,const char *path) {
     s->best_us=value;s->storage_ready=true;return true;
 }
 bool jrc_begin_file(JrcState *s,int64_t now_us,int file,bool clean,bool eligible) {
-    jrc_tick(s,now_us);
-    if(s->phase!=JRC_BOOT) {
-        if(s->phase==JRC_RUNNING)jrc_invalidate(s,"file reselected/reloaded during attempt");
-        return false;
-    }
+    /* Every file selection starts a new attempt, timed from this moment (the usual
+       real-time rule: the clock starts when the file is chosen). The stored best time
+       and its storage state carry over; nothing else from an earlier attempt does. */
+    if(now_us<0) { jrc_invalidate(s,"monotonic clock unavailable");return false; }
+    s->boot_us=s->last_us=now_us; s->elapsed_us=0; s->file=0; s->stars=0;
+    s->phase=JRC_BOOT; s->reason=NULL;
+    memset(s->split_us,0,sizeof(s->split_us));
     if(!clean || !eligible || file<1 || file>4) {
         jrc_invalidate(s,"not a supported clean-file run");return false;
     }
-    s->file=file;s->stars=0;s->phase=JRC_RUNNING;return true;
+    s->file=file;s->phase=JRC_RUNNING;return true;
 }
 void jrc_observe(JrcState *s,int64_t now_us,int file,int stars,bool eligible) {
     jrc_tick(s,now_us);
@@ -72,6 +74,7 @@ void jrc_observe(JrcState *s,int64_t now_us,int file,int stars,bool eligible) {
     if(!eligible || file!=s->file || stars<s->stars || stars>16 || stars<0) {
         jrc_invalidate(s,"profile, save slot or star progress changed");return;
     }
+    for(int i=s->stars;i<stars && i<16;++i) s->split_us[i]=s->elapsed_us; /* time at each new star */
     s->stars=stars;
 }
 static bool write_record(JrcState *s,uint64_t value) {

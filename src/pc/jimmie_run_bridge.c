@@ -39,19 +39,24 @@ static void trace(const char *event) {
     fclose(f);
 }
 
-/* Conservative personal-practice profile; not leaderboard certification. */
+/* JIMMIE_RUN_TEST lets an automated start time a run; such runs use their own record file. */
+static bool test_run(void) { return getenv("JIMMIE_RUN_TEST") != NULL; }
+
+/* Single-player, unassisted profile; not leaderboard certification. The mod's exact file list
+   is no longer part of this: it changes with every update and made every run ineligible.
+   Bubble death only matters with more than one player, so its setting is ignored. */
 static bool eligible(void) {
     return gNetworkType == NT_SERVER && gServerSettings.maxPlayers == 1
         && gNetworkPlayerLocal && gNetworkPlayerLocal->connected
-        && network_player_connected_count() == 1 && jimmie_companion_profile_ok()
-        && !gServerSettings.skipIntro && !gServerSettings.bubbleDeath
+        && network_player_connected_count() == 1
+        && (!gServerSettings.skipIntro || test_run())
         && gServerSettings.stayInLevelAfterStar == STAR_LEAVE_LEVEL
         && gServerSettings.bouncyLevelBounds == BOUNCY_LEVEL_BOUNDS_OFF
         && !gServerSettings.pauseAnywhere && !gSaveFileUsingBackupSlot
         && !gDebugLevelSelect && !gCurrDemoInput && !gCurrCreditsEntry
         && gLevelValues.entryLevel == LEVEL_CASTLE_GROUNDS
         && gMarioStates[0].action != ACT_DEBUG_FREE_MOVE
-        && !getenv("JIMMIE_HEAD_TEST_START") && !getenv("JIMMIE_HEAD_TEST_INTERACTION")
+        && (!getenv("JIMMIE_HEAD_TEST_START") || test_run()) && !getenv("JIMMIE_HEAD_TEST_INTERACTION")
         && !getenv("JIMMIE_SDL_CONTROLLER_TEST") && !getenv("JIMMIE_ROUTE_PAD_TEST");
 }
 
@@ -77,7 +82,7 @@ void jimmie_run_boot(void) {
 }
 
 void jimmie_run_load(void) {
-    if (!jrc_load_pb(&sClock, fs_get_write_path("jimmie_16star_pb.txt")))
+    if (!jrc_load_pb(&sClock, fs_get_write_path(test_run() ? "jimmie_16star_pb_test.txt" : "jimmie_16star_pb.txt")))
         fprintf(stderr, "Jimmie PB: stored record unavailable/corrupt; seed retained, writes disabled.\n");
     trace("pb_loaded");
 }
@@ -112,6 +117,36 @@ void jimmie_run_disqualify(void) {
     }
 }
 
+/* What the mod may read: phase (0 boot, 1 running, 2 finished, 3 not a timed run), the time so
+   far, the best time, the star count and the time at each star. Read-only. */
+int jimmie_run_phase(void) { return (int)sClock.phase; }
+uint64_t jimmie_run_elapsed_us(void) { return sClock.elapsed_us; }
+uint64_t jimmie_run_best_us(void) { return sClock.best_us; }
+int jimmie_run_stars(void) { return sClock.stars; }
+uint64_t jimmie_run_split_us(int star) { return star >= 1 && star <= 16 ? sClock.split_us[star - 1] : 0; }
+const char *jimmie_run_reason(void) { return sClock.reason ? sClock.reason : ""; }
+
+/* One line per finished run, appended to jimmie_16star_runs.txt beside the save. The last field
+   is a check value over the rest of the line, so an edited line no longer matches. This catches
+   casual editing only; it is not proof against someone who reads this source. */
+static uint32_t line_check(const char *text) {
+    uint32_t h = UINT32_C(0x4a313652);
+    for (const unsigned char *p = (const unsigned char *)text; *p; ++p) { h ^= *p; h *= UINT32_C(16777619); h ^= h >> 13; }
+    return h;
+}
+
+static void write_run_record(bool improved) {
+    char line[640];
+    int n = snprintf(line, sizeof(line), "JIMMIE16RUN1 time_us=%" PRIu64 " stars=%d pb=%d test=%d splits=",
+                     sClock.elapsed_us, sClock.stars, improved ? 1 : 0, test_run() ? 1 : 0);
+    for (int i = 0; i < 16 && n > 0 && n < (int)sizeof(line) - 24; ++i)
+        n += snprintf(line + n, sizeof(line) - n, "%s%" PRIu64, i ? "," : "", sClock.split_us[i]);
+    FILE *f = fopen(fs_get_write_path(test_run() ? "jimmie_16star_runs_test.txt" : "jimmie_16star_runs.txt"), "a");
+    if (!f) return;
+    fprintf(f, "%s check=%08" PRIx32 "\n", line, line_check(line));
+    fclose(f);
+}
+
 void jimmie_run_collection(struct MarioState *m, struct Object *star, struct Object *puff) {
     if (sClock.phase != JRC_RUNNING || !m || !star || !puff || m != &gMarioStates[0]
         || gCurrLevelNum != LEVEL_BOWSER_3 || star->behavior != bhvGrandStar
@@ -130,6 +165,7 @@ void jimmie_run_puff_emitted(struct Object *puff) {
     JrcResult result = jrc_finish(&sClock, jrc_monotonic_us(), gCurrSaveFileNum, stars(), proof, eligible());
     if (result == JRC_STORE_FAILED)
         fprintf(stderr, "Jimmie PB: result could not be saved; previous best retained.\n");
+    if (sClock.phase == JRC_FINISHED) write_run_record(result == JRC_NEW_PB);
     trace(result == JRC_NEW_PB ? "pb_improved" : result == JRC_STORE_FAILED ? "pb_store_failed"
           : result == JRC_NO_CHANGE ? "pb_finished" : "pb_finish_rejected");
 }

@@ -42,7 +42,7 @@ function M.new(g,data,deps,opts)
     if o.activeFlags==0 or not o.header or not o.header.gfx or not o.header.gfx.animInfo then return false end
     local scale=o.header.gfx.scale
     if not scale then return false end
-    for _,k in ipairs({'x','y','z'}) do if not finite(scale[k]) or math.abs(scale[k]-M.SCALE)>.00001 then return false end end
+    for _,k in ipairs({'x','y','z'}) do if not finite(scale[k]) or math.abs(math.abs(scale[k])-M.SCALE)>.00001 then return false end end
    end
    return true
   end)

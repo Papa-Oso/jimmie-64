@@ -404,7 +404,8 @@ local function jimmie_init(obj)
     obj.oGraphYOffset = 0
     obj.hookRender = 1 -- only this private body/board/brace behavior
     -- Approved v4 is 207 game units tall including the board at this scale.
-    obj_scale(obj, 0.62)
+    -- motion:regular. Mirrored front-to-back so he rides left foot forward.
+    obj_scale_xyz(obj, 0.62, 0.62, -0.62)
     -- Local cosmetic companion pair. No player or network object ownership.
 end
 
@@ -777,7 +778,10 @@ local function update_pose_animation(dt)
                     if outq and outq.name and outq.name~='ollie' then result.trick=result.trick..' to '..outq.name..' out' end
                 else result.trick=(named and named.name) or tostring(result.clip) end
                 if named and named.spin then p.manual=nil end
-                if p.fakieTrick and result.kind=='trick' then result.trick='fakie '..result.trick end
+                if p.fakieTrick and result.kind=='trick' then
+                    local swapped=result.trick:gsub('frontside','@'):gsub('backside','frontside'):gsub('@','backside')
+                    result.trick='fakie '..swapped
+                end
                 p.fakieTrick=nil
                 if p.manual and p.manual.t==0 and not fail and OriginalBank.clips[p.manual.clip] then result.trick=result.trick..' to '..OriginalBank.clips[p.manual.clip].name end
                 -- How many tricks he has landed in a row with less than three seconds between them.
@@ -814,6 +818,7 @@ local function skate_model_angles(heading, slope, turn)
     local yaw = (math.floor(heading * 32768 / math.pi) - 16384) % 65536
     -- With a local-X deck, pitch banks around its length; roll lifts its nose.
     local bank = math.floor(math.max(-1800, math.min(1800, turn * -24000)))
+    if PHYS and PHYS.fakie and math.abs(PHYS.fakie.yaw) > math.pi / 2 then bank = -bank end
     local incline = math.floor(math.max(-700, math.min(700, slope * 1600)))
     return yaw, bank, incline
 end
@@ -2831,5 +2836,90 @@ hook_event(HOOK_ON_INTERACT, JIMMIE_BRAIN.interact)
 hook_event(HOOK_ON_DEATH, JIMMIE_BRAIN.death)
 if HOOK_ON_CHAT_MESSAGE then hook_event(HOOK_ON_CHAT_MESSAGE, function(m, msg) pcall(JIMMIE_BRAIN.chat, m, msg) end) end
 print("[jb] link ready")
+
+-- Every text box, one box each, in Jimmie's voice (jimmie_dialogs.lua): reading never costs time.
+do
+    local ok, boxes = pcall(require, "jimmie_dialogs")
+    local done = 0
+    if ok and type(boxes) == "table" and type(smlua_text_utils_dialog_replace) == "function" then
+        for _, d in ipairs(boxes) do
+            if pcall(smlua_text_utils_dialog_replace, d[1], 1, d[2], d[3], d[4], d[5]) then done = done + 1 end
+        end
+    end
+    print("[jdlg] text boxes replaced: " .. done)
+end
+
+-- The run clock on screen, and the three tells that decide whether this file is a 16-star run.
+-- The game program does the timing (jimmie_run_state); this only decides whether to show it.
+if type(jimmie_run_state) == "function" then
+    local TELLS = require("jimmie_run_tells")
+    local tells = TELLS.new()
+    local lastPhase, lastStars, lastVerdict, flashUntil, flashText = nil, 0, nil, 0, nil
+    local function say(row) print("[jrun] " .. Personality.json(row)) end
+    local function run_update()
+        local phase, ms, best, stars = jimmie_run_state()
+        if phase == 1 and lastPhase ~= 1 then
+            tells.begin()
+            lastStars, lastVerdict = 0, nil
+            say({ event = "begin", best_ms = best })
+        end
+        if phase == 2 and lastPhase == 1 then
+            say({ event = "finish", ms = ms, best_ms = best, stars = stars })
+            flashText, flashUntil = (ms <= best and "NEW BEST " or "FINISH ") .. TELLS.clock(ms), ms + 1e12
+        end
+        lastPhase = phase
+        if phase ~= 1 then return end
+        local m, np = gMarioStates[0], gNetworkPlayers[0]
+        if not m or not np then return end
+        local t, level = ms / 1000, np.currLevelNum
+        if stars > lastStars then
+            tells.star(t, level, stars)
+            flashText, flashUntil = string.format("STAR %d  %s", stars, TELLS.clock(jimmie_run_split(stars))), ms + 4000
+            say({ event = "split", star = stars, ms = jimmie_run_split(stars), level = level })
+            lastStars = stars
+        end
+        if get_global_timer() % 10 == 0 then
+            local still = m.vel and math.abs(m.vel.x) < 2 and math.abs(m.vel.y) < 2 and math.abs(m.vel.z) < 2
+            tells.observe(t, level, stars, still)
+        end
+        local verdict, why = tells.verdict()
+        if verdict ~= lastVerdict then
+            say({ event = "verdict", verdict = verdict, why = why, s = math.floor(t), level = level, stars = stars })
+            -- Jimmie follows the decision: route companion for a run, free roam otherwise.
+            if verdict == "run" then pcall(JIMMIE_ROUTE16.command, "16")
+            elseif verdict == "not" then pcall(JIMMIE_ROUTE16.command, "free") end
+            lastVerdict = verdict
+        end
+    end
+    local function run_hud()
+        local phase, ms, best, stars = jimmie_run_state()
+        local text
+        if phase == 2 and flashText then text = flashText
+        elseif phase == 1 and tells.shows() then text = TELLS.clock(ms)
+        else return end
+        djui_hud_set_resolution(RESOLUTION_N64)
+        djui_hud_set_font(FONT_NORMAL)
+        local scale = 0.5
+        local width = djui_hud_get_screen_width()
+        local w = djui_hud_measure_text(text) * scale
+        local x, y = (width - w) / 2, 4
+        djui_hud_set_color(0, 0, 0, 170)
+        djui_hud_print_text(text, x + 1, y + 1, scale)
+        if phase == 2 then djui_hud_set_color(255, 220, 90, 255) else djui_hud_set_color(255, 255, 255, 255) end
+        djui_hud_print_text(text, x, y, scale)
+        if phase == 1 then
+            local sub = (ms < flashUntil and flashText) or ("BEST " .. TELLS.clock(best))
+            local sw = djui_hud_measure_text(sub) * 0.3
+            djui_hud_set_color(0, 0, 0, 170)
+            djui_hud_print_text(sub, (width - sw) / 2 + 1, y + 18, 0.3)
+            djui_hud_set_color(255, 220, 90, 255)
+            djui_hud_print_text(sub, (width - sw) / 2, y + 17, 0.3)
+        end
+        djui_hud_reset_color()
+    end
+    hook_event(HOOK_UPDATE, function() pcall(run_update) end)
+    hook_event(HOOK_ON_HUD_RENDER, function() pcall(run_hud) end)
+    print("[jrun] ready")
+end
 
 end)()

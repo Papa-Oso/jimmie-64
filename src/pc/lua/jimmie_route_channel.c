@@ -79,7 +79,31 @@ static int reply(lua_State *L) {
     return 1;
 }
 
+/* The run clock, read-only: phase, milliseconds so far, best milliseconds, stars, why not timed. */
+extern int jimmie_run_phase(void);
+extern uint64_t jimmie_run_elapsed_us(void);
+extern uint64_t jimmie_run_best_us(void);
+extern int jimmie_run_stars(void);
+extern uint64_t jimmie_run_split_us(int star);
+extern const char *jimmie_run_reason(void);
+
+static int run_state(lua_State *L) {
+    lua_pushinteger(L, jimmie_run_phase());
+    lua_pushnumber(L, (lua_Number)jimmie_run_elapsed_us() / 1000.0);
+    lua_pushnumber(L, (lua_Number)jimmie_run_best_us() / 1000.0);
+    lua_pushinteger(L, jimmie_run_stars());
+    lua_pushstring(L, jimmie_run_reason());
+    return 5;
+}
+
+static int run_split(lua_State *L) {
+    lua_pushnumber(L, (lua_Number)jimmie_run_split_us((int)luaL_checkinteger(L, 1)) / 1000.0);
+    return 1;
+}
+
 void jimmie_route_bind(lua_State *L) {
+    smlua_bind_function(L, "jimmie_run_state", run_state);
+    smlua_bind_function(L, "jimmie_run_split", run_split);
     smlua_bind_function(L, "jimmie_route_enabled", enabled);
     smlua_bind_function(L, "jimmie_route_file_epoch", identity);
     smlua_bind_function(L, "jimmie_route_now_ms", now_ms);

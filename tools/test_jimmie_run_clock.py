@@ -11,7 +11,7 @@ def main():
     flags=['-std=gnu11','-O2','-Iinclude','-Isrc','-Isrc/pc','-I.','-Ilib/lua/include','-DVERSION_US','-D_LANGUAGE_C','-DNON_MATCHING','-DAVOID_UB','-DF3DEX_GBI_2','-DF3DEX_GBI_2E','-DJIMMIE_NATIVE_HEAD']
     steps=[
         [sys.executable,'-B','tools/pin_jimmie_text_profile.py','--check'],
-        [str(cc),*flags,'-Wall','-Wextra','-Werror','src/pc/jimmie_run_clock.c',str(STAGE/'test_run_clock.c'),'-o',str(out/'core.exe')],
+        [str(cc),*flags,'-Wall','-Wextra','-Werror','src/pc/jimmie_run_clock.c','tools/test_jimmie_run_clock_core.c','-o',str(out/'core.exe')],
         [str(out/'core.exe'),str(out)],
         [str(cc),*flags,'-Djrc_monotonic_us=jrc_platform_monotonic_us','-c','src/pc/jimmie_run_clock.c','-o',str(out/'core.o')],
         [str(cc),*flags,'-Wall','-Wextra','-Werror','tools/test_jimmie_run_bridge.c',str(out/'core.o'),'-o',str(out/'bridge.exe')],
