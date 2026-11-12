@@ -17,17 +17,26 @@ out loud.
 You need your own **Super Mario 64 (US) ROM** (a `.z64` file). None is included and none will be.
 
 1. Download `Jimmie-64-windows.zip` from [Releases](https://github.com/Papa-Oso/jimmie-64/releases/latest) and unzip it anywhere.
-2. Open the `Jimmie 64` folder. Optionally double-click **Add desktop shortcut**.
+2. Open the `Jimmie 64` folder. Optionally double-click **Add desktop shortcut** to get an icon for each of the two ways to play.
 3. Double-click **Play Jimmie 64**.
 4. The first time, the game asks for your ROM. Drag your `.z64` file onto the game window. You only do this once.
+
+For a 16-star speedrun attempt, double-click **Play Jimmie 64 Speedrun** instead. It starts on a
+fresh, empty save every time and never touches your normal save.
 
 Windows 10 or 11, 64-bit. Nothing else needs installing.
 
 ## In the game
 
-- Just play. A clock runs from the moment you pick a file. If you are clearly not doing a 16-star
-  run it goes away by itself and Jimmie settles into exploring with you. At each star it shows
-  how far ahead or behind you are.
+- Just play. On a new, empty file a clock runs from the moment you pick it. The game watches your
+  first minute of control: head straight into the castle and it is a run, and stays one. Take your
+  time getting to the door, fall in the water outside, stop to talk to Toad, walk back out or stand
+  around, and the clock goes away and Jimmie settles into exploring with you. Either way the answer
+  is locked after that minute. At each star the clock shows how far ahead or behind you are.
+- A file that already has progress is never timed. To start over, use **ERASE** on the file screen,
+  pick an empty file, or use **Play Jimmie 64 Speedrun**.
+- On a new file Jimmie says nothing until Mario meets him on the castle bridge. Jump past the
+  meeting and he simply joins you.
 - Type anything else in chat to talk to Jimmie: say hello, ask him something, give him a hard time.
 - When a newer Jimmie 64 is out, the start screen says UPDATE READY; `Update Jimmie 64.cmd` opens the
   download page. Nothing installs by itself. The check downloads one small public file from this
@@ -48,7 +57,10 @@ Windows 10 or 11, 64-bit. Nothing else needs installing.
 ![Jimmie skating beside Mario](jimmie/readme/in-game.png)
 
 - **Skates:** 50 named tricks (flips, shuvits, grabs, spins, grinds and slides, manuals, nollie and
-  fakie versions, a few old-school ones), linked into combos, with falls that have a cause.
+  fakie versions, a few old-school ones), linked into combos, with falls that have a cause. He hops
+  onto rails on every map and rides ledges around the castle.
+- **Keeps up:** he swims when Mario swims, takes to the air when Mario flies, and kicks up dust,
+  sparks, splashes, snow and sand as he goes.
 - **Talks:** several hundred things he really said on stream, picked for the moments they fit, plus
   lines written in his style. He stays on a subject for a while instead of jumping around.
 - **Answers:** greetings, digs, questions and anything about his own bits, in the game's chat.
