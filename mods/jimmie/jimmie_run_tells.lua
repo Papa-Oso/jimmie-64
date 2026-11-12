@@ -27,9 +27,10 @@ M.DEFAULTS = {
     course_levels = { [4]=true,[5]=true,[7]=true,[8]=true,[9]=true,[10]=true,[11]=true,[12]=true,[13]=true,
                       [14]=true,[15]=true,[22]=true,[23]=true,[24]=true,[36]=true },   -- the fifteen main courses
     grounds_level = 16,                       -- outside the castle
-    door  = { by = 20,  bad = 45 },           -- inside the castle within 20 s; not inside by 45 s is a bad miss
+    door  = { by = 15,  bad = 25 },           -- inside the castle within 15 s; not inside by 25 s is a bad miss
     course = { by = 90, bad = 120 },          -- in a route course within 90 s; none by 120 s, or a different course first, is a bad miss
     star  = { by = 240 },                     -- first star within 240 s; a first star anywhere else is a bad miss
+    lock = 60,                                -- owner, 2026-11-11: decided one way or the other within the first minute, then locked
     idle_bad = 15,                            -- standing still this long before the first star is a bad miss
 }
 
@@ -68,11 +69,12 @@ function M.new(options)
     end
 
     -- Called a few times a second. t = seconds since the attempt began; still = Mario is not moving.
-    -- signs (optional): { talk = stopped to talk or read a sign in the castle, met = met Jimmie on the bridge }
+    -- signs (optional): { water = in the water outside the castle, talk = stopped to talk or read a sign in the castle, met = met Jimmie on the bridge }
     function self.observe(t, level, stars, still, signs)
         if not started or verdict then return end
         if stars == 0 and signs then
             if signs.talk then return decide("not", "stopped to talk") end
+            if signs.water then return decide("not", "fell in the water outside") end
             if signs.met then met = true end
         end
         if stars == 0 and beenInside and level == cfg.grounds_level then return decide("not", "went back outside") end
@@ -102,6 +104,8 @@ function M.new(options)
                 idleSince = nil
             end
         end
+        -- Nothing above ruled it out in the first minute of play: it is a run, and that is final.
+        if t >= cfg.lock then return decide("run", "looked like a run for the first minute") end
         settle()
     end
 

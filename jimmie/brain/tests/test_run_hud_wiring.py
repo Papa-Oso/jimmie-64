@@ -77,7 +77,7 @@ class RunHudWiring(unittest.TestCase):
         """A real start: grounds, castle, Bob-omb Battlefield, first star at star_ms."""
         self.tick(0, phase=0)
         self.tick(1000)
-        self.tick(18000, level=6)
+        self.tick(13000, level=6)
         self.tick(40000, level=9)
         self.g.STATE.splits[1] = star_ms
         return self.tick(star_ms + 100, level=9, stars=1)

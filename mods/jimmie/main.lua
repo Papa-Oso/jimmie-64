@@ -3806,6 +3806,8 @@ if type(jimmie_run_state) == "function" then
             JIMMIE_RUN.signs.talk = true
         end
         JIMMIE_RUN.reading = reading
+        -- In the water outside the castle: no run goes there before the first star.
+        if level == 16 and ACT_GROUP_SUBMERGED and (m.action & ACT_GROUP_MASK) == ACT_GROUP_SUBMERGED then JIMMIE_RUN.signs.water = true end
         if pending and not JIMMIE_RUN.signs.met and type(jimmie_intro_lakitu) == "function" then
             local okL, lak = pcall(jimmie_intro_lakitu)
             if okL and lak and lak.oAction ~= 0 then JIMMIE_RUN.signs.met = true end
