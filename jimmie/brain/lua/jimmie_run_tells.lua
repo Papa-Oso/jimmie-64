@@ -11,6 +11,13 @@
 -- stops it on its own. Hit any tell and it is a run. Stopping only hides the clock: the game
 -- program keeps timing, so a real run is never lost to a wrong guess.
 --
+-- Owner, 2026-11-11: the clock stayed up while he talked to Toad, left the castle and stood about.
+-- Before the first star these each stop it alone: stopping to talk to someone in the castle,
+-- walking back outside, standing still for 15 s, a slow walk to the door. Meeting Jimmie on the
+-- bridge is a soft sign (runners jump past him, but triggering him is a common first mistake):
+-- it only counts together with a door that was not reached quickly.
+-- Times are seconds the player had control; being held by a scene or text box does not count.
+--
 -- Pure logic, no engine calls: the caller feeds it time, place and star count. Times in seconds.
 local M = {}
 
@@ -19,10 +26,11 @@ M.DEFAULTS = {
     route_courses = { [9] = true, [24] = true, [5] = true },   -- Bob-omb Battlefield, Whomp's Fortress, Cool Cool Mountain
     course_levels = { [4]=true,[5]=true,[7]=true,[8]=true,[9]=true,[10]=true,[11]=true,[12]=true,[13]=true,
                       [14]=true,[15]=true,[22]=true,[23]=true,[24]=true,[36]=true },   -- the fifteen main courses
-    door  = { by = 40,  bad = 150 },          -- inside the castle within 40 s; not inside by 150 s is a bad miss
-    course = { by = 90, bad = 300 },          -- in a route course within 90 s; none by 300 s, or a different course first, is a bad miss
+    grounds_level = 16,                       -- outside the castle
+    door  = { by = 20,  bad = 45 },           -- inside the castle within 20 s; not inside by 45 s is a bad miss
+    course = { by = 90, bad = 120 },          -- in a route course within 90 s; none by 120 s, or a different course first, is a bad miss
     star  = { by = 240 },                     -- first star within 240 s; a first star anywhere else is a bad miss
-    idle_bad = 60,                            -- standing still this long before the first star is a bad miss
+    idle_bad = 15,                            -- standing still this long before the first star is a bad miss
 }
 
 local function copy(t)
@@ -37,7 +45,7 @@ function M.new(options)
     local self = {}
     local started, verdict, reason
     local tell = {}                           -- name -> "hit" | "miss"
-    local idleSince, firstCourse, beenInside
+    local idleSince, firstCourse, beenInside, met
 
     local function decide(v, why)
         if verdict == nil then verdict, reason = v, why end
@@ -56,18 +64,25 @@ function M.new(options)
 
     -- A new timed attempt began.
     function self.begin()
-        started, verdict, reason, tell, idleSince, firstCourse, beenInside = 0, nil, nil, {}, nil, nil, nil
+        started, verdict, reason, tell, idleSince, firstCourse, beenInside, met = 0, nil, nil, {}, nil, nil, nil, nil
     end
 
     -- Called a few times a second. t = seconds since the attempt began; still = Mario is not moving.
-    function self.observe(t, level, stars, still)
+    -- signs (optional): { talk = stopped to talk or read a sign in the castle, met = met Jimmie on the bridge }
+    function self.observe(t, level, stars, still, signs)
         if not started or verdict then return end
+        if stars == 0 and signs then
+            if signs.talk then return decide("not", "stopped to talk") end
+            if signs.met then met = true end
+        end
+        if stars == 0 and beenInside and level == cfg.grounds_level then return decide("not", "went back outside") end
         if tell.door == nil then
             if level == cfg.castle_level and t <= cfg.door.by then tell.door = "hit"
             elseif t > cfg.door.by then tell.door = "miss" end
         end
+        if met and tell.door == "miss" and stars == 0 then return decide("not", "met Jimmie and was slow to the door") end
         if level == cfg.castle_level or cfg.course_levels[level] then beenInside = true end
-        if not beenInside and t > cfg.door.bad then return decide("not", "never went into the castle") end
+        if not beenInside and t > cfg.door.bad then return decide("not", "slow to the castle door") end
         if cfg.course_levels[level] and not firstCourse then
             firstCourse = level
             if cfg.route_courses[level] then

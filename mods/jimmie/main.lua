@@ -3791,9 +3791,25 @@ if type(jimmie_run_state) == "function" then
         local free = ACT_GROUP_MASK == nil or (m.action & ACT_GROUP_MASK) ~= ACT_GROUP_CUTSCENE
         if not JIMMIE_RUN.t0 then
             if not free then return end
-            JIMMIE_RUN.t0 = ms
+            JIMMIE_RUN.t0, JIMMIE_RUN.held, JIMMIE_RUN.last, JIMMIE_RUN.signs, JIMMIE_RUN.reading = ms, 0, ms, {}, false
         end
-        local t = (ms - JIMMIE_RUN.t0) / 1000
+        -- Time held by a scene or a text box is not the player's: it is left out of the judging.
+        if not free then JIMMIE_RUN.held = JIMMIE_RUN.held + (ms - JIMMIE_RUN.last) end
+        JIMMIE_RUN.last = ms
+        local t = (ms - JIMMIE_RUN.t0 - JIMMIE_RUN.held) / 1000
+        -- Two signs for the tells. Stopping to talk to someone or read a sign around the castle (not
+        -- the bridge meeting itself, and not a course, where the first star's boss talks). And meeting
+        -- Jimmie on the bridge at all, which runners usually jump past.
+        local pending = JIMMIE_INTRO and JIMMIE_INTRO.seen and not JIMMIE_INTRO.done
+        local reading = m.action == ACT_READING_NPC_DIALOG or m.action == ACT_READING_SIGN
+        if reading and not JIMMIE_RUN.reading and not pending and (level == 6 or level == 16 or level == 26) then
+            JIMMIE_RUN.signs.talk = true
+        end
+        JIMMIE_RUN.reading = reading
+        if pending and not JIMMIE_RUN.signs.met and type(jimmie_intro_lakitu) == "function" then
+            local okL, lak = pcall(jimmie_intro_lakitu)
+            if okL and lak and lak.oAction ~= 0 then JIMMIE_RUN.signs.met = true end
+        end
         if stars > lastStars then
             tells.star(t, level, stars)
             JIMMIE_RUN.delta = nil
@@ -3806,7 +3822,7 @@ if type(jimmie_run_state) == "function" then
         if get_global_timer() % 10 == 0 then
             -- Being held by a text box or a scene is not the player standing around.
             local still = free and m.vel and math.abs(m.vel.x) < 2 and math.abs(m.vel.y) < 2 and math.abs(m.vel.z) < 2
-            tells.observe(t, level, stars, still)
+            tells.observe(t, level, stars, still, JIMMIE_RUN.signs)
         end
         local verdict, why = tells.verdict()
         if verdict ~= lastVerdict then

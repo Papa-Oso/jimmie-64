@@ -39,12 +39,12 @@ class RunTells(unittest.TestCase):
         self.assertTrue(self.t.shows())
 
     def test_one_hit_is_enough_even_when_the_other_two_are_missed(self):
-        self.walk([(60, GROUNDS, 0, False), (70, CASTLE, 0, False), (130, BOB, 0, False)])   # late door, late course
+        self.walk([(30, GROUNDS, 0, False), (35, CASTLE, 0, False), (100, BOB, 0, False)])   # late door, late course
         self.t.star(200, BOB, 1)                                                              # star in time
         self.assertEqual((self.verdict(), self.t.tells().star), ("run", "hit"))
 
     def test_missing_all_three_stops_the_clock(self):
-        self.walk([(60, GROUNDS, 0, False), (70, CASTLE, 0, False), (130, BOB, 0, False), (250, BOB, 0, False)])
+        self.walk([(30, GROUNDS, 0, False), (35, CASTLE, 0, False), (100, BOB, 0, False), (250, BOB, 0, False)])
         self.assertEqual(self.verdict(), "not")
         self.assertFalse(self.t.shows())
         self.assertEqual(self.t.verdict()[1], "missed all three tells")
@@ -55,12 +55,34 @@ class RunTells(unittest.TestCase):
         t = self.mod.new(); t.begin()
         for s in range(0, 200, 5):
             t.observe(s, GROUNDS, 0, False)                                    # wandering the grounds
-        self.assertEqual(t.verdict()[1], "never went into the castle")
+        self.assertEqual(t.verdict()[1], "slow to the castle door")
         t = self.mod.new(); t.begin()
         t.observe(10, CASTLE, 0, False)
         for s in range(12, 90, 2):
             t.observe(s, CASTLE, 0, True)                                      # put the controller down
         self.assertEqual(t.verdict()[1], "stood still too long")
+
+    def test_things_a_runner_never_does_before_the_first_star(self):
+        def fresh():
+            t = self.mod.new(); t.begin(); return t
+        t = fresh()
+        t.observe(10, CASTLE, 0, False)
+        t.observe(14, CASTLE, 0, False, self.lua.table(talk=True))             # stopped at Toad
+        self.assertEqual(t.verdict()[1], "stopped to talk")
+        t = fresh()
+        t.observe(10, CASTLE, 0, False); t.observe(30, GROUNDS, 0, False)      # walked back out
+        self.assertEqual(t.verdict()[1], "went back outside")
+        t = fresh()
+        for s in range(0, 60, 5):
+            t.observe(s, GROUNDS, 0, False)                                    # 45 s and still not at the door
+        self.assertEqual(t.verdict()[1], "slow to the castle door")
+        t = fresh()
+        met = self.lua.table(met=True)
+        t.observe(5, GROUNDS, 0, False, met); t.observe(15, CASTLE, 0, False, met)   # met Jimmie, still quick: a first mistake
+        self.assertEqual(t.verdict()[0], "watching")
+        t = fresh()
+        t.observe(5, GROUNDS, 0, False, met); t.observe(25, GROUNDS, 0, False, met)  # met Jimmie and dawdled
+        self.assertEqual(t.verdict()[1], "met Jimmie and was slow to the door")
 
     def test_once_it_is_a_run_nothing_later_takes_the_clock_away(self):
         self.walk([(18, CASTLE, 0, False), (40, BOB, 0, False)])

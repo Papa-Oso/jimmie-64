@@ -27,6 +27,7 @@ JIMMIE_ROUTE16 = { command = function(name) MODES[#MODES + 1] = name; djui_chat_
 JIMMIE_BRAIN = { fact = function(kind, actor, extra) FACTS[#FACTS + 1] = kind .. ":" .. tostring(extra.n) end }
 gMarioStates = { [0] = { action = 0, vel = { x = 9, y = 0, z = 9 } } }
 ACT_GROUP_MASK, ACT_GROUP_CUTSCENE = 0x1C0, 0x100
+ACT_READING_NPC_DIALOG, ACT_READING_SIGN = 0x1301, 0x1308
 JIMMIE_INTRO = nil
 gNetworkPlayers = { [0] = { currLevelNum = 16 } }
 function get_global_timer() return TIMER end
