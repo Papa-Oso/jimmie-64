@@ -25,7 +25,9 @@ function jimmie_run_split(n) return STATE.splits[n] or 0 end
 function djui_chat_message_create(s) CHAT[#CHAT + 1] = s end
 JIMMIE_ROUTE16 = { command = function(name) MODES[#MODES + 1] = name; djui_chat_message_create("Jimmie: " .. name) return true end }
 JIMMIE_BRAIN = { fact = function(kind, actor, extra) FACTS[#FACTS + 1] = kind .. ":" .. tostring(extra.n) end }
-gMarioStates = { [0] = { vel = { x = 9, y = 0, z = 9 } } }
+gMarioStates = { [0] = { action = 0, vel = { x = 9, y = 0, z = 9 } } }
+ACT_GROUP_MASK, ACT_GROUP_CUTSCENE = 0x1C0, 0x100
+JIMMIE_INTRO = nil
 gNetworkPlayers = { [0] = { currLevelNum = 16 } }
 function get_global_timer() return TIMER end
 function smlua_text_utils_dialog_replace(id, a, per, left, width, text) TEXTS[#TEXTS + 1] = { id = id, per = per, text = text } end

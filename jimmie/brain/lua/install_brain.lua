@@ -17,6 +17,9 @@ end
 
 local function speak(sample, seconds, detail)
     local t = VOICE.now()
+    -- Owner, 2026-11-11: on a new file he does not talk until Mario has met him on the castle bridge.
+    -- JIMMIE_INTRO.seen is set while that meeting is still to come; .done once he has joined (or it was skipped).
+    if JIMMIE_INTRO and JIMMIE_INTRO.seen and not JIMMIE_INTRO.done then return false end
     if detail.valid and not detail.valid() then return false end
     if VOICE.currentSnd then pcall(audio_sample_stop, VOICE.currentSnd) end   -- a reaction cuts a ramble off
     local ok = pcall(audio_sample_play, sample, heard_from(), detail.volume or 1.0)
@@ -115,7 +118,7 @@ if type(jimmie_run_state) == "function" then
         if phase == 1 and lastPhase ~= 1 then
             tells.begin()
             lastStars, lastVerdict = 0, nil
-            JIMMIE_RUN.attempts, JIMMIE_RUN.delta = JIMMIE_RUN.attempts + 1, nil
+            JIMMIE_RUN.attempts, JIMMIE_RUN.delta, JIMMIE_RUN.t0 = JIMMIE_RUN.attempts + 1, nil, nil
             say({ event = "begin", best_ms = best, attempt = JIMMIE_RUN.attempts })
             retext(JIMMIE_RUN.attempts)
             if JIMMIE_RUN.attempts >= 2 and JIMMIE_BRAIN then
@@ -131,7 +134,16 @@ if type(jimmie_run_state) == "function" then
         if phase ~= 1 then return end
         local m, np = gMarioStates[0], gNetworkPlayers[0]
         if not m or not np then return end
-        local t, level = ms / 1000, np.currLevelNum
+        local level = np.currLevelNum
+        -- The tells are judged from the moment the player can first move, not from file select: on a
+        -- new file the opening holds Mario for about a minute, which used to read as "stood still too
+        -- long" and hid the clock before play began. The clock itself still counts from file select.
+        local free = ACT_GROUP_MASK == nil or (m.action & ACT_GROUP_MASK) ~= ACT_GROUP_CUTSCENE
+        if not JIMMIE_RUN.t0 then
+            if not free then return end
+            JIMMIE_RUN.t0 = ms
+        end
+        local t = (ms - JIMMIE_RUN.t0) / 1000
         if stars > lastStars then
             tells.star(t, level, stars)
             JIMMIE_RUN.delta = nil
@@ -142,7 +154,8 @@ if type(jimmie_run_state) == "function" then
             lastStars = stars
         end
         if get_global_timer() % 10 == 0 then
-            local still = m.vel and math.abs(m.vel.x) < 2 and math.abs(m.vel.y) < 2 and math.abs(m.vel.z) < 2
+            -- Being held by a text box or a scene is not the player standing around.
+            local still = free and m.vel and math.abs(m.vel.x) < 2 and math.abs(m.vel.y) < 2 and math.abs(m.vel.z) < 2
             tells.observe(t, level, stars, still)
         end
         local verdict, why = tells.verdict()
