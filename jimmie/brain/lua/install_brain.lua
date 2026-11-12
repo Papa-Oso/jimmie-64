@@ -62,6 +62,18 @@ hook_event(HOOK_ON_DEATH, JIMMIE_BRAIN.death)
 if HOOK_ON_CHAT_MESSAGE then hook_event(HOOK_ON_CHAT_MESSAGE, function(m, msg) pcall(JIMMIE_BRAIN.chat, m, msg) end) end
 print("[jb] link ready")
 
+-- Owner, 2026-11-11: Lakitu was still to be seen waiting near the castle door before the bridge
+-- meeting, and stayed there if the meeting was skipped. He and his cloud are kept invisible on the
+-- castle grounds; nothing about him is moved, removed or retimed.
+if type(jimmie_intro_lakitu) == "function" and type(jimmie_intro_hide) == "function" then
+    hook_event(HOOK_UPDATE, function()
+        local np = gNetworkPlayers[0]
+        if not np or np.currLevelNum ~= 16 then return end
+        local ok, lak = pcall(jimmie_intro_lakitu)
+        if ok and lak then pcall(jimmie_intro_hide, lak, false) end
+    end)
+end
+
 -- Every text box, one box each, in Jimmie's voice (jimmie_dialogs.lua): reading never costs time.
 do
     local ok, boxes = pcall(require, "jimmie_dialogs")
