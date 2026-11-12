@@ -47,7 +47,7 @@ function O.railPace(rail,p,m)
  if speed<4 or speed>48 or forward<speed*.7 then return nil end
  local x,z=m.x-p.x,m.z-p.z
  local along=x*dx+z*dz;local lateral=math.abs(x*dz-z*dx)
- if along<0 or lateral>280 or dist(p,m)>800 or math.abs(m.y-p.y)>220 then return nil end
+ if along<0 or lateral>280 or dist(p,m)>1500 or math.abs(m.y-p.y)>220 then return nil end
  return clamp((forward+clamp((along-80)/20,-8,8))/horizontal,0,RAIL_MAX_SPEED)
 end
 -- motion:railspeed. Speed along the rail at contact: most of the approach speed carries over,
@@ -62,6 +62,7 @@ local function startGrind(t,vx,vy,vz)
  if not length then return false end
  t.grindLength=length;t.grindGrade=y;t.grindDistance=0;t.grindTicks=0
  t.grindSpeed=entrySpeed(vx,vy,vz,x,y,z)
+ if t.entryVel then t.grindSpeed=math.max(t.grindSpeed,entrySpeed(t.entryVel.x,0,t.entryVel.z,x,y,z)) end   -- rolling speed carried onto the rail
  t.phase='grind';t.step=0;t.contactPending=true
  return true
 end
@@ -157,13 +158,13 @@ function O:begin(plan,kind,p,ctx,rail)
  self.episode=self.episode+1
  self.task={plan=plan,kind=kind,balanceClip=rail and self:chooseBalance(ctx,rail.visual) or nil,phase='air',frame=ctx.frame,scene=ctx.scene,instance=ctx.instance,
   phys=ctx.phys,area=ctx.area,step=0,expected=cp(p),variant=self:chooseVariant(kind),rail=rail,
-  terrain=ctx.terrain,started=ctx.time,approachOrigin=cp(p),windup=plan.contactEntry and 0 or (quick and 2 or O.WINDUP)}
+  terrain=ctx.terrain,started=ctx.time,approachOrigin=cp(p),entryVel={x=p.vx or 0,z=p.vz or 0},windup=plan.contactEntry and 0 or (quick and 2 or O.WINDUP)}
  if plan.contactEntry then
   if not startGrind(self.task,p.vx,p.vy,p.vz) then self.task=nil;return nil end
  end
  self.nextFollow=ctx.time+1.25
  -- Navigation does not consume optional fun. Keep the RNG draw for parity.
- local nextFun=ctx.time+9+self.rng()*7
+ local nextFun=ctx.time+4+self.rng()*4
  if kind=='rail' then self.nextFun=nextFun end
  self.cue=nil;self.pendingRail=nil
  self:event('selected',ctx,{opportunity=kind,variant=self.task.variant,from=cp(p),to=cp(plan.landing or plan.b),finiteProbes=true})
@@ -227,8 +228,9 @@ function O:advance(p,ctx)
  -- never from an invented landing or teleport. Prefer a checked dismount first.
  if t.rail then
   local gap=dist(p,ctx.player)
-  if gap>1000 then self:cancel('player-outpaced-rail',ctx);return nil end
-  if gap>800 and t.phase=='grind' then
+  local chasing=t.phase=='grind' and gap<=2000
+  if gap>2000 then self:cancel('player-outpaced-rail',ctx);return nil end
+  if gap>1400 and t.phase=='grind' then
    t.phase='dismount';t.exitTry=0;t.dismountReason='companion-range'
    self:event('rail-dismount-requested',ctx,{reason='companion-range',gap=gap})
   end
@@ -268,8 +270,10 @@ function O:advance(p,ctx)
   local speed,travel=O.railDynamics(t.grindSpeed,t.grindGrade,O.railPace(t.rail,p,ctx.player))
   t.grindSpeed=speed;t.grindDistance=math.min(t.grindLength,t.grindDistance+travel);t.grindTicks=t.grindTicks+1
   k=t.grindDistance/t.grindLength
-  if k<1 and (speed<=.01 or t.grindTicks>=60) then
-   t.phase='dismount';t.exitTry=0;t.dismountReason='momentum-stall'
+  -- motion:grindmore. Up to 6 seconds on a rail (was 2). He steps off early if the rail is carrying him away from Mario.
+  local leaving=dist(p,ctx.player)>1400
+  if k<1 and (speed<=.01 or t.grindTicks>=180 or leaving) then
+   t.phase='dismount';t.exitTry=0;t.dismountReason=leaving and 'left-player-behind' or 'momentum-stall'
    self:event('rail-stalled',ctx,{speed=speed,progress=k,grade=t.grindGrade})
    local result=self:dismount(t,p,ctx)
    if result~=true then return result end
@@ -287,7 +291,16 @@ function O:advance(p,ctx)
   if not f or math.abs(f.y-q.y)>12 then self:cancel('rail-support-lost',ctx);return nil end
   if t.rail.visual then
    presentation=self.world.raisedPresentation and self.world:raisedPresentation(p,q,t.rail,ctx)
-   if not presentation then self:cancel('raised-presentation-clearance-refused',ctx);return nil end
+   -- motion:railhold. The two checks that the board sits exactly on the rail top (the ground under the trucks, and the
+   -- top's width) no longer end the grind on their own: he keeps the last good placement for up to 1.5 seconds.
+   -- Every other refusal (body or wall clearance, a changed rail line) still ends it at once.
+   if presentation then t.lastPresentation=presentation;t.presentationMiss=0
+   else
+    local why=self.world.lastReject
+    if t.lastPresentation and (why=='raised-truck-support' or why=='raised-width-changed') and (t.presentationMiss or 0)<45 then
+     presentation=t.lastPresentation;t.presentationMiss=(t.presentationMiss or 0)+1
+    else self:cancel('raised-presentation-clearance-refused',ctx);return nil end
+   end
   end
  end
  if k>=1 then
@@ -297,9 +310,32 @@ function O:advance(p,ctx)
    if not startGrind(t,q.x-p.x,q.y-p.y,q.z-p.z) then self:cancel('invalid-rail',ctx);return nil end
    self:event('rail-contact-proposed',ctx,{from=cp(t.rail.a),to=cp(t.rail.b)})
   elseif t.phase=='grind' then
+   -- motion:cornerrail. Another rail carries on round the corner: a small pop across onto it, up to six in a row.
+   local nxt=(t.chain or 0)<8 and dist(q,ctx.player)<=1500 and t.nextRail or nil   -- found ahead of time by O:prefetch
+   if nxt and not self.world:floor(nxt.a.x,nxt.a.y+24,nxt.a.z) then nxt=nil end
+   t.nextRail=nil;t.nextTried=nil
+   local carried=false
+   if nxt and nxt.seamless then
+    local length,_,gy=railShape(nxt)
+    if length then
+     t.chain=(t.chain or 0)+1;t.rail=nxt;t.grindLength=length;t.grindGrade=gy;t.grindDistance=0;t.grindTicks=0;carried=true
+     self:event('rail-continued',ctx,{from=cp(nxt.a),to=cp(nxt.b),chain=t.chain,straight=true})
+    end
+   elseif nxt then
+    local hop=self.world:arc(q,nxt.a,36,{landingRadius=28})
+    if hop and self:playersClear(q,self.world:at(hop,1/hop.duration),ctx) then
+     hop.duration=math.max(6,math.min(hop.duration,math.ceil(dist(q,nxt.a)/math.max(12,t.grindSpeed or 12))))
+     t.chain=(t.chain or 0)+1;t.rail=nxt;t.plan=hop;t.phase='air';t.step=0;t.windup=0;t.expected=cp(q)
+     self:event('rail-continued',ctx,{from=cp(nxt.a),to=cp(nxt.b),chain=t.chain})
+     return {position=cp(q),velocity={x=0,y=0,z=0},onGround=false,variant=t.variant,balanceClip=t.balanceClip,kind=t.kind,grind=false,
+      phase='air',episode=self.episode,popped=true,heading=math.atan2(nxt.b.x-nxt.a.x,nxt.b.z-nxt.a.z),incline=0,duration=hop.duration/30,airTime=0}
+    end
+   end
+   if not carried then
    local plan=self.world:arc(q,t.rail.exit,80)
    if not plan then self:cancel('exit-changed',ctx);return nil end
    t.plan=plan;t.phase='exit';t.step=0;self:event('rail-exit',ctx)
+   end
   else
    local h=self.world:support(q,28)
    if not h then self:cancel('landing-support-missing',ctx);return nil end
@@ -314,6 +350,31 @@ function O:advance(p,ctx)
   heading=t.rail and (t.phase=='air' or t.phase=='grind') and math.atan2(t.rail.b.x-t.rail.a.x,t.rail.b.z-t.rail.a.z) or nil,
   incline=presentation and presentation.incline or (grind and math.atan((t.rail.b.y-t.rail.a.y)/math.max(1,dist(t.rail.a,t.rail.b))) or 0),
   duration=t.plan.duration/30,airTime=math.min(t.step,total)/30}
+end
+-- motion:cornerrail. The next rail is looked up ahead of time, in a budget of its own, so the search can never
+-- cancel the grind he is on. Called once a frame from main.lua after the normal step.
+function O:prefetch(ctx)
+ if not self.task then return self:lookahead(ctx) end
+ local t=self.task
+ if not t or t.phase~='grind' or not t.rail or t.nextTried or not self.world.nextRail or (t.chain or 0)>=8 then return nil end
+ if (t.grindDistance or 0)<(t.grindLength or 1)*.3 then return nil end
+ t.nextTried=true
+ t.nextRail=self.world:nextRail(t.rail,cp(t.rail.b),ctx.player)
+ return nil
+end
+-- motion:railmap. While he is just following: every fifth frame, look straight at the listed rail Mario is moving
+-- along and, if one is in reach, hand it to the normal admission (which proves it again and plans the hop).
+function O:lookahead(ctx)
+ local p,m=ctx.phys,ctx.player
+ if self.pendingRail or not p or not m or p.onGround~=true or ctx.frame%5~=0 or ctx.time<self.nextFun then return nil end
+ local vx,vz=m.vx or 0,m.vz or 0;local speed=math.sqrt(vx*vx+vz*vz)
+ if speed<8 or speed>48 or dist(p,m)>650 or not self.world.chainRail then return nil end
+ local r=self.world:chainRail(p,m,vx,vz)
+ if r then
+  self.pendingRail={rail=r,time=ctx.time,scene=ctx.scene,area=ctx.area}
+  self:event('rail-opportunity-found',ctx,{from=cp(r.a),to=cp(r.b),remaining=r.visual and r.visual.remaining or nil,ahead=true})
+ end
+ return nil
 end
 function O:follow(p,ctx)
  local m=ctx.player;local length=dist(p,m)
@@ -366,7 +427,9 @@ function O:railKeepsUp(p,rail,ctx,plan)
  -- Avoid starting optional fun after the approach has already lost the player.
  -- This is a follow window estimate, not a physical camera visibility promise.
  local entryPlayer={x=m.x+vx*entryFrames,y=m.y,z=m.z+vz*entryFrames}
- if speed>=8 and dist(rail.a,entryPlayer)>400 then return false,'entry-outside-follow-window' end
+ -- motion:railahead. Mario running the rail's way: the grind catches him up, so starting behind him is fine.
+ if speed>=8 and dist(rail.a,entryPlayer)>400
+  and not O.railPace(rail,rail.a,{x=entryPlayer.x,y=entryPlayer.y,z=entryPlayer.z,vx=vx,vz=vz}) then return false,'entry-outside-follow-window' end
  local estimated
  if entryFrames>0 then
   local before=self.world:at(plan,1-1/entryFrames)
@@ -374,8 +437,9 @@ function O:railKeepsUp(p,rail,ctx,plan)
  else
   estimated=entrySpeed(p.vx,p.vy,p.vz,tx,grade,tz)
  end
+ estimated=math.max(estimated,entrySpeed(p.vx,0,p.vz,tx,grade,tz))   -- the same carry-over in the prediction
  local progress,grindFrames=0,0
- while progress<total and grindFrames<60 do
+ while progress<total and grindFrames<180 do
   local position={x=rail.a.x+tx*progress,y=rail.a.y+grade*progress,z=rail.a.z+tz*progress}
   local elapsed=entryFrames+grindFrames
   local player={x=m.x+vx*elapsed,y=m.y,z=m.z+vz*elapsed,vx=vx,vz=vz}
@@ -386,14 +450,14 @@ function O:railKeepsUp(p,rail,ctx,plan)
  if progress<total then return false,'predicted-grind-timeout' end
  local exitFrames=(rail.exitArc and rail.exitArc.duration) or 18
  local horizon=entryFrames+grindFrames+exitFrames+3
- if horizon>105 then return false,'optional-trip-too-long' end
+ if horizon>230 then return false,'optional-trip-too-long' end
  if speed<8 then return true end
  -- Mario may turn or stop. Extrapolating a full multi-hop trip wrongly vetoes
  -- ordinary running even beside a good rail. Predict only 0.4 seconds, then
  -- apply a bounded companion excursion. Actual clearance is checked each tick.
  local lookahead=math.min(horizon,12)
  local predicted={x=m.x+vx*lookahead,y=m.y,z=m.z+vz*lookahead}
- if dist(rail.exit,predicted)>650 then
+ if dist(rail.exit,predicted)>650 and not O.railPace(rail,rail.a,m) then
   return false,'exit-outside-companion-range'
  end
  return true

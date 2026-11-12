@@ -73,6 +73,73 @@ function R:add(surface,dynamic,scene)
  end
  self.stats.candidates=#self.segments;return added
 end
+-- motion:cornerrail. The visible rail that carries on from the end E of the current one: it shares that end point and
+-- turns by no more than 45 degrees. Returns its far end and unit direction, or nil.
+function R:after(E,dx,dz,current)
+ local g=self.g;local np=g.gNetworkPlayers and g.gNetworkPlayers[0]
+ if not Visible or not np or not E or not current then return nil end
+ local best,score
+ for _,map in ipairs(Visible.maps or {}) do
+  if g[map.level] and np.currLevelNum==g[map.level] and np.currAreaIndex==map.area then
+   for i,v in ipairs(map.segments) do
+    if i>512 then break end
+    local ax,ay,az,bx,by,bz=table.unpack(v)
+    local same=(ax==current.a.x and az==current.a.z and bx==current.b.x and bz==current.b.z)
+     or (ax==current.b.x and az==current.b.z and bx==current.a.x and bz==current.a.z)
+    if not same then
+     local fx,fy,fz
+     if (ax-E.x)^2+(az-E.z)^2<=9 and math.abs(ay-E.y)<=8 then fx,fy,fz=bx,by,bz
+     elseif (bx-E.x)^2+(bz-E.z)^2<=9 and math.abs(by-E.y)<=8 then fx,fy,fz=ax,ay,az end
+     if fx then
+      local x,z=fx-E.x,fz-E.z;local length=math.sqrt(x*x+z*z)
+      if length>=156 then
+       local ux,uz=x/length,z/length;local dot=ux*dx+uz*dz
+       if dot>=.7071 and (not score or dot>score) then
+        best={a={x=E.x,y=E.y,z=E.z},b={x=fx,y=fy,z=fz},ux=ux,uz=uz,length=length};score=dot
+       end
+      end
+     end
+    end
+   end
+  end
+ end
+ return best
+end
+-- motion:railmap. The listed rail Mario is moving along right now, and a point on it a little ahead of him.
+-- Direct lookup in the level's rail list: no searching around Jimmie.
+function R:ahead(player,vx,vz)
+ local g=self.g;local np=g.gNetworkPlayers and g.gNetworkPlayers[0]
+ if not Visible or not np or not player then return nil end
+ local speed=math.sqrt((vx or 0)^2+(vz or 0)^2)
+ if speed<4 then return nil end
+ local fx,fz=vx/speed,vz/speed;local lead=math.max(150,math.min(330,speed*9))
+ local best,cost
+ for _,map in ipairs(Visible.maps or {}) do
+  if g[map.level] and np.currLevelNum==g[map.level] and np.currAreaIndex==map.area then
+   for i,v in ipairs(map.segments) do
+    if i>512 then break end
+    local ax,ay,az,bx,by,bz=table.unpack(v)
+    local x,z=bx-ax,bz-az;local length=math.sqrt(x*x+z*z)
+    if length>=280 then
+     local ux,uz=x/length,z/length;local dot=ux*fx+uz*fz
+     if math.abs(dot)>=.8 then
+      local sign=dot>0 and 1 or -1
+      local along=(player.x-ax)*ux+(player.z-az)*uz
+      local lateral=math.abs((player.x-ax)*uz-(player.z-az)*ux)
+      local t=along+sign*lead
+      local remaining=sign>0 and length-42-t or t-42
+      local y=ay+(by-ay)*math.max(0,math.min(1,t/length))
+      if lateral<=320 and t>=46 and t<=length-46 and remaining>=120 and math.abs(y-player.y)<=260
+       and (not cost or lateral<cost) then
+       best={x=ax+x*t/length,y=y,z=az+z*t/length,dx=ux*sign,dz=uz*sign};cost=lateral
+      end
+     end
+    end
+   end
+  end
+ end
+ return best
+end
 function R:visible(p,dx,dz,needRemaining,budget,sceneChecked)
  local g=self.g;local np=g.gNetworkPlayers and g.gNetworkPlayers[0]
  if self.bound and not sceneChecked then
@@ -145,7 +212,7 @@ function R:near(p,player,fx,fz,frame,deferred,budget)
      local vl=math.sqrt(vx*vx+vz*vz);local orientation=vx*dx+vz*dz>=0 and 1 or -1
      dx,dz=vx/vl*orientation,vz/vl*orientation
      hints[#hints+1]={x=q.x,y=q.y,z=q.z,dx=dx,dz=dz,key=id,source='static-surface-edge',seed=s.seed,
-      points=math.min(25,math.floor(visual.remaining/24)+1),visual=visual,
+      points=math.min((dx*fx+dz*fz)>=.7 and 25 or 25,math.floor(visual.remaining/24)+1),visual=visual,
       score=d+.2*gap+40*(1-dx*fx-dz*fz)+(variant==2 and 28 or 0)-32}
      -- Bounded top24 insertion; never sort thousands of generated candidates.
      if #hints>24 then

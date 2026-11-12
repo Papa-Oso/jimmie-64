@@ -76,7 +76,7 @@ function M:allowRailAdmission()
 end
 function M.new(g)
  local self=setmetatable({g=g or _G,allowed={}},M)
- for _,s in ipairs({'SURFACE_DEFAULT','SURFACE_HARD','SURFACE_NOT_SLIPPERY','SURFACE_HARD_NOT_SLIPPERY','SURFACE_NO_CAM_COLLISION','SURFACE_SLIPPERY','SURFACE_VERY_SLIPPERY','SURFACE_HARD_SLIPPERY','SURFACE_HARD_VERY_SLIPPERY'}) do local k=self.g[s];if num(k) then self.allowed[k]=true end end
+ for _,s in ipairs({'SURFACE_DEFAULT','SURFACE_HARD','SURFACE_NOT_SLIPPERY','SURFACE_HARD_NOT_SLIPPERY','SURFACE_NO_CAM_COLLISION','SURFACE_SLIPPERY','SURFACE_VERY_SLIPPERY','SURFACE_HARD_SLIPPERY','SURFACE_HARD_VERY_SLIPPERY','SURFACE_NOISE_DEFAULT','SURFACE_NOISE_SLIPPERY'}) do local k=self.g[s];if num(k) then self.allowed[k]=true end end
  if SurfaceRails then
   self.surfaceRails=SurfaceRails.new(self.g);self.surfaceRails:bind()
   self.surfaceBudget={tick=function()self:_tick()end,scene=function()return self:_native('smlua_collision_util_get_current_terrain_collision')end}
@@ -401,8 +401,8 @@ function M:_railScanStep(p,player,ctx)
  local s=self._railScan
  if s and ctx.epoch==s.epoch and ctx.frame==s.frame then return nil end -- duplicate frame cannot advance
  if s and (ctx.epoch~=s.epoch or ctx.frame~=s.frame+1 or dist(p,s.previous)>96
-  or dist(player,s.player)>96 or dist(p,s.origin)>600 or ctx.frame-s.started>120) then
-  if s.indexKey then self:deferRail({indexKey=s.indexKey},ctx.frame,300) end
+  or dist(player,s.player)>96 or dist(p,s.origin)>600+speed*30 or ctx.frame-s.started>120) then
+  if s.indexKey then self:deferRail({indexKey=s.indexKey},ctx.frame,speed>=8 and 60 or 300) end
   if s.nearGeneric then self._nearScanNext=math.max(self._nearScanNext or 0,ctx.frame+90) end
   s=nil
  end
@@ -688,7 +688,7 @@ M.trimRail=guarded(function(self,p,rail,player)
   or not pt(rail.a) or not pt(rail.b) or not pt(rail.exit) then return nil end
  local a,b=rail.a,rail.b
  local dx,dz=b.x-a.x,b.z-a.z;local length=math.sqrt(dx*dx+dz*dz)
- if length<72 or length>600 then return nil end
+ if length<71.5 or length>1250 then return nil end
  local t=((p.x-a.x)*dx+(p.z-a.z)*dz)/(length*length)
  if t<0 or t>1 or (1-t)*length<72 then return nil end
  local start=mix(a,b,t)
@@ -721,7 +721,7 @@ M.validateRail=guarded(function(self,rail,player)
  if not rail or rail.kind~='grind' or not pt(rail.a) or not pt(rail.b) or not pt(rail.exit) then return nil end
  local dx,dz=rail.b.x-rail.a.x,rail.b.z-rail.a.z
  local length=math.sqrt(dx*dx+dz*dz)
- if length<72 or length>600 then return nil end
+ if length<71.5 or length>1250 then return nil end
  local count=math.ceil(dist(rail.a,rail.b)/24);local points={};local width
  for i=0,count do
   local hint=mix(rail.a,rail.b,i/count)
@@ -738,6 +738,94 @@ M.validateRail=guarded(function(self,rail,player)
  if not arc then return nil end
  return {kind='grind',feature='two-sided-rail',a=points[1],b=points[#points],entry=cp(points[1]),
   exit=cp(exit),exitArc=arc,width=width,points=points,continuousClearance=false,method='finite-native-probes',indexKey=rail.indexKey,shapeSource=rail.shapeSource,visual=rail.visual}
+end)
+
+-- motion:railmap. A rail on the listed piece Mario is moving along, starting a little ahead of him, proved in full
+-- with the same checks as any rail. Nil when there is none within Jimmie's reach.
+M.chainRail=guarded(function(self,p,player,vx,vz)
+ player=player and (player.pos or player)
+ if not self.surfaceRails or not self.surfaceRails.ahead or not pt(p) or not pt(player) then return nil end
+ local h=self.surfaceRails:ahead(player,vx,vz)
+ if not h then return self:deny('no-rail-ahead') end
+ local a=self:floor(h.x,h.y+24,h.z)
+ if not a or math.abs(a.y-h.y)>28 then return self:deny('rail-ahead-no-floor') end
+ local reach=math.sqrt((a.x-p.x)^2+(a.z-p.z)^2)
+ if reach>500 or reach<60 or math.abs(a.y-p.y)>180 then return self:deny('rail-ahead-out-of-reach') end
+ local visual=self.surfaceRails:visible(a,h.dx,h.dz,true,self.surfaceBudget)
+ if not visual then return self:deny('rail-ahead-not-visible') end
+ local n=math.min(24,math.floor(visual.remaining/24))
+ if n<4 then return self:deny('rail-ahead-short') end
+ local b=self:floor(a.x+h.dx*n*24,a.y+24,a.z+h.dz*n*24)
+ if not b then return self:deny('rail-ahead-no-end') end
+ for _,o in ipairs(exits) do
+  for _,sgn in ipairs({1,-1}) do
+   local lat=o[2]*sgn
+   local e=self:floor(b.x+h.dx*o[1]-h.dz*lat,b.y+180,b.z+h.dz*o[1]+h.dx*lat)
+   if e and self:support(e,64) then
+    local r=self:validateRail({kind='grind',a=cp(a),b=cp(b),exit=cp(e),visual=visual,shapeSource='static-surface-edge'},player)
+    if r then return r end
+   end
+   if o[2]==0 then break end
+  end
+ end
+ return self:deny(self.lastReject or 'rail-ahead-refused')
+end)
+
+-- motion:cornerrail. The rail that continues round a corner from the end of this one, freshly proved in full with the
+-- same checks as any rail (floor, width, clearance, exit support, exit flight). Nil when there is none.
+M.nextRail=guarded(function(self,rail,q,player)
+ player=player and (player.pos or player)
+ if not rail or not rail.visual or rail.shapeSource~='static-surface-edge' or not self.surfaceRails
+  or not self.surfaceRails.after or not pt(q) or not pt(player) then return nil end
+ local dx,dz=rail.b.x-rail.a.x,rail.b.z-rail.a.z;local len=math.sqrt(dx*dx+dz*dz)
+ if len<1 then return nil end;dx,dz=dx/len,dz/len
+ local v=rail.visual;local E,S=v.b,v.a
+ if (v.b.x-v.a.x)*dx+(v.b.z-v.a.z)*dz<0 then E,S=v.a,v.b end
+ local function prove(a,b,ux,uz,visual)
+  for _,o in ipairs(exits) do
+   for _,sgn in ipairs({1,-1}) do
+    local lat=o[2]*sgn
+    local e=self:floor(b.x+ux*o[1]-uz*lat,b.y+180,b.z+uz*o[1]+ux*lat)
+    if e and self:support(e,64) then
+     local r=self:validateRail({kind='grind',a=cp(a),b=cp(b),exit=cp(e),visual=visual,shapeSource='static-surface-edge'},player)
+     if r then return r end
+    end
+    if o[2]==0 then break end
+   end
+  end
+  return nil
+ end
+ -- The same rail carries straight on: ride it with no hop.
+ local cur=self.surfaceRails:visible(q,dx,dz,true,self.surfaceBudget)
+ if cur and sameLine(cur,v) and cur.remaining>=96 then
+  local a=self:floor(q.x,q.y+24,q.z)
+  if a and math.abs(a.y-q.y)<=2 then
+   local n=math.min(24,math.floor(cur.remaining/24))
+   local b=self:floor(a.x+dx*n*24,a.y+24,a.z+dz*n*24)
+   local r=b and prove(a,b,dx,dz,cur)
+   if r then r.seamless=true;return r end
+  end
+ end
+ local seg=self.surfaceRails:after(E,dx,dz,v)
+ if not seg then return self:deny('no-continuing-rail') end
+ -- keep to the same side of the rail top as on this one
+ local sx,sz=E.x-S.x,E.z-S.z;local sl=sx*sx+sz*sz
+ if sl<1 then return nil end
+ local k=((q.x-S.x)*sx+(q.z-S.z)*sz)/sl
+ local ox,oz=q.x-(S.x+sx*k),q.z-(S.z+sz*k)
+ local side=ox*(-dz)+oz*dx
+ local ux,uz=seg.ux,seg.uz
+ local a=self:floor(seg.a.x+ux*48-uz*side,q.y+40,seg.a.z+uz*48+ux*side)
+ if not a or math.abs(a.y-q.y)>48 then return self:deny('continuing-rail-no-floor') end
+ local visual=self.surfaceRails:visible(a,ux,uz,true,self.surfaceBudget)
+ if not visual then return self:deny('continuing-rail-not-visible') end
+ local n=math.min(24,math.floor(visual.remaining/24))
+ if n<3 then return self:deny('continuing-rail-short') end
+ local b=self:floor(a.x+ux*n*24,a.y+24,a.z+uz*n*24)
+ if not b then return self:deny('continuing-rail-no-end') end
+ local r=prove(a,b,ux,uz,visual)
+ if r then return r end
+ return self:deny(self.lastReject or 'continuing-rail-refused')
 end)
 
 return M

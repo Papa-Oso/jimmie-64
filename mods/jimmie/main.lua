@@ -1236,6 +1236,25 @@ local function update_movement(dt)
         p.pushT = 0
     end
 
+    -- motion:pivot. When the way he must go is behind him (Mario turned round), he pivots on the back wheels: speed
+    -- scrubbed and the board swung round in 8 frames, then off again the new way. Before this he had to carve a full
+    -- loop at 137 degrees a second and fell behind.
+    if p.pivot then
+        p.pivot.t=p.pivot.t+1;p.vx,p.vz=p.vx*.55,p.vz*.55
+        if p.pivot.t>=8 or not p.onGround then
+            if p.onGround then local go=math.min(desiredSpeed,16);p.vx,p.vz=ndx*go,ndz*go end
+            p.pivot=nil;p.pivotCool=24
+        end
+    else
+        p.pivotCool=math.max(0,(p.pivotCool or 0)-1)
+        local rolling=math.sqrt(p.vx*p.vx+p.vz*p.vz)
+        if p.onGround and p.pivotCool==0 and rolling>6 and desiredSpeed>10 and not p.windup and not p.manual and not p.fakie
+            and (p.vx*ndx+p.vz*ndz)/rolling< -.35 then
+            p.pivot={t=0}
+            if OriginalBank and OriginalBank.clips.manual then p.manual={clip='manual',t=0,dur=.27} end   -- nose up for the turn
+            log('[jimmie-pivot] frame='..tostring(get_global_timer()))
+        end
+    end
     -- carve toward the desired velocity (lateral grip)
     local dvx, dvz = ndx * desiredSpeed - p.vx, ndz * desiredSpeed - p.vz
     local dlen = math.sqrt(dvx * dvx + dvz * dvz)
@@ -1254,9 +1273,10 @@ local function update_movement(dt)
     else
         wantYaw = math.atan2(dx, dz)
     end
+    if p.pivot then wantYaw = math.atan2(ndx, ndz) end
     -- carve: never snap, limit angular speed (rad/s)
     local dyaw = (wantYaw - p.yaw + math.pi * 3) % (math.pi * 2) - math.pi
-    local maxYawRate = 2.4 * dt
+    local maxYawRate = (p.pivot and 14 or 2.4) * dt
     dyaw = math.max(-maxYawRate, math.min(maxYawRate, dyaw))
     p.yaw = p.yaw + dyaw
     local prevYaw = p.prevYaw or p.yaw
@@ -1399,6 +1419,10 @@ local function step_skate_opportunity()
         manual=manualMode~=nil and manualMode~="follow",water=VOICE and (VOICE.hasContext("water") or VOICE.hasContext("lava"))}
     local ok,out=pcall(function() return skateOpportunity.world:transaction(function() return skateOpportunity:step(p,ctx) end) end)
     if skateOpportunity.world.lastBudget and skateOpportunity.world.lastBudget.reason then skateOpportunity:cancel(skateOpportunity.world.lastBudget.reason,ctx) end
+    if ok and skateOpportunity.prefetch then   -- the look-ahead for the next rail runs apart from the step, so it cannot cancel it
+        pcall(function() return skateOpportunity.world:transaction(function() return skateOpportunity:prefetch(ctx) end) end)
+        if skateOpportunity.world.lastBudget then skateOpportunity.world.lastBudget.reason=nil end
+    end
     if not ok then
         log("[skate-opportunity] disabled after error: "..tostring(out));skateOpportunity=nil;return false
     end
@@ -2263,7 +2287,9 @@ function jimmie_fx_spawn(model,x,y,z,q)
     if #L>=24 or not model or id_bhvjimmie==nil then return end
     local ok,o=pcall(spawn_non_sync_object,id_bhvjimmie,model,x,y,z,function(o) end)
     if not (ok and o) then return end
-    obj_set_billboard(o);o.oInteractType=0;o.oCollisionDistance=0
+    -- motion:fxmore. Flat effects (rings, wakes) lie on the surface and keep a heading; the rest face the camera.
+    if q.flat then o.oFaceAnglePitch,o.oFaceAngleRoll,o.oFaceAngleYaw=0,0,q.yaw or 0 else obj_set_billboard(o) end
+    o.oInteractType=0;o.oCollisionDistance=0
     q.o=o;q.t=0;obj_scale_xyz(o,q.s0,q.s0,q.s0);L[#L+1]=q
 end
 function jimmie_fx_tick()
@@ -2310,11 +2336,13 @@ function jimmie_effects_step()
     if jimmie_fx_dust then jimmie_fx_dust(st) end
     if jimmie_fx_sparks then jimmie_fx_sparks(st) end
     if jimmie_fx_sounds then jimmie_fx_sounds(st) end
+    if jimmie_fx_bail then jimmie_fx_bail(st) end
 end
 -- motion:dust. The game's white puff model: one when he pushes off, two when he lands, one every few frames in a hard
 -- turn, four bigger ones when he bails.
 function jimmie_fx_dust(st)
     local function puff(n,size,spread)
+        if jimmie_fx_spray and jimmie_fx_spray(st,n,size,spread) then return end
         for _=1,n do
             jimmie_fx_spawn(E_MODEL_MIST,st.x+(math.random()-.5)*spread,st.y+8,st.z+(math.random()-.5)*spread,{life=12,s0=size*.5,s1=size*1.6,vy=1.2,fade=190})
         end
@@ -2331,6 +2359,258 @@ function jimmie_fx_sparks(st)
     local b=(st.yaw or 0)+math.pi
     jimmie_fx_spawn(E_MODEL_SPARKLES,st.x+(math.random()-.5)*30,st.y+6,st.z+(math.random()-.5)*30,
         {life=9,s0=.45,s1=.1,vx=math.sin(b)*4+(math.random()-.5)*5,vy=5+math.random()*4,vz=math.cos(b)*4+(math.random()-.5)*5,grav=1.1,frames=5})
+end
+-- motion:waterfx. Water around the swimming Jimmie, all our own objects with stock water models: a splash where his
+-- dive meets the water and where he leaps out, a ring every so often while he floats at the surface, a wake behind
+-- him while he swims along it. Nothing underwater, nothing in the air.
+function jimmie_fx_water()
+    local d=JIMMIE_SWIM;local s=JIMMIE_FX.prev;local f=get_global_timer();local m=gMarioStates[0]
+    if s.wf==f then return end;s.wf=f                                              -- once a frame, whoever calls
+    if not m or (m.action & ACT_GROUP_MASK)==ACT_GROUP_CUTSCENE then return end
+    local kind=d and d.leap and d.leap.kind or nil
+    local ok=d and d.body and jimmie_is_mine(d.body)
+    if ok then
+        local o=d.body;local x,y,z=o.oPosX,o.oPosY,o.oPosZ
+        local w=find_water_level(x,z)
+        local function splash()
+            if not w or w<-10000 then return end
+            jimmie_fx_spawn(E_MODEL_SMALL_WATER_SPLASH,x,w+10,z,{life=10,s0=1.2,s1=2.6,vy=3,frames=5})
+            jimmie_fx_spawn(E_MODEL_IDLE_WATER_WAVE,x,w+2,z,{life=20,s0=.8,s1=2.4,fade=200,flat=true})
+            if jimmie_fx_splash_sound then jimmie_fx_splash_sound(o) end
+        end
+        if s.leap=='in' and kind==nil and d.mode=='swim' then splash() end          -- his dive reaches the water
+        if kind=='out' and s.leap~='out' then splash() end                           -- he leaps out
+        if kind==nil and d.mode=='swim' and w and w>-10000 and y>w-140 and y<w+20 then
+            local sp=s.wx and math.sqrt((x-s.wx)^2+(z-s.wz)^2) or 0
+            if sp>=3 and f%6==0 then
+                jimmie_fx_spawn(E_MODEL_WAVE_TRAIL,x,w+2,z,{life=18,s0=.7,s1=1.5,fade=180,flat=true,yaw=o.oFaceAngleYaw})
+            elseif sp<3 and f%24==0 then
+                jimmie_fx_spawn(E_MODEL_IDLE_WATER_WAVE,x,w+2,z,{life=24,s0=.6,s1=1.8,fade=170,flat=true})
+            end
+        end
+        s.wx,s.wz=x,z
+    else s.wx=nil end
+    s.leap=kind
+end
+-- motion:splashsound. The game's own water-entry sound with the splash, at Jimmie's position. Its own change so it
+-- can be judged and removed on its own. The only sound he makes.
+function jimmie_fx_splash_sound(o)
+    local v=SOUND_ACTION_UNKNOWN430 or SOUND_OBJ_DIVING_INTO_WATER
+    if v and o and o.header and o.header.gfx then play_sound(v,o.header.gfx.cameraToObject) end
+end
+-- motion:bailstars. When he bails: a short fan of the game's little cartoon stars thrown up and out, with the big
+-- dust that is already there. No sound.
+function jimmie_fx_bail(st)
+    if not st.bailed or not E_MODEL_CARTOON_STAR then return end
+    for i=1,5 do
+        local a=(i-1)*2*math.pi/5+math.random()*.6
+        jimmie_fx_spawn(E_MODEL_CARTOON_STAR,st.x,st.y+50,st.z,{life=16,s0=.7,s1=.35,vx=math.sin(a)*7,vz=math.cos(a)*7,vy=9+math.random()*4,grav=1.2})
+    end
+end
+-- motion:spray. On snow or sand the push-off / landing / turn puff becomes a spray of that ground: small white
+-- flecks on snow, tan dust on sand. Chosen from the floor under him and the area's terrain, as the game does for Mario.
+function jimmie_fx_spray(st,n,size,spread)
+    local m=gMarioStates[0]
+    local terrain=m and m.area and TERRAIN_MASK and (m.area.terrainType & TERRAIN_MASK) or nil
+    local _,surf=find_floor(st.x,st.y+60,st.z)
+    local kind=surf and surf.type or nil
+    local snow=(terrain~=nil and terrain==TERRAIN_SNOW) or (kind~=nil and (kind==SURFACE_ICE or kind==SURFACE_SNOW or kind==SURFACE_HARD_SNOW))
+    local sand=(terrain~=nil and terrain==TERRAIN_SAND) or (kind~=nil and (kind==SURFACE_SHALLOW_QUICKSAND or kind==SURFACE_SHALLOW_MOVING_QUICKSAND or kind==SURFACE_SAND))
+    if snow and E_MODEL_WHITE_PARTICLE_DL then
+        for _=1,n*3 do
+            local a=math.random()*2*math.pi
+            jimmie_fx_spawn(E_MODEL_WHITE_PARTICLE_DL,st.x+(math.random()-.5)*spread,st.y+6,st.z+(math.random()-.5)*spread,
+                {life=11,s0=size*1.4,s1=size*.6,vx=math.sin(a)*3,vz=math.cos(a)*3,vy=5+math.random()*4,grav=1})
+        end
+        return true
+    end
+    if sand and E_MODEL_SAND_DUST then
+        for _=1,n do
+            jimmie_fx_spawn(E_MODEL_SAND_DUST,st.x+(math.random()-.5)*spread,st.y+8,st.z+(math.random()-.5)*spread,{life=12,s0=size*.5,s1=size*1.5,vy=1.4,fade=200})
+        end
+        return true
+    end
+    return false
+end
+-- motion:ledgeride. Ledge grinding from the level's ledge lines (skate_ledges.lua, built offline from a height scan).
+-- When Mario is moving along a ledge, Jimmie hops onto it a little ahead of him, slides along its lip at Mario's
+-- pace, follows it round bends of up to 45 degrees, and hops off onto the level side when it ends, after 8 seconds,
+-- or when Mario has gone. A simple system of its own: it owns him only while he is on the ledge.
+JIMMIE_LEDGE={cool=90}
+function jimmie_ledge_list()
+    local s=JIMMIE_LEDGE
+    if s.loaded==nil then local ok,d=pcall(require,'skate_ledges');s.loaded=(ok and type(d)=='table' and d.maps) and d or false end
+    if not s.loaded then return nil end
+    local np=gNetworkPlayers[0];local key=np.currLevelNum*100+np.currAreaIndex
+    if s.key~=key then
+        s.key=key;s.list=nil
+        for _,m in ipairs(s.loaded.maps) do if _G[m.level]==np.currLevelNum and m.area==np.currAreaIndex then s.list=m.ledges end end
+    end
+    return s.list
+end
+-- A point t units along piece i of a ledge line, with the piece's direction and the side the ground drops away.
+function jimmie_ledge_at(c,i,t)
+    local a,b=c[i],c[i+1];local x,z=b[1]-a[1],b[3]-a[3];local len=math.sqrt(x*x+z*z)
+    if len<1 then return nil end
+    local k=math.max(0,math.min(1,t/len))
+    local nx,nz=a[4]+(b[4]-a[4])*k,a[5]+(b[5]-a[5])*k;local nl=math.sqrt(nx*nx+nz*nz)
+    if nl<.01 then nx,nz=-z/len,x/len else nx,nz=nx/nl,nz/nl end
+    -- the drop is across the line, not along it
+    local across=nx*(-z/len)+nz*(x/len)
+    nx,nz=(across>=0 and 1 or -1)*(-z/len),(across>=0 and 1 or -1)*(x/len)
+    return a[1]+x*k,a[2]+(b[2]-a[2])*k,a[3]+z*k,x/len,z/len,nx,nz,len
+end
+-- The exact lip: from the scanned point, step toward the drop until the ground falls away.
+function jimmie_ledge_lip(x,y,z,nx,nz,ridge)
+    local h0=find_floor_height(x,y+80,z)
+    if h0<-10000 or math.abs(h0-y)>90 then
+        -- the scan is 40 units coarse: look a little to the level side too
+        x,z=x-nx*30,z-nz*30;h0=find_floor_height(x,y+80,z)
+        if h0<-10000 or math.abs(h0-y)>90 then return nil end
+    end
+    -- A thin wall or kerb beside the line is too narrow for the 40-unit scan: if there is a higher top within reach
+    -- across the line, that is the thing to ride.
+    local top,tx,tz=h0,x,z
+    for i=-7,10 do
+        local px,pz=x+nx*i*8,z+nz*i*8
+        local h=find_floor_height(px,h0+170,pz)
+        if h>top+20 and h<=h0+170 then top,tx,tz=h,px,pz end
+    end
+    if top>h0 then return tx,top,tz end
+    if ridge then return x,h0,z end
+    local ex,ez=x,z
+    for i=1,9 do
+        local px,pz=x+nx*i*8,z+nz*i*8
+        if find_floor_height(px,h0+60,pz)<h0-40 then break end
+        ex,ez=px,pz
+    end
+    return ex-nx*8,h0,ez-nz*8
+end
+function jimmie_ledge_find(m)
+    local list=jimmie_ledge_list()
+    if not list then return nil end
+    local vx,vz=m.vel.x,m.vel.z;local speed=math.sqrt(vx*vx+vz*vz)
+    if speed<8 then return nil end
+    local fx,fz=vx/speed,vz/speed;local lead=math.max(140,math.min(300,speed*8));local best,cost
+    for _,c in ipairs(list) do
+        for i=1,#c-1 do
+            local a,b=c[i],c[i+1];local x,z=b[1]-a[1],b[3]-a[3];local len=math.sqrt(x*x+z*z)
+            if len>=80 then
+                local ux,uz=x/len,z/len;local dot=ux*fx+uz*fz
+                if math.abs(dot)>=.75 then
+                    local dir=dot>0 and 1 or -1
+                    local along=(m.pos.x-a[1])*ux+(m.pos.z-a[3])*uz
+                    local lateral=math.abs((m.pos.x-a[1])*uz-(m.pos.z-a[3])*ux)
+                    local t=along+dir*lead
+                    if t>=0 and t<=len and lateral<=360 and math.abs(a[2]-m.pos.y)<=320 and (not cost or lateral<cost) then
+                        best={c=c,i=i,t=t,dir=dir};cost=lateral
+                    end
+                end
+            end
+        end
+    end
+    return best
+end
+function jimmie_ledge_place(x,y,z,yaw,clip,phase)
+    jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ=x,y,z
+    jimmie.oFaceAngleYaw,jimmie.oFaceAnglePitch,jimmie.oFaceAngleRoll=skate_model_angles(yaw,0,0)
+    for _,field in ipairs({'oPosX','oPosY','oPosZ','oFaceAngleYaw','oFaceAnglePitch','oFaceAngleRoll'}) do originalBoard[field]=jimmie[field] end
+    originalController.bank:apply(jimmie,originalBoard,clip,phase,0)
+    obj_scale_xyz(jimmie,.62,.62,-.62);obj_scale_xyz(originalBoard,.62,.62,-.62)
+    PHYS=nil
+end
+function jimmie_ledge_step(m)
+    local s=JIMMIE_LEDGE
+    if not (jimmie and originalBoard and jimmie.activeFlags~=0 and originalBoard.activeFlags~=0) or dying or not m then s.ride=nil;return false end
+    local r=s.ride
+    if not r then
+        s.cool=math.max(0,(s.cool or 0)-1)
+        local p=PHYS
+        if s.cool>0 or get_global_timer()%4~=0 or not p or not p.onGround or PHYS_AIR or opportunityMotion~=nil or p.windup
+            or (JIMMIE_PULL and (JIMMIE_PULL.t or JIMMIE_PULL.wait)) or (m.action & ACT_GROUP_MASK)==ACT_GROUP_CUTSCENE then return false end
+        local dx,dz=m.pos.x-jimmie.oPosX,m.pos.z-jimmie.oPosZ
+        if dx*dx+dz*dz>750*750 then return false end
+        local f=jimmie_ledge_find(m)
+        if not f then return false end
+        local x,y,z,ux,uz,nx,nz=jimmie_ledge_at(f.c,f.i,f.t)
+        if not x then return false end
+        local ex,ey,ez=jimmie_ledge_lip(x,y,z,nx,nz,f.c.ridge)
+        if not ex then return false end
+        local reach=math.sqrt((ex-jimmie.oPosX)^2+(ez-jimmie.oPosZ)^2);local rise=ey-jimmie.oPosY
+        if reach<50 or reach>600 or rise< -80 or rise>300 then return false end
+        r={c=f.c,i=f.i,t=f.t,dir=f.dir,phase='hop',k=0,n=math.max(8,math.min(22,math.floor(reach/24))),
+            x0=jimmie.oPosX,y0=jimmie.oPosY,z0=jimmie.oPosZ,ex=ex,ey=ey,ez=ez,
+            speed=math.max(16,math.sqrt((p.vx or 0)^2+(p.vz or 0)^2)),ticks=0,
+            clip=({'grind_5_0','slide_board','grind_nose','grind_smith','slide_lip','grind_crooked'})[math.random(6)]}
+        if not OriginalBank.clips[r.clip] then r.clip='balance042' end
+        s.ride=r;log('[jimmie-ledge] on frame='..tostring(get_global_timer())..' clip='..r.clip)
+    end
+    local mvx,mvz=m.vel.x,m.vel.z;local mspeed=math.sqrt(mvx*mvx+mvz*mvz)
+    if r.phase=='hop' then
+        r.k=r.k+1;local u=r.k/r.n;local h=55+math.max(0,r.ey-r.y0)*.35
+        local x,y,z=r.x0+(r.ex-r.x0)*u,r.y0+(r.ey-r.y0)*u+4*h*u*(1-u),r.z0+(r.ez-r.z0)*u
+        jimmie_ledge_place(x,y,z,math.atan2(r.ex-r.x0,r.ez-r.z0),OriginalBank.clips.ollie and 'ollie' or r.clip,math.min(.9,u))
+        jimmieSpeed=r.speed
+        if r.k>=r.n then r.phase='grind' end
+        return true
+    end
+    if r.phase=='grind' then
+        r.ticks=r.ticks+1
+        -- Mario's pace, a little faster while he is ahead; his own speed never drops quickly
+        r.speed=math.max(10,math.min(44,math.max(r.speed*.99,mspeed>4 and mspeed+5 or 0)))
+        local x,y,z,ux,uz,nx,nz,len=jimmie_ledge_at(r.c,r.i,r.t)
+        local off=nil
+        if not x then off='line' else
+            r.t=r.t+r.dir*r.speed
+            while r.t>len or r.t<0 do                                    -- onto the next piece, round the bend
+                local ni=r.i+r.dir
+                if ni<1 or ni>#r.c-1 then off='end';break end
+                local _,_,_,vx2,vz2,_,_,len2=jimmie_ledge_at(r.c,ni,0)
+                if not vx2 or (vx2*ux+vz2*uz)<.7071 then off='sharp-bend';break end
+                if r.dir>0 then r.t=r.t-len else r.t=r.t+len2 end
+                r.i=ni;len=len2;ux,uz=vx2,vz2
+            end
+        end
+        local ex,ey,ez
+        if not off then
+            x,y,z,ux,uz,nx,nz=jimmie_ledge_at(r.c,r.i,r.t)
+            ex,ey,ez=jimmie_ledge_lip(x,y,z,nx,nz,r.c.ridge)
+            if not ex then off='no-ground' end
+        end
+        local gx,gz=m.pos.x-jimmie.oPosX,m.pos.z-jimmie.oPosZ
+        if not off and (r.ticks>240 or gx*gx+gz*gz>1500*1500) then off=r.ticks>240 and 'long-enough' or 'mario-gone' end
+        if not off then
+            local yaw=math.atan2(ux*r.dir,uz*r.dir)
+            jimmie_ledge_place(ex,ey+2,ez,yaw,r.clip,.5)
+            jimmieSpeed=r.speed;r.ux,r.uz,r.nx,r.nz=ux*r.dir,uz*r.dir,nx,nz
+            if jimmie_fx_spawn and r.ticks%2==0 then
+                jimmie_fx_spawn(E_MODEL_SPARKLES,ex+(math.random()-.5)*24,ey+6,ez+(math.random()-.5)*24,
+                    {life=9,s0=.45,s1=.1,vx=-r.ux*4+(math.random()-.5)*5,vy=5+math.random()*4,vz=-r.uz*4+(math.random()-.5)*5,grav=1.1,frames=5})
+            end
+            return true
+        end
+        -- hop off onto the level side, carrying his speed along the ledge
+        r.phase='off';r.k=0;r.n=10;r.x0,r.y0,r.z0=jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ
+        local ax,az=r.ux or 0,r.uz or 0;local bx,bz=-(r.nx or 0),-(r.nz or 0)
+        local tx,tz=r.x0+ax*r.speed*6+bx*70,r.z0+az*r.speed*6+bz*70
+        local th=find_floor_height(tx,r.y0+80,tz)
+        if th<-10000 or math.abs(th-r.y0)>120 then tx,tz=r.x0+bx*60,r.z0+bz*60;th=find_floor_height(tx,r.y0+80,tz) end
+        if th<-10000 then tx,tz,th=r.x0,r.z0,r.y0 end
+        r.ex,r.ey,r.ez=tx,th,tz
+        log('[jimmie-ledge] off reason='..tostring(off)..' frames='..tostring(r.ticks)..' frame='..tostring(get_global_timer()))
+    end
+    -- phase 'off'
+    r.k=r.k+1;local u=r.k/r.n
+    local x,y,z=r.x0+(r.ex-r.x0)*u,r.y0+(r.ey-r.y0)*u+4*30*u*(1-u),r.z0+(r.ez-r.z0)*u
+    local yaw=math.atan2(r.ex-r.x0,r.ez-r.z0)
+    jimmie_ledge_place(x,y,z,yaw,OriginalBank.clips.land_ollie and 'land_ollie' or r.clip,math.min(.9,u))
+    if r.k>=r.n then
+        local v=math.min(r.speed,30)
+        PHYS={x=r.ex,y=r.ey,z=r.ez,vx=math.sin(yaw)*v,vy=0,vz=math.cos(yaw)*v,yaw=yaw,onGround=true,pushT=0,airT=0}
+        s.ride=nil;s.cool=75+math.random(60)
+        return false
+    end
+    return true
 end
 local function on_update()
     railPresentation:clear() -- early returns, pause and ownership changes fail closed
@@ -2356,6 +2636,7 @@ local function on_update()
     if jimmie_fx_tick then jimmie_fx_tick() end
     jimmie_opening_step()
     jimmie_swim_step()
+    if jimmie_fx_water then jimmie_fx_water() end   -- the swimmer's water effects run even when the skater is away
     if companionSpawn:observe(m) then
         despawn_jimmie()
         originalScene=originalScene+1
@@ -2485,6 +2766,8 @@ local function on_update()
     load_all_sounds()
     if step_original_crash(false) then
         -- Crash renderer is the exclusive owner this tick.
+    elseif jimmie_ledge_step(m) then
+        -- He is on a ledge this tick.
     elseif jimmie_pull_step() then
         -- He is pulling out his board this tick.
     elseif jimmie_intro_step(m) then
