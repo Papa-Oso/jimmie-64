@@ -1794,7 +1794,12 @@ function jimmie_intro_hide(lak,delete)
 end
 function jimmie_intro_sparkles(x,y,z,count,spread)
     for _=1,count do
-        spawn_non_sync_object(id_bhvSparkleSpawn,E_MODEL_NONE,x+(math.random()-.5)*spread,y+math.random()*spread,z+(math.random()-.5)*spread,nil)
+        -- motion:sparklefx. Our own sparkle objects (same sparkle model) instead of the game's sparkle spawner, which
+        -- draws from the game's shared random numbers every frame.
+        if jimmie_fx_spawn then
+            jimmie_fx_spawn(E_MODEL_SPARKLES_ANIMATION or E_MODEL_SPARKLES,x+(math.random()-.5)*spread,y+math.random()*spread,z+(math.random()-.5)*spread,
+                {life=10,s0=.9,s1=.45,vy=1,frames=5})
+        end
     end
 end
 function jimmie_intro_step(m)
@@ -1855,7 +1860,7 @@ function jimmie_intro_step(m)
     PHYS=nil;jimmieSpeed=10
     jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ=x+fx,y+fy,z+fz
     jimmie.oFaceAngleYaw,jimmie.oFaceAnglePitch,jimmie.oFaceAngleRoll=skate_model_angles(heading+spin,0,0)
-    local fc=s.talking and 'fly_cam' or 'fly'
+    local fc='swim'   -- motion:fairyswim. He swims through the air like a fairy; no camera stick.
     if OriginalBank.clips[fc] then
         -- Flying pose, off the board; the board waits out of sight until he joins Mario.
         originalController.bank:apply(jimmie,originalBoard,fc,(s.tick%24)/24,0);originalBoard.oPosY=-10000
@@ -1920,7 +1925,7 @@ function jimmie_opening_step()
         local okB,board=pcall(spawn_non_sync_object,id_bhvjimmie,originalBoardModel,lak.oPosX,-10000,lak.oPosZ,function(o) end)
         if not (okA and okB and body and board) then return end
         s.body,s.board,s.tick=body,board,0
-        smlua_anim_util_set_animation(body,OriginalBank.clips.fly_cam.body);smlua_anim_util_set_animation(board,OriginalBank.clips.fly_cam.board)
+        smlua_anim_util_set_animation(body,OriginalBank.clips.swim.body);smlua_anim_util_set_animation(board,OriginalBank.clips.swim.board)
         log('[jimmie-opening] shown frame='..tostring(get_global_timer()))
     end
     s.tick=s.tick+1
@@ -1935,7 +1940,7 @@ function jimmie_opening_step()
     s.board.oPosY=-10000
     -- The camera stick in his hand: a small model of our own, placed at his holding hand and pointing where he faces.
     if not (s.stick and s.stick.activeFlags~=0) then
-        local id=smlua_model_util_get_id('jimmie_camstick_geo')
+        local id=nil   -- no camera stick
         if id and id~=E_MODEL_ERROR_MODEL then
             local ok,st=pcall(spawn_non_sync_object,id_bhvjimmie,id,o.oPosX,-10000,o.oPosZ,function(q) end)
             if ok and st then s.stick=st end
@@ -1955,6 +1960,7 @@ JIMMIE_CAM_ICON=get_texture_info('jimmie_cam_head')
 if JIMMIE_CAM_ICON then texture_override_set('texture_hud_char_lakitu',JIMMIE_CAM_ICON) end
 -- motion:camfix. Places the camera stick at a flying Jimmie's holding hand, pointing the way he faces.
 function jimmie_stick_place(s,x,y,z,face,hidden,size)
+    do return end   -- no camera stick
     if not (s.stick and s.stick.activeFlags~=0) then
         local id=smlua_model_util_get_id('jimmie_camstick_geo')
         if not id or id==E_MODEL_ERROR_MODEL then return end
@@ -2042,7 +2048,13 @@ function jimmie_swim_step()
     if mode=='swim' then o.oPosY=s.y-30+5*math.sin(s.tick*.13) else o.oPosY=s.y+10*math.sin(s.tick*.3) end
     -- motion:bubbles. The game's own bubble, from his mouth, about once a second while he swims.
     if mode=='swim' and not shut and s.tick%32==0 and id_bhvBubbleMaybe and E_MODEL_BUBBLE then
-        pcall(spawn_non_sync_object,id_bhvBubbleMaybe,E_MODEL_BUBBLE,s.x+math.sin(s.face)*45,o.oPosY+70,s.z+math.cos(s.face)*45,function(q) end)
+        -- motion:bubblefx. Our own bubble object instead of the game's bubble behaviour, which draws from the game's
+        -- random numbers. Same model; it rises and is removed at the surface.
+        local bw=find_water_level(s.x,s.z);local by=o.oPosY+70
+        if jimmie_fx_spawn and bw and by<bw-30 then
+            jimmie_fx_spawn(E_MODEL_BUBBLE,s.x+math.sin(s.face)*45,by,s.z+math.cos(s.face)*45,
+                {life=math.max(4,math.min(40,math.floor((bw-by)/6))),s0=.5,s1=.9,vy=6,vx=(math.random()-.5)*1.5,vz=(math.random()-.5)*1.5})
+        end
     end
     local yaw=skate_model_angles(s.face+math.pi/2,0,0)
     o.oFaceAngleYaw,o.oFaceAnglePitch,o.oFaceAngleRoll=yaw,0,0
@@ -2206,6 +2218,120 @@ function jimmie_react_step(m)
         originalController.bank:apply(jimmie,originalBoard,'react_'..s.kind,(s.t-1)/23,0)
     end
 end
+-- motion:shadow. His ground shadow, lost when the model moved to the animated skeleton (those model files never
+-- asked for one). A separate object that draws nothing but the game's own round shadow, placed at his feet each
+-- frame: under the skater, and under him when he swims through the air; not underwater, not in cutscenes.
+JIMMIE_FX={}
+function jimmie_fx_forget() JIMMIE_FX.shadow=nil;JIMMIE_FX.shadow2=nil end
+hook_event(HOOK_ON_WARP,jimmie_fx_forget)
+if HOOK_ON_CLEAR_AREAS then hook_event(HOOK_ON_CLEAR_AREAS,jimmie_fx_forget) end
+function jimmie_shadow_place(key,x,y,z,size)
+    local s=JIMMIE_FX;local o=s[key]
+    if o and not jimmie_is_mine(o) then o=nil;s[key]=nil end
+    if not x then if o then o.oPosY=-10000 end return end
+    if not o then
+        local id=smlua_model_util_get_id('jimmie_shadow_geo')
+        if not id or id==E_MODEL_ERROR_MODEL or id_bhvjimmie==nil then return end
+        local ok,q=pcall(spawn_non_sync_object,id_bhvjimmie,id,x,y,z,function(q) end)
+        if not (ok and q) then return end
+        o=q;s[key]=o
+    end
+    o.oPosX,o.oPosY,o.oPosZ=x,y,z;o.oInteractType=0;o.oCollisionDistance=0
+    obj_scale_xyz(o,size,size,size)
+end
+function jimmie_shadow_step()
+    local m=gMarioStates[0]
+    if not m or (m.action & ACT_GROUP_MASK)==ACT_GROUP_CUTSCENE then return end     -- scenes keep whatever was there
+    if jimmie and jimmie.activeFlags~=0 and not (JIMMIE_PULL and JIMMIE_PULL.wait) then
+        jimmie_shadow_place('shadow',jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ,1.1)
+    else jimmie_shadow_place('shadow') end
+    local d=JIMMIE_SWIM
+    if d and d.body and jimmie_is_mine(d.body) and d.mode=='fly' and not d.leap and d.body.oPosY>-9000 then
+        jimmie_shadow_place('shadow2',d.body.oPosX,d.body.oPosY,d.body.oPosZ,1.1)
+    else jimmie_shadow_place('shadow2') end
+end
+-- motion:fxcore. Shared by the dust, spark and sound changes. Effect objects are our own: spawned with Jimmie's inert
+-- behaviour and a stock particle model, moved and removed here. Lua's math.random only; the game's random number
+-- generator is never called. At most 24 live effect objects; when full, new effects are simply not made.
+JIMMIE_FX=JIMMIE_FX or {}
+JIMMIE_FX.list={};JIMMIE_FX.prev={}
+function jimmie_fx_clear() JIMMIE_FX.list={};JIMMIE_FX.prev={} end
+hook_event(HOOK_ON_WARP,jimmie_fx_clear)
+if HOOK_ON_CLEAR_AREAS then hook_event(HOOK_ON_CLEAR_AREAS,jimmie_fx_clear) end
+function jimmie_fx_spawn(model,x,y,z,q)
+    local L=JIMMIE_FX.list
+    if #L>=24 or not model or id_bhvjimmie==nil then return end
+    local ok,o=pcall(spawn_non_sync_object,id_bhvjimmie,model,x,y,z,function(o) end)
+    if not (ok and o) then return end
+    obj_set_billboard(o);o.oInteractType=0;o.oCollisionDistance=0
+    q.o=o;q.t=0;obj_scale_xyz(o,q.s0,q.s0,q.s0);L[#L+1]=q
+end
+function jimmie_fx_tick()
+    local L=JIMMIE_FX.list;local f=get_global_timer()
+    if JIMMIE_FX.ticked==f then return end;JIMMIE_FX.ticked=f
+    for i=#L,1,-1 do
+        local q=L[i];local o=q.o
+        if not jimmie_is_mine(o) then table.remove(L,i)
+        else
+            q.t=q.t+1
+            if q.t>=q.life then obj_mark_for_deletion(o);table.remove(L,i)
+            else
+                local k=q.t/q.life
+                o.oPosX,o.oPosY,o.oPosZ=o.oPosX+(q.vx or 0),o.oPosY+(q.vy or 0),o.oPosZ+(q.vz or 0)
+                if q.grav then q.vy=(q.vy or 0)-q.grav end
+                local s=q.s0+(q.s1-q.s0)*k;obj_scale_xyz(o,s,s,s)
+                if q.fade then o.oOpacity=math.floor(q.fade*(1-k)) end
+                if q.frames then o.oAnimState=math.floor(k*q.frames) end
+            end
+        end
+    end
+end
+function jimmie_effects_step()
+    jimmie_fx_tick()
+    local m=gMarioStates[0];local s=JIMMIE_FX.prev
+    if not m or (m.action & ACT_GROUP_MASK)==ACT_GROUP_CUTSCENE then return end          -- no effects during scenes or text
+    if jimmie_fx_water then jimmie_fx_water() end
+    local alive=jimmie and jimmie.activeFlags~=0
+    local crash=alive and originalCrashHost~=nil and originalCrashHost.active==true
+    local p=PHYS
+    if not alive or (JIMMIE_PULL and (JIMMIE_PULL.wait or JIMMIE_PULL.t)) then s.have=false;s.crash=false;return end
+    local st={x=jimmie.oPosX,y=jimmie.oPosY,z=jimmie.oPosZ,obj=jimmie,crash=crash,tick=get_global_timer(),turn=0,speed=0}
+    st.bailed=crash and not s.crash;s.crash=crash
+    if p and not crash then
+        st.speed=math.sqrt((p.vx or 0)^2+(p.vz or 0)^2);st.ground=p.onGround==true and not PHYS_AIR
+        st.grind=opportunityMotion~=nil and (opportunityMotion.grind==true or opportunityMotion.phase=='grind')
+        st.push=PHYS_PUSHING==true;st.yaw=p.yaw or 0
+        if s.have then
+            st.pushed=st.push and not s.push;st.landed=st.ground and not s.ground;st.popped=(not st.ground) and s.ground
+            st.turn=math.abs(((st.yaw-s.yaw+math.pi)%(2*math.pi))-math.pi)
+        end
+        s.have=true;s.push=st.push;s.ground=st.ground;s.yaw=st.yaw
+    else s.have=false end
+    if jimmie_fx_dust then jimmie_fx_dust(st) end
+    if jimmie_fx_sparks then jimmie_fx_sparks(st) end
+    if jimmie_fx_sounds then jimmie_fx_sounds(st) end
+end
+-- motion:dust. The game's white puff model: one when he pushes off, two when he lands, one every few frames in a hard
+-- turn, four bigger ones when he bails.
+function jimmie_fx_dust(st)
+    local function puff(n,size,spread)
+        for _=1,n do
+            jimmie_fx_spawn(E_MODEL_MIST,st.x+(math.random()-.5)*spread,st.y+8,st.z+(math.random()-.5)*spread,{life=12,s0=size*.5,s1=size*1.6,vy=1.2,fade=190})
+        end
+    end
+    if st.bailed then puff(4,2.2,90);return end
+    if not st.ground then return end
+    if st.pushed then puff(1,1.0,20) end
+    if st.landed then puff(2,1.3,50) end
+    if st.turn>.07 and st.speed>12 and st.tick%5==0 then puff(1,1.0,30) end
+end
+-- motion:sparks. While he grinds: a small spark every other frame, thrown back and up from the board, falling.
+function jimmie_fx_sparks(st)
+    if not st.grind or st.tick%2~=0 then return end
+    local b=(st.yaw or 0)+math.pi
+    jimmie_fx_spawn(E_MODEL_SPARKLES,st.x+(math.random()-.5)*30,st.y+6,st.z+(math.random()-.5)*30,
+        {life=9,s0=.45,s1=.1,vx=math.sin(b)*4+(math.random()-.5)*5,vy=5+math.random()*4,vz=math.cos(b)*4+(math.random()-.5)*5,grav=1.1,frames=5})
+end
 local function on_update()
     railPresentation:clear() -- early returns, pause and ownership changes fail closed
     if in_jimmie_title() then
@@ -2227,6 +2353,7 @@ local function on_update()
         return
     end
     jimmie_mirror_step()
+    if jimmie_fx_tick then jimmie_fx_tick() end
     jimmie_opening_step()
     jimmie_swim_step()
     if companionSpawn:observe(m) then
@@ -2374,6 +2501,8 @@ local function on_update()
     director_bridge(m,true)
     update_chatter()
     update_original_brace()
+    jimmie_shadow_step()
+    jimmie_effects_step()
     railPresentation:publish(rail_presentation_context())
 end
 
