@@ -27,7 +27,7 @@ say things outside this project. If he asks for any of this to be taken down, it
 
 ## Content
 
-Strong language and crude humour throughout. Not for children.
+Intended for an adult audience (18+). Strong language and crude, sexual humour throughout. Not for children.
 
 ## Licence
 

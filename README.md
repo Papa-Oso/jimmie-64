@@ -10,7 +10,9 @@ He never touches Mario, never helps and never gets in the way.
 
 > **Read first:** [JIMMIE_NOTICE.md](JIMMIE_NOTICE.md). This is an unofficial fan project, not
 > affiliated with Nintendo. Jimmie is the streamer floppyjimmie, used with his permission, and his
-> voice in the game is an AI clone. Strong language throughout.
+> voice in the game is an AI clone.
+>
+> **For adults only (18+).** Strong language and sexual humour throughout. Not for children.
 
 ## Play it
 
