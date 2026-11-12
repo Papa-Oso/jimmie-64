@@ -2,11 +2,11 @@
 
 ![The Jimmie 64 start screen](jimmie/readme/start-screen.png)
 
-A skateboarding companion for Super Mario 64 who talks like a real person.
+Super Mario 64 with a skateboarding companion who talks like a real person.
 
-You play Mario. Jimmie skates alongside: he does 50 named tricks, grinds, manuals and combos, bails,
-calls his shots, and has something to say about all of it. Type in the game's chat and he answers
-out loud.
+You play Mario, exactly as you always have. Jimmie skates along beside you: he does tricks, grinds
+rails, bails, and has something to say about what is going on. He is company, not a second player.
+He never touches Mario, never helps and never gets in the way.
 
 > **Read first:** [JIMMIE_NOTICE.md](JIMMIE_NOTICE.md). This is an unofficial fan project, not
 > affiliated with Nintendo. Jimmie is the streamer floppyjimmie, used with his permission, and his
@@ -17,30 +17,56 @@ out loud.
 You need your own **Super Mario 64 (US) ROM** (a `.z64` file). None is included and none will be.
 
 1. Download `Jimmie-64-windows.zip` from [Releases](https://github.com/Papa-Oso/jimmie-64/releases/latest) and unzip it anywhere.
-2. Open the `Jimmie 64` folder. Optionally double-click **Add desktop shortcut** to get an icon for each of the two ways to play.
-3. Double-click **Play Jimmie 64**.
-4. The first time, the game asks for your ROM. Drag your `.z64` file onto the game window. You only do this once.
-
-For a 16-star speedrun attempt, double-click **Play Jimmie 64 Speedrun** instead. It starts on a
-fresh, empty save every time and never touches your normal save.
+2. Open the `Jimmie 64` folder and double-click **Play Jimmie 64**.
+3. The first time, the game asks for your ROM. Drag your `.z64` file onto the game window. You only do this once.
 
 Windows 10 or 11, 64-bit. Nothing else needs installing.
 
-## In the game
+Also in the folder:
 
-- Just play. On a new, empty file a clock runs from the moment you pick it. The game watches your
-  first minute of control: head straight into the castle and it is a run, and stays one. Take your
-  time getting to the door, fall in the water outside, stop to talk to Toad, walk back out or stand
-  around, and the clock goes away and Jimmie settles into exploring with you. Either way the answer
-  is locked after that minute. At each star the clock shows how far ahead or behind you are.
+- **Play Jimmie 64 Speedrun** starts a 16-star attempt on a fresh, empty save every time. Your
+  normal save is never touched.
+- **Add desktop shortcut** puts an icon for each on your desktop.
+- **Update Jimmie 64** opens the download page. The start screen says UPDATE READY when a newer
+  version is out. Nothing installs by itself; the check reads one small public file from this
+  repository and sends nothing about you.
+
+## What is different from Mario 64
+
+![Jimmie skating beside Mario](jimmie/readme/in-game.png)
+
+- **Jimmie is there.** You meet him on the castle bridge, where Lakitu used to introduce himself,
+  and he stays with you from then on. He is also the one holding the camera.
+- **He skates.** 50 named tricks (flips, shuvits, grabs, spins, grinds and slides, manuals, nollie
+  and fakie versions, a few old-school ones), linked into combos, with falls that have a cause. He
+  hops onto rails on every map and rides ledges around the castle.
+- **He keeps up.** He swims when Mario swims and takes to the air when Mario flies.
+- **He talks.** Several hundred things he really said on stream, picked for the moments they fit,
+  plus lines written in his style. He stays on a subject for a while instead of jumping around.
+- **Every sign and text box is in his words.**
+- **You can talk back.** Type in the game's chat and he answers out loud.
+
+Mario, the levels, the enemies and the stars are untouched.
+
+## Speedrunning
+
+On a new, empty file a clock runs from the moment you pick it. There is nothing to switch on.
+
+- Head straight into the castle and it is a run. At each star the clock shows how far ahead or
+  behind your best you are, and Jimmie follows the 16-star route with you.
+- Take your time and the clock goes away by itself: Jimmie settles into exploring with you. The
+  game decides during your first minute of control, then sticks with its answer.
 - A file that already has progress is never timed. To start over, use **ERASE** on the file screen,
   pick an empty file, or use **Play Jimmie 64 Speedrun**.
-- On a new file Jimmie says nothing until Mario meets him on the castle bridge. Jump past the
-  meeting and he simply joins you.
-- Type anything else in chat to talk to Jimmie: say hello, ask him something, give him a hard time.
-- When a newer Jimmie 64 is out, the start screen says UPDATE READY; `Update Jimmie 64.cmd` opens the
-  download page. Nothing installs by itself. The check downloads one small public file from this
-  repository at start-up and sends nothing about you; with no internet it is skipped.
+
+**Fairness.** The rule this project is built on is that nothing may change how long a run takes.
+
+- Jimmie cannot push, block, carry, heal, hurt or warp Mario, or collect anything.
+- Text takes the same number of boxes as the Japanese release that runners play.
+- We replay the same button presses on the unmodified game and on Jimmie 64 and compare Mario
+  frame by frame. So far that covers the start of a run through the castle, not a whole run.
+- This is the US game on a PC, with no console slowdown. Times belong on a Jimmie 64 board and are
+  not comparable with console records.
 
 ## Controls
 
@@ -51,20 +77,6 @@ Windows 10 or 11, 64-bit. Nothing else needs installing.
   in the same menu if jump feels like it is on the wrong button.
 - With several controllers connected, pick yours under **Options → Controls → Gamepad**.
 - To reset every control, close the game and delete `brain\profile\save\sm64config.txt`.
-
-## What he does
-
-![Jimmie skating beside Mario](jimmie/readme/in-game.png)
-
-- **Skates:** 50 named tricks (flips, shuvits, grabs, spins, grinds and slides, manuals, nollie and
-  fakie versions, a few old-school ones), linked into combos, with falls that have a cause. He hops
-  onto rails on every map and rides ledges around the castle.
-- **Keeps up:** he swims when Mario swims, takes to the air when Mario flies, and kicks up dust,
-  sparks, splashes, snow and sand as he goes.
-- **Talks:** several hundred things he really said on stream, picked for the moments they fit, plus
-  lines written in his style. He stays on a subject for a while instead of jumping around.
-- **Answers:** greetings, digs, questions and anything about his own bits, in the game's chat.
-- **Runs:** in the 16-star mode he follows the route with you.
 
 ## Build it yourself
 
