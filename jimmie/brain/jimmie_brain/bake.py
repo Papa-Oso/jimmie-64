@@ -330,7 +330,13 @@ class Listener:
 
 SAME_WORDS = (("goddamn", "god damn"), ("gonna", "going to"), ("gotta", "got to"), ("wanna", "want to"), ("alright", "all right"),
               ("fuckin'", "fucking"), ("fuckin", "fucking"), ("skatable", "skateable"), ("shitballs", "shit balls"),
-              ("ok", "okay"), ("'cause", "because"), ("yup", "yep"))
+              ("ok", "okay"), ("'cause", "because"), ("yup", "yep"),
+              # 2026-11-12: six good takes were thrown away because the recogniser spells his made-up words its own
+              # way, drops apostrophes, or the clone contracts two words. Same sounds, so the same words.
+              ("its", "it's"), ("boners", "boner's"), ("stoners", "stoner's"), ("you're", "you are"),
+              ("cocula", "cockula"), ("fappleseed", "fapple seed"), ("ah cock arena", "ock cockerina"),
+              ("jimmy", "jimmie"), ("keeping", "keepin'"), ("there's", "there is"), ("docs", "docks"),
+              ("should've", "should have"), ("horney", "horny"))
 
 
 def spelled(text: str) -> str:

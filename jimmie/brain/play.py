@@ -107,6 +107,25 @@ def setup_profile() -> None:
         shutil.copy2(CONFIG, PROFILE / SAVE / "sm64config.txt")
 
 
+def title_music() -> None:
+    """The owner's own start-screen music, if he has put one in brain/private/title_music.ogg.
+
+    The game program loops jimmie-title/title_music.ogg when that file exists and otherwise plays the
+    title music from the player's ROM. The file is copied in at each start so a rebuilt game folder
+    still has it. (The owner said on 2026-11-12 that the recording is his and is to be published, so
+    the same file also ships in the package's jimmie-title folder.)
+    (2026-11-12: the start screen no longer speaks, so the voice clips are no longer refilled here.)
+    """
+    try:
+        mine, title = HERE / "private/title_music.ogg", GAME / "jimmie-title"
+        if mine.is_file() and title.is_dir():
+            there = title / "title_music.ogg"
+            if not there.is_file() or there.stat().st_size != mine.stat().st_size:
+                shutil.copyfile(mine, there)
+    except Exception:
+        pass
+
+
 def llm_up(port: int) -> bool:
     try:
         opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
@@ -170,6 +189,7 @@ def main() -> int:
     if a.new_run:
         new_run()
     setup_profile()
+    title_music()
     session = HERE / "sessions" / datetime.now().strftime("%Y%m%d-%H%M%S")
     session.mkdir(parents=True)
     (session / "stdout.log").write_bytes(b"")

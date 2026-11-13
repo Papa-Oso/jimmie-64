@@ -27,6 +27,7 @@ static const char *sChatterFiles[] = {
     "!/jimmie-title/title_pink_bitch_insurance.ogg",
 };
 #define TITLE_MUSIC_VOLUME 0.60f
+#define TITLE_VOICE_OFF 1
 #define TITLE_MUSIC_DUCK_VOLUME 0.18f
 
 /* Honor the user’s focus-mute setting without changing gameplay audio. */
@@ -37,8 +38,34 @@ static bool title_focus_muted(void) {
     return configMuteFocusLoss && (title_focus_unavailable() || !gWindowApi->has_focus());
 }
 
-/* The title screen plays the game's own title music from the player's ROM. */
+/* Owner, 2026-11-12: the start screen has music of the player's own if they put one there, and no
+ * voice. If jimmie-title/title_music.ogg exists beside the game it is looped; otherwise the title
+ * screen plays the game's own title music from the player's ROM, as before. No music file ships. */
 static s32 title_music_start(void) {
+    char path[SYS_MAX_PATH];
+    if (sMusic && sMusic->loaded && ma_sound_is_playing(&sMusic->sound)) return 1;
+    fs_convert_path(path, sizeof(path), "!/jimmie-title/title_music.ogg");
+    FILE *probe = fopen(path, "rb");
+    if (!probe) return 0;
+    fclose(probe);
+    sMusic = audio_stream_load_native_title(path);
+    if (!sMusic) {
+        jimmie_head_trace("title_music_load_failed");
+        return 0;
+    }
+    audio_stream_set_volume_channel(sMusic, MOD_AUDIO_CHANNEL_MUSIC);
+    audio_stream_set_looping(sMusic, true);
+    if (title_focus_unavailable()) { jimmie_head_trace("title_focus_unavailable"); goto fail; }
+    audio_stream_play(sMusic, true, title_focus_muted() ? 0.0f : TITLE_MUSIC_VOLUME);
+    if (!ma_sound_is_playing(&sMusic->sound)) {
+        jimmie_head_trace("title_music_play_failed");
+        goto fail;
+    }
+    jimmie_head_trace("title_music_started");
+    return 1;
+fail:
+    audio_stream_destroy(sMusic);
+    sMusic = NULL;
     return 0;
 }
 
@@ -101,6 +128,8 @@ void jimmie_title_audio_update(void) {
 }
 
 void jimmie_title_greet(void) {
+    /* Owner, 2026-11-12: "we dont need any chatter during start menu". No greeting, no lines. */
+    if (TITLE_VOICE_OFF) return;
     if (title_focus_unavailable()) { jimmie_head_trace("title_focus_unavailable"); return; }
     if (sChatterActive) return;
     sChatterActive = true;

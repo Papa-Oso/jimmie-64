@@ -81,7 +81,7 @@ The bake has four steps (`python -m jimmie_brain.bake write|judge|voice|report`)
 `python tools/keep_up.py` (game closed) finds his new streams, transcribes them, picks up to 30 new
 sentences of his that stand on their own, adds them to `data/real_lines.json` marked "auto", voices
 them and runs the tests. What it added is listed in `docs/KEEPUP_LOG.md`. A scheduled task in the
-Claude app runs it on Monday and Thursday at 4:30 am and reads over what was added. `--dry` shows
+Claude app runs it every day at about 10 am and reads over what was added. `--dry` shows
 what it would add without changing anything.
 
 ## Checks

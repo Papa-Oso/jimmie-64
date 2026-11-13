@@ -46,11 +46,15 @@ LOG = HERE / "docs/KEEPUP_LOG.md"
 PORT = 8774
 
 # Not about the stream, chat, other people, records or anything crude enough to need a person's eye.
+# Owner, 2026-11-11/12: adult themes are not filtered ("im just asking to not filter adult themes"), and they get
+# no cap and no boost: "at the same proportional rate that we filtered them, we should consider for adding".
+# So sex words are not in this list and an adult line goes through the same steps as any other line; its share
+# of what is added is then its natural share of what he says. Slurs, hate and sexual violence are still out.
 BAD = re.compile(r"\b(chat|stream\w*|sub|subs|follow\w*|donat\w*|bits|raid|mod|mods|discord|twitch|youtube|clip|clips|guys|"
                  r"viewer\w*|gift\w*|prime|emote\w*|tts|song|playlist|ad|ads|dono|thank|thanks|welcome|y'all|live|video|"
                  r"videos|run|runs|pb|record|split|splits|timer|pace|speedrun\w*|tonight|tomorrow|today|yesterday|he|she|"
-                 r"his|her|him|he's|she's|said|says|retard\w*|fag\w*|nig\w*|rape\w*|kill|cancer|gay|dick\w*|cock|pussy|"
-                 r"cum|porn\w*|jerk\w*|sperm|pubes?|pubic|panties|trann\w*|jew\w*|muslim\w*|black people|white people)\b", re.I)
+                 r"his|her|him|he's|she's|said|says|retard\w*|fag\w*|nig\w*|rape\w*|kill|cancer|gay|molest\w*|pedo\w*|"
+                 r"trann\w*|jew\w*|muslim\w*|black people|white people)\b", re.I)
 HIS = re.compile(r"fuck|shit|goddamn|god damn|\bson\b|\bdude\b|\bbro\b|\bman\b|\bbuddy\b", re.I)
 OPENERS = set("I I'm I've I'd I'll It It's That That's This There There's They We We're We've You You're Your What "
               "What's Why Who How Where When Yeah Yes No Nah Oh Okay Dude Hey Holy God Fuck Fucking Shit Man Bro Buddy "
@@ -143,7 +147,7 @@ def main() -> int:
 
     if not (a.dry or a.no_fetch):
         print("Looking for new streams and transcribing them...", flush=True)
-        subprocess.run(["cmd", "/c", "start_pipeline.cmd", "--refresh"], cwd=TRANSCRIBER, check=False)
+        subprocess.run(["cmd", "/c", str(TRANSCRIBER / "start_pipeline.cmd"), "--refresh"], cwd=TRANSCRIBER, check=False)   # full path: some shells do not search the current folder
         print("Rebuilding the line source...", flush=True)
         subprocess.run([str(play.PYTHON), "-B", "-m", "jimmie_brain", "corpus", str(TRANSCRIBER / "transcripts"),
                         str(turns), "--splits", str(HERE.parent / "ai/personality_vod_splits.json")], cwd=HERE, check=True)
@@ -157,7 +161,10 @@ def main() -> int:
     print(f"{len(new_vods)} new stream(s), {len(found)} candidate lines, showing the editor {len(shown)}", flush=True)
     kept = edit(shown, cfg) if shown else []
     picked = kept[:a.add]
-    print(f"editor kept {len(kept)}; adding {len(picked)}", flush=True)
+    import sexual_scan                       # only to report the share; nothing is filtered or favoured by it
+    def adult(lines): return sum(1 for l in lines if sexual_scan.RX.search(l))
+    print(f"editor kept {len(kept)}; adding {len(picked)}. Adult-themed: {adult(found)} of {len(found)} candidates, "
+          f"{adult(picked)} of {len(picked)} added", flush=True)
     for line in picked:
         print("  +", line)
     if a.dry or not picked:
