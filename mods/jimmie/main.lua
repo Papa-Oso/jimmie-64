@@ -2131,6 +2131,159 @@ function jimmie_pull_size(t)
     end
     return 1
 end
+-- motion:runpull. The board pull no longer stops him. Out of the water he is the skater at once, rolling at keep-up
+-- speed; for the first 10 frames he is drawn running while he yanks the board out from behind him, and it pops out
+-- too big and lands under his feet. Now and then, never during a run, something else comes out first, still on the
+-- move: a flapping fish (25 in 100; he looks at it and flings it over his shoulder), or a joint (15 in 100; into
+-- the side of his mouth, then the board, and he skates off smoking for 7 seconds and throws it down). The things
+-- are our own inert objects: nothing can touch, collect or be hurt by them, they use Lua random numbers only, and a
+-- thrown thing is gone when it lands. Looks only; where he is and how fast he goes is the normal skater throughout.
+JIMMIE_ITEMS={{name='fish',model=E_MODEL_FISH,odds=25,size=2,flap=true},{name='joint',odds=15,size=1.55,keep=true}}
+function jimmie_keys(k,t)
+    for i=1,#k-1 do
+        if t<=k[i+1][1] then return k[i][2]+(k[i+1][2]-k[i][2])*(t-k[i][1])/(k[i+1][1]-k[i][1]) end
+    end
+    return k[#k][2]
+end
+function jimmie_runpull_pick(m)
+    local pick=nil
+    if JIMMIE_PULL_FORCE then for _,q in ipairs(JIMMIE_ITEMS) do if q.name==JIMMIE_PULL_FORCE then pick=q end end
+    else
+        if type(jimmie_run_state)=='function' then
+            local ok,phase=pcall(jimmie_run_state)
+            if ok and phase==1 then return nil end                               -- in a run: always the board, straight away
+        end
+        local r=math.random()*100;local acc=0
+        for _,q in ipairs(JIMMIE_ITEMS) do
+            acc=acc+q.odds
+            if r<acc then pick=q;break end
+        end
+    end
+    if pick and pick.name=='joint' then
+        local id=smlua_model_util_get_id('jimmie_joint_geo')
+        if not id or id==E_MODEL_ERROR_MODEL then return nil end
+        pick.model=id
+    end
+    if pick and not pick.model then return nil end
+    return pick
+end
+-- A thrown thing: an arc and a spin; when it reaches the ground it is gone, with a small puff if asked.
+function jimmie_toss(o,vx,vy,vz,q)
+    JIMMIE_PULL.toss=JIMMIE_PULL.toss or {}
+    q=q or {};q.o=o;q.t=0;q.vx=vx;q.vy=vy;q.vz=vz
+    table.insert(JIMMIE_PULL.toss,q)
+end
+function jimmie_toss_tick()
+    local L=JIMMIE_PULL.toss
+    if not L then return end
+    for i=#L,1,-1 do
+        local f=L[i];local o=f.o
+        if not jimmie_is_mine(o) then table.remove(L,i)
+        else
+            f.t=f.t+1;f.vy=f.vy-2.4
+            o.oPosX,o.oPosY,o.oPosZ=o.oPosX+f.vx,o.oPosY+f.vy,o.oPosZ+f.vz
+            if f.spin~=false then o.oFaceAnglePitch=(o.oFaceAnglePitch+0x1400)%65536 end
+            o.oFaceAngleYaw=(o.oFaceAngleYaw+0x900)%65536
+            local lift=f.lift or 0
+            local floor=find_floor_height(o.oPosX,o.oPosY+lift+120,o.oPosZ)
+            if f.t>=45 or (f.vy<0 and floor and floor>-10000 and o.oPosY+lift<=floor+6) then
+                if f.puff and jimmie_fx_spawn then jimmie_fx_spawn(E_MODEL_MIST,o.oPosX,o.oPosY+lift+6,o.oPosZ,{life=12,s0=.5,s1=f.puff,vy=.8,fade=180}) end
+                obj_mark_for_deletion(o);table.remove(L,i)
+            end
+        end
+    end
+end
+-- The joint in the side of his mouth. face: the way his face points (radians).
+function jimmie_joint_place(o,face,tick,size)
+    local a=face+1.15;local fx,fz=math.sin(face),math.cos(face)
+    o.oPosX=jimmie.oPosX+fx*22+math.sin(a)*7;o.oPosZ=jimmie.oPosZ+fz*22+math.cos(a)*7
+    o.oPosY=jimmie.oPosY+(JIMMIE_JOINT_Y or 116)
+    o.oFaceAngleYaw=math.floor(a*32768/math.pi)%65536
+    o.oFaceAnglePitch=(-0x500+math.floor(math.sin(tick*.5)*0x500))%65536;o.oFaceAngleRoll=0
+    obj_scale_xyz(o,size*1.7,size*1.7,size)                                     -- fat: wider than its length would make it
+    if tick%4==0 and jimmie_fx_spawn then                                       -- a chunky trail from the tip
+        jimmie_fx_spawn(E_MODEL_MIST,o.oPosX+math.sin(a)*20*size,o.oPosY+8,o.oPosZ+math.cos(a)*20*size,{life=22,s0=.4,s1=1.15,vy=1.6,fade=160})
+    end
+end
+function jimmie_runpull_end(s)
+    if s.obj and jimmie_is_mine(s.obj) then
+        if s.item and s.item.keep then JIMMIE_PULL.smoke={o=s.obj,t=0,size=s.item.size} else obj_mark_for_deletion(s.obj) end
+    end
+    if jimmie and originalBoard and jimmie.activeFlags~=0 and originalBoard.activeFlags~=0 then
+        obj_scale_xyz(jimmie,.62,.62,-.62);obj_scale_xyz(originalBoard,.62,.62,-.62)
+    end
+    JIMMIE_PULL.run=nil
+end
+function jimmie_runpull_step(m)
+    jimmie_toss_tick()
+    local alive=jimmie and originalBoard and jimmie.activeFlags~=0 and originalBoard.activeFlags~=0
+    local k7=JIMMIE_PULL.smoke                                                   -- skating and smoking, 7 seconds
+    if k7 then
+        if not jimmie_is_mine(k7.o) then JIMMIE_PULL.smoke=nil
+        elseif not alive then obj_mark_for_deletion(k7.o);JIMMIE_PULL.smoke=nil
+        else
+            k7.t=k7.t+1
+            local face=(PHYS and PHYS.yaw or k7.face or 0)-math.pi/2;k7.face=face+math.pi/2
+            if k7.t>=210 or dying then                                           -- done: thrown down, gone when it lands
+                jimmie_toss(k7.o,math.sin(face+.9)*7,9,math.cos(face+.9)*7,{puff=1.6})
+                JIMMIE_PULL.smoke=nil;log('[jimmie-pull] joint thrown frame='..tostring(get_global_timer()))
+            else jimmie_joint_place(k7.o,face,k7.t,k7.size) end
+        end
+    end
+    local s=JIMMIE_PULL.run
+    if not s then return end
+    local p=PHYS
+    if not alive or dying or opportunityMotion~=nil then
+        if s.obj and jimmie_is_mine(s.obj) then obj_mark_for_deletion(s.obj) end;s.obj=nil
+        jimmie_runpull_end(s);return
+    end
+    if not p then s.idle=(s.idle or 0)+1;if s.idle>10 then jimmie_runpull_end(s) end;return end
+    s.t=s.t+1
+    local first=s.item and (s.item.keep and 15 or 22) or 0                       -- frames spent on the other thing
+    local wrong=s.t<=first
+    local k=wrong and s.t or (s.t-first)
+    if not wrong and k>10 then jimmie_runpull_end(s);log('[jimmie-pull] end frame='..tostring(get_global_timer()));return end
+    local q=OriginalBank.clips[wrong and 'run_wrong' or 'run_pull'];local t=(k-1)/(q.frames-1)
+    local st=jimmie_keys(q.stretch,t);local w=.62/math.sqrt(st);local b=.62*jimmie_keys(q.size,t)
+    originalController.bank:apply(jimmie,originalBoard,wrong and 'run_wrong' or 'run_pull',t,0)
+    obj_scale_xyz(jimmie,w,.62*st,-w);obj_scale_xyz(originalBoard,b,b,-b)
+    if not wrong and k==5 and jimmie_fx_spawn then                               -- the pop
+        jimmie_fx_spawn(E_MODEL_MIST,jimmie.oPosX,jimmie.oPosY+100,jimmie.oPosZ,{life=9,s0=1,s1=2.8,fade=200})
+    end
+    local h=p.yaw or 0;local nx,nz=math.sin(h),math.cos(h);local side=JIMMIE_PULL_SIDE or 1
+    if wrong and k==3 and not s.obj then
+        local ok,o=pcall(spawn_non_sync_object,id_bhvjimmie,s.item.model,jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ,function(o) end)
+        if ok and o then o.oInteractType=0;o.oCollisionDistance=0;s.obj=o end
+    end
+    local o=s.obj
+    if o and jimmie_is_mine(o) then
+        if s.item.keep and (not wrong or k>=9) then
+            -- in his mouth; his face turns from the way he runs to side-on as he lands on the board
+            local turn=wrong and 0 or math.max(0,math.min(1,(t-.6)/.4))
+            jimmie_joint_place(o,h-turn*math.pi/2,s.t,s.item.size)
+        elseif wrong then
+            local e=q.item[k]
+            if s.item.keep or k<18 then
+                o.oPosX=jimmie.oPosX+(nx*e[2]+nz*side*e[3])*1.3;o.oPosZ=jimmie.oPosZ+(nz*e[2]-nx*side*e[3])*1.3
+                o.oPosY=jimmie.oPosY+e[4]*1.3-20
+                local grow=math.min(1,(k-2)/5)*s.item.size                         -- small while it is still behind him
+                obj_scale_xyz(o,grow,grow,grow)
+                o.oFaceAngleYaw=(math.floor(h*32768/math.pi)+0x4000)%65536
+                o.oFaceAngleRoll=s.item.flap and math.floor(math.sin(k*1.9)*0x1c00) or 0
+            elseif k==18 then                                                    -- flung up and back over his shoulder
+                jimmie_toss(o,-nx*9+(p.vx or 0)*.3,24,-nz*9+(p.vz or 0)*.3,{});s.obj=nil
+            end
+        end
+    end
+end
+-- The neck brace, when its time is up (change bracetoss): thrown aside instead of vanishing. False = not now.
+function jimmie_brace_toss(o)
+    if not JIMMIE_BRACE_TOSS or not PHYS or dying or opportunityMotion~=nil or not jimmie_is_mine(o) then return false end
+    local a=(PHYS.yaw or 0)+2.2
+    jimmie_toss(o,math.sin(a)*8,15,math.cos(a)*8,{lift=125,puff=2.2,spin=false})
+    log('[jimmie-brace] tossed frame='..tostring(get_global_timer()))
+    return true
+end
 function jimmie_pull_step()
     local s=JIMMIE_PULL
     if not (jimmie and originalBoard and jimmie.activeFlags~=0 and originalBoard.activeFlags~=0) then s.t=nil;s.wait=nil;s.wet=0;s.had=false;return false end
@@ -2146,7 +2299,12 @@ function jimmie_pull_step()
         s.wait=s.wait+1
         if JIMMIE_SWIM.out==nil or s.wait>30 then
             s.wait=nil;JIMMIE_SWIM.out=nil;JIMMIE_SWIM.hold=0;s.t=0
+            if OriginalBank.clips.run_pull and OriginalBank.clips.run_wrong then      -- on the run: no standing still
+                s.t=nil;s.run={t=0,item=jimmie_runpull_pick(m)}
+                log('[jimmie-pull] run item='..(s.run.item and s.run.item.name or 'board')..' frame='..tostring(get_global_timer()))
+            else
             log('[jimmie-pull] begin frame='..tostring(get_global_timer()))
+            end
         else
             PHYS=nil;jimmieSpeed=0
             originalController.bank:apply(jimmie,originalBoard,'board_pull',0,0)
@@ -2779,6 +2937,7 @@ local function on_update()
         update_pose_animation(1 / 30)
     end
     jimmie_react_step(m)
+    jimmie_runpull_step(m)
     update_jumps()
     update_host(m,true)
     director_bridge(m,true)
