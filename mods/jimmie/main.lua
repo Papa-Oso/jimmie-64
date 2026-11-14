@@ -538,7 +538,12 @@ local function remove_original_brace()
 end
 local function update_original_brace()
     local remaining=originalOutcomes:remaining(tostring(originalScene),jimmie,clock_elapsed_f64())
-    if not original_pair_valid() or remaining<=0 then remove_original_brace();return end
+    if not original_pair_valid() or remaining<=0 then
+        -- motion:bracetoss. On time-up, while he is free, the brace is thrown aside (our toss takes the object).
+        if remaining<=0 and originalBrace and original_pair_valid() and jimmie_brace_toss and jimmie_brace_toss(originalBrace) then originalBrace=nil
+        else remove_original_brace() end
+        return
+    end
     if not originalBraceModel then return end
     if not originalBrace then
         local ok,o=pcall(spawn_non_sync_object,id_bhvjimmie,originalBraceModel,jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ,function(o) end)
@@ -2138,6 +2143,7 @@ end
 -- the side of his mouth, then the board, and he skates off smoking for 7 seconds and throws it down). The things
 -- are our own inert objects: nothing can touch, collect or be hurt by them, they use Lua random numbers only, and a
 -- thrown thing is gone when it lands. Looks only; where he is and how fast he goes is the normal skater throughout.
+JIMMIE_BRACE_TOSS=true
 JIMMIE_ITEMS={{name='fish',model=E_MODEL_FISH,odds=25,size=2,flap=true},{name='joint',odds=15,size=1.55,keep=true}}
 function jimmie_keys(k,t)
     for i=1,#k-1 do
