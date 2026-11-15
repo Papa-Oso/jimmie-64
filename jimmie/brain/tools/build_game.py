@@ -95,6 +95,13 @@ def main() -> int:
     # (src/menu/jimmie_title_audio.c). Owner decision 2026-11-10; see docs/BUILD_ORIGIN_CHECK.md.
     (OUT / "jimmie-title/rainbow_road.ogg").unlink(missing_ok=True)
 
+    # The owner's own recording of his "Princess Peach'd" stream alert replaces Peach's letter voice in
+    # the opening (hook at the end of lua/install_brain.lua). Private, like the title music; without
+    # the file the game's own voice plays.
+    letter = HERE / "private/peach_letter_stream_01.ogg"
+    if letter.is_file():
+        shutil.copy2(letter, mod / "sound" / letter.name)
+
     # Jimmie's movement changes (wind-ups, ollie, rail hops). Owned by the movement review; each change
     # is listed in docs/movement-review-20261109/motion/changes.py. Stops the build if one no longer fits.
     subprocess.run([sys.executable, str(MOTION), "--mod", str(mod)], check=True)

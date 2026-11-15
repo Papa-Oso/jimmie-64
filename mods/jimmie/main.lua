@@ -4046,4 +4046,27 @@ if type(jimmie_run_state) == "function" then
     print("[jrun] ready")
 end
 
+-- Peach's opening letter voice ("Dear Mario...") is replaced by the owner's own recording of his
+-- "Princess Peach'd" stream alert (private/peach_letter_stream_01.ogg, copied in by tools/build_game.py).
+-- Without the file, or if it fails to play, the game's own letter voice is kept.
+if HOOK_ON_PLAY_SOUND ~= nil and SOUND_PEACH_DEAR_MARIO ~= nil and NO_SOUND ~= nil then
+    local okLetter, peachLetter = pcall(audio_sample_load, "peach_letter_stream_01.ogg")
+    if okLetter and peachLetter ~= nil then
+        hook_event(HOOK_ON_PLAY_SOUND, function(soundBits)
+            if soundBits ~= SOUND_PEACH_DEAR_MARIO then return nil end
+            local at = { x = 0, y = 0, z = 0 }
+            local m = gMarioStates[0]
+            local camera = m ~= nil and m.area ~= nil and m.area.camera or nil
+            if camera ~= nil then at = { x = camera.pos.x, y = camera.pos.y, z = camera.pos.z } end
+            if pcall(audio_sample_play, peachLetter, at, 1.0) then
+                print("[jimmie] peach letter replaced by owner stream clip")
+                return NO_SOUND
+            end
+            return nil
+        end)
+    else
+        print("[jimmie] peach letter clip unavailable; stock letter voice kept")
+    end
+end
+
 end)()

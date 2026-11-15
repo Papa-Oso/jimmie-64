@@ -2,6 +2,15 @@
 
 2026-11-09, 23:30. Everything here was run on this PC from `jimmie-64\brain`.
 
+## Peach's letter voice (2026-11-15)
+
+On a new file, Peach's "Dear Mario" letter voice is replaced by the owner's own recording of his
+"Princess Peach'd" stream alert (`private/peach_letter_stream_01.ogg`, 7.74 s; hook at the end of
+`lua/install_brain.lua`; copied in by `tools/build_game.py`). Without the file the game's own voice
+plays. Checked: a no-brain run through the opening on a throwaway profile logged the replacement
+with no Lua errors, and the rebuilt game differs from the previous one only by the clip and
+`main.lua`. Asked to start a new run and report, the owner answered "Plays fine now" (2026-11-15); no loudness measurement was made. The owner chose to include it in the public download; released in v1.1.5 (2026-11-15).
+
 ## What you can do now
 
 Double-click `Play Jimmie.cmd`. He reacts to his own tricks and bails, Mario's stars, deaths,
