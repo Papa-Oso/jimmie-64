@@ -1831,57 +1831,12 @@ function jimmie_intro_sparkles(x,y,z,count,spread)
         end
     end
 end
--- motion:smokecloud. On the bridge he rides in sitting on a low cloud of his own smoke. The cloud is a handful of our
--- own inert puff objects (stock puff models, Lua random numbers only) kept under him, with a short trail of
--- small puffs that fade. Looks only: where he is, the scene and its frames are the game's own.
-JIMMIE_CLOUD_SHAPE={{0,0,0,2.5,1},{58,-5,6,1.9,1},{-56,-4,-4,2.0,1},{24,9,-34,1.6,1},{-22,8,30,1.6,1},{6,-16,2,2.6,2},{-34,-14,-14,1.9,2},{40,-12,14,1.8,2}}
-function jimmie_cloud_clear(s)
-    for _,o in ipairs(s.cloud or {}) do if jimmie_is_mine(o) then obj_mark_for_deletion(o) end end
-    s.cloud=nil
-end
-function jimmie_cloud_step(s,x,y,z,ax,az,size,lean)
-    local c=size/.62;local t=s.tick or 0
-    if not s.cloud then
-        s.cloud={}
-        for i,q in ipairs(JIMMIE_CLOUD_SHAPE) do
-            local model=q[5]==2 and (E_MODEL_SMOKE or E_MODEL_MIST) or E_MODEL_MIST
-            local ok,o=pcall(spawn_non_sync_object,id_bhvjimmie,model,x,y,z,function(o) end)
-            if ok and o then obj_set_billboard(o);o.oInteractType=0;o.oCollisionDistance=0;s.cloud[i]=o end
-        end
-    end
-    for i,q in ipairs(JIMMIE_CLOUD_SHAPE) do
-        local o=s.cloud[i]
-        if o and jimmie_is_mine(o) then
-            local along=q[1]*c;local side=q[3]*c
-            local puff=1+.07*math.sin(t*.19+i*1.7)                                -- each puff swells and settles on its own
-            o.oPosX=x+ax*along-az*side;o.oPosZ=z+az*along+ax*side
-            o.oPosY=y+(q[2]+4*math.sin(t*.13+i))*c+lean*q[1]*c
-            local k=q[4]*c*puff;obj_scale_xyz(o,k*1.25,k*.8,k)                     -- wider than tall
-            o.oOpacity=q[5]==2 and 170 or 140
-        end
-    end
-end
-function jimmie_cloud_trail(x,y,z,c)
-    if not jimmie_fx_spawn then return end
-    jimmie_fx_spawn(E_MODEL_MIST,x+(math.random()-.5)*50*c,y+(math.random()-.3)*20*c,z+(math.random()-.5)*50*c,
-        {life=14,s0=1.3*c,s1=.5*c,vy=.6,fade=150})
-end
-function jimmie_cloud_thin(s,x,y,z)
-    jimmie_cloud_clear(s)
-    if not jimmie_fx_spawn then return end
-    for i=1,7 do
-        local a=i*.9+math.random()
-        jimmie_fx_spawn(i%3==0 and (E_MODEL_SMOKE or E_MODEL_MIST) or E_MODEL_MIST,x+math.sin(a)*40,y+(math.random()-.5)*16,z+math.cos(a)*40,
-            {life=20,s0=1.9,s1=3.4,vx=math.sin(a)*2.2,vz=math.cos(a)*2.2,vy=.5,fade=170})
-    end
-end
 function jimmie_intro_step(m)
     local s=JIMMIE_INTRO
     if s.done then return false end
     local lak=jimmie_intro_lakitu()
     if not lak then
         if s.seen then s.done=true end                                         -- the scene is over, or was never on this file
-        if s.cloud then jimmie_cloud_clear(s) end
         return false
     end
     s.seen=true
@@ -1908,7 +1863,7 @@ function jimmie_intro_step(m)
         obj_scale_xyz(jimmie,.62,.62,-.62);obj_scale_xyz(originalBoard,.62,.62,-.62)
         PHYS={x=x,y=y,z=z,vx=0,vy=0,vz=0,yaw=heading,prevYaw=heading,onGround=false,pushT=0,airT=0}
         PHYS_AIR=false
-        if s.cloud then jimmie_cloud_thin(s,jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ) else jimmie_intro_sparkles(x,y,z,14,170) end
+        jimmie_intro_sparkles(x,y,z,14,170)
         if s.stick and s.stick.activeFlags~=0 then obj_mark_for_deletion(s.stick) end;s.stick=nil
         jimmie_intro_hide(lak,true)
         s.done=true;log('[jimmie-intro] phase=companion frame='..tostring(get_global_timer()))
@@ -1916,8 +1871,7 @@ function jimmie_intro_step(m)
     end
     if s.frame==get_global_timer() then return true end                          -- once per frame, whichever path called
     s.frame=get_global_timer();s.tick=(s.tick or 0)+1
-    local onCloud=OriginalBank.clips.cloud_sit~=nil
-    if not s.arrived then s.arrived=true;if not onCloud then jimmie_intro_sparkles(x,y,z,10,200) end;log('[jimmie-intro] phase=arrive frame='..tostring(get_global_timer())) end
+    if not s.arrived then s.arrived=true;jimmie_intro_sparkles(x,y,z,10,200);log('[jimmie-intro] phase=arrive frame='..tostring(get_global_timer())) end
     if lak.oCameraLakituSpeed==0 and not s.talking then s.talking=true;s.twirl=14;log('[jimmie-intro] phase=talk frame='..tostring(get_global_timer())) end
     local far=math.sqrt(dx*dx+dz*dz+(m.pos.y-y)^2)
     local k=1-math.max(0,math.min(1,(far-500)/2500));k=k*k*(3-2*k)
@@ -1932,34 +1886,18 @@ function jimmie_intro_step(m)
     local spin=0
     if wild>.15 and t%44<13 then spin=(t%44)/13*2*math.pi end
     if s.twirl and s.twirl>0 then spin=(1-s.twirl/14)*2*math.pi;s.twirl=s.twirl-1 end
-    local lean=0
-    if onCloud then
-        spin=0;fx=wild*40*math.sin(t*.11);fz=wild*40*math.cos(t*.09+.6)
-        fy=wild*18*math.sin(t*.17+1.1)+8*math.sin(t*.12)                         -- a slow bob, flying and hovering
-        local hx,hz=math.sin(heading),math.cos(heading)                           -- he leans into the way the cloud is sliding
-        if s.lastX then lean=math.max(-.07,math.min(.07,((x+fx-s.lastX)*hx+(z+fz-s.lastZ)*hz)*.004)) end
-        s.lean=(s.lean or 0)+(lean-(s.lean or 0))*.2;lean=s.lean;s.lastX,s.lastZ=x+fx,z+fz
-    end
     PHYS=nil;jimmieSpeed=10
     jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ=x+fx,y+fy,z+fz
-    jimmie.oFaceAngleYaw,jimmie.oFaceAnglePitch,jimmie.oFaceAngleRoll=skate_model_angles(heading+spin,0,lean)
-    local fc=onCloud and 'cloud_sit' or 'swim'   -- motion:fairyswim. Without the cloud pose he swims through the air.
+    jimmie.oFaceAngleYaw,jimmie.oFaceAnglePitch,jimmie.oFaceAngleRoll=skate_model_angles(heading+spin,0,0)
+    local fc='swim'   -- motion:fairyswim. He swims through the air like a fairy; no camera stick.
     if OriginalBank.clips[fc] then
         -- Flying pose, off the board; the board waits out of sight until he joins Mario.
-        originalController.bank:apply(jimmie,originalBoard,fc,(s.tick%24)/24,0)
-        if onCloud then                                                           -- the board is under his arm, so it is shown
-            originalBoard.oPosX,originalBoard.oPosY,originalBoard.oPosZ=jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ
-            originalBoard.oFaceAngleYaw,originalBoard.oFaceAnglePitch,originalBoard.oFaceAngleRoll=jimmie.oFaceAngleYaw,jimmie.oFaceAnglePitch,jimmie.oFaceAngleRoll
-        else originalBoard.oPosY=-10000 end
+        originalController.bank:apply(jimmie,originalBoard,fc,(s.tick%24)/24,0);originalBoard.oPosY=-10000
     else update_pose_animation(1/30) end
     obj_scale_xyz(jimmie,size,size,-size);obj_scale_xyz(originalBoard,size,size,-size)
     jimmie_stick_place(s,jimmie.oPosX,jimmie.oPosY,jimmie.oPosZ,math.atan2(dx,dz),false,size)
     stop_sound(SOUND_AIR_LAKITU_FLY,lak.header.gfx.cameraToObject)
-    if onCloud then
-        local far2=math.sqrt(dx*dx+dz*dz);local ax,az=dx/math.max(1,far2),dz/math.max(1,far2)   -- he reclines toward Mario
-        jimmie_cloud_step(s,jimmie.oPosX-ax*8*size,jimmie.oPosY+4*size,jimmie.oPosZ-az*8*size,ax,az,size,0)
-        if wild>.05 and t%3==0 then jimmie_cloud_trail(jimmie.oPosX-ax*60*size,jimmie.oPosY,jimmie.oPosZ-az*60*size,size/.62) end
-    elseif not s.talking then jimmie_intro_sparkles(x+fx,y+fy+60*size,z+fz,2,150*size)
+    if not s.talking then jimmie_intro_sparkles(x+fx,y+fy+60*size,z+fz,2,150*size)
     elseif t%9==0 then jimmie_intro_sparkles(x+fx,y+fy+90,z+fz,1,120) end
     return true
 end
